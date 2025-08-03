@@ -184,7 +184,7 @@ src/
 
 ### **Suporte Técnico**
 - 📞 **WhatsApp**: (64) 9602-8022
-- 📧 **E-mail**: suporte@onedrip.com
+- 📧 **E-mail**: suporte@onedrip.com.br
 - 🕐 **Horário**: Segunda à Sexta, 8h às 18h
 
 ---

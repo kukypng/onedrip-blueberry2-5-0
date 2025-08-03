@@ -366,7 +366,7 @@ const generateSimplePDF = async (data: BudgetPDFData): Promise<Blob> => {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(colors.darkGray[0], colors.darkGray[1], colors.darkGray[2]);
-    doc.text(`Método: ${data.payment_condition}`, 20, currentY);
+    doc.text(`Método de Pagamento: ${data.payment_condition}`, 20, currentY);
   }
 
   // SEÇÃO GARANTIA

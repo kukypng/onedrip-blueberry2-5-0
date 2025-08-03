@@ -233,7 +233,7 @@ export const AuthPage = () => {
                   <span className="text-muted-foreground">|</span>
                   <button
                     type="button"
-                    onClick={() => window.open('https://wa.me/5511999999999', '_blank')}
+                    onClick={() => window.open('https://wa.me/64996028022', '_blank')}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
                   >
                     Suporte

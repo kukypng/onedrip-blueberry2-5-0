@@ -273,9 +273,7 @@ const AdminLiteComponent = ({
                       
                       
                       
-                      <Button size="sm" variant="destructive" onClick={() => handleDelete(user)} className="text-xs">
-                        Excluir
-                      </Button>
+                      
                     </div>
                   </div>)}
               </div>}

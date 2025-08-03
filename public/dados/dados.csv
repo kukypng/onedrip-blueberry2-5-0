@@ -1,0 +1,143 @@
+Tipo Aparelho;Serviço/Aparelho;Qualidade;Observações;Preço à Vista;Preço Parcelado;Parcelas;Método de Pagamento;Garantia (meses);Validade (dias);Inclui Entrega;Inclui Película
+celular;Tela A12;;;25000;30000;4;Cartao de Credito;3;13;sim;nao
+celular;Tela Moto G52;Original Importada;;42000;45000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela G8 Play;Original Nacional;;32000;35000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela do Moto G23;Original Nacional;;32000;35000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria Samsung A10;Gold;;10000;12000;4;Cartao de Credito;3;27;nao;nao
+celular;Tela LG K22;Original Importada;;20000;23000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Xiaomi Redmi Note 9;Original Nacional;;30000;33000;5;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G22;Original Importada;;25000;28000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Xiaomi Note 11 4G;Original Nacional;;55000;60000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela iPhone 8 Plus;Gold;;37000;39000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G7 Power;;;33000;36000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Moto G50;Original Importada;;25000;26000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto G8 Power Lite;Original Nacional;;31000;34000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Xiaomi Redmi 12;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A13;Original Importada;;25000;28000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Samsung A03;Original Importada;;25000;28000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto E13;Original Nacional;;25000;35000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto Edie 50 Pro;Original Nacional;;76000;12000;5;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A7;Original Importada;;35000;18000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela iPhone X;Gold;;25000;40000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Realme C30;Original Nacional;;27000;27000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A15;Original Nacional;;64000;68000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela iPhone 12;Gold;;85000;89000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela iPhone 13;Gold;;90000;95000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Poco X5 5G;Incel;;22000;25000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Samsung  A52;Original Nacional;;75000;78000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A22 4G;Original Nacional;;50000;54000;4;Cartao de Credito;6;27;nao;nao
+celular;Tela redmi 13c;Original Nacional;;22000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Redmi Note 11 Pro;Original Nacional;;20000;23000;4;Cartao de Credito;3;27;sim;nao
+celular;Bateria iPhone 13;Gold;;32000;35000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Moto E40;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A30 - A50;Original Nacional;;53000;57000;5;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G100;Original Nacional;;45000;48000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria Samsung A71;Gold;;16000;18000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung A06;Original Nacional;;28000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G24;Original Nacional;;33000;37000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela G4 Play;Original Importada;;20000;23000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela iPhone 15 Pro Max;Oled;;220000;314000;10;Cartao de Credito;6;27;sim;sim
+celular;Tampa traseira Samsung S20 Plus;;;9000;11000;10;Cartao de Credito;0;27;sim;nao
+celular;Tela Samsung S20 Plus;Original Nacional;;160000;177000;10;Cartao de Credito;6;27;sim;nao
+celular;Bateria iPhone 11;Gold;;25000;28000;4;Cartao de Credito;3;27;nao;nao
+celular;Tela Samsung A25;Original Importada;;35000;39000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto G14;Original Nacional;;33000;37000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Realme C61;;;25000;74000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela iPhone 6 Plus;Gold;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Poco M3 - Redmi 9T;Original Nacional;;33000;36000;4;Cartao de Credito;6;27;sim;sim
+celular;Tampa traseira Redmi 12;;;9000;11000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung A04e;Original Nacional;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung M23;Original Nacional;;25000;37000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Realme 11x 5g;Original Importada;;6500;30000;4;Cartao de Credito;3;27;sim;sim
+celular;Bateria Moto Edge 30;;;17000;19000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Moto G34;Original Nacional;;25000;37000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G53;Original Nacional;;25000;37000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Redmi 10 2022;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria Samsung J7 Metal;Original Importada;;9000;11000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Samsung A71;Original Nacional;;80000;86000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung S21 FE;Vivid;;74000;80000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung A32 4G;Vivid;;35000;50000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung J7 Metal;Original Importada;;29000;32000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung A31;Original Importada;;33000;36000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Redmi Note 12s;Original Importada;;45000;48000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto G04;Original Nacional;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A02 Core;;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G60s;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A05;Original Nacional;;36000;39000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Redmi Note 9;Original Nacional;;16000;18000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Moto E6 Play;Original Nacional;;27000;30000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria iPhone 12;;;36000;40000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria Redmi Note 10 4G;;;16000;18000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Redmi 7;Original Nacional;;22000;32000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A01 Core;;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela iPhone 7 plus;Gold;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Realme C53 / Note 50;Original Nacional;;22000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Samsung A02s A03s A03 A04 A04E;;;15000;17000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung J8;Original Importada;;30000;33000;4;Cartao de Credito;3;27;sim;sim
+celular;Bateria Redmi Note 8;Original Nacional;;16000;18000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Xiaomi Redmi Note 8;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Tampa traseira iphone 12;;;25000;28000;4;Cartao de Credito;3;27;sim;nao
+celular;Tampa traseira iPhone 8 Plus;;;20000;25000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A11;Original Nacional;;33000;36000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung S9;Original Nacional;;80000;85000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Xiaomi Note 7;Original Nacional;;30000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Redmi 12c;;;15000;18000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Moto G54 5G;Original Nacional;;35000;39000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G32;Original Nacional;;29000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G6;Original Importada;;22000;25000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Realme 7i;Original Nacional;;32000;36000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Redmi 8 Normal;Original Nacional;;28000;31000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Xiaomi Note 13 Pro Plus 5G;Original Nacional;;70000;75000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung J5 Pro;Original Importada;;26000;29000;4;Cartao de Credito;3;27;sim;sim
+celular;Bateria Motorola G8 Play;Gold;;16000;58000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Motorola E7 Plus;Original Nacional;;35000;39000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria iPhone 7;Gold;;17000;20000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria J2 Core;;;9000;11000;4;Cartao de Credito;3;27;sim;nao
+celular;Bateria iPhone 8;Gold;;17000;19000;4;Cartao de Credito;6;27;sim;nao
+celular;Tampa traseira Redmi Note 8;;;10000;13000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela iPhone 11 Pro Max;Gold;;85000;95000;10;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A20;Original Importada;;27000;31000;4;Cartao de Credito;3;27;sim;sim
+celular;Bateria Redmi 10s;Gold;;16000;18000;4;Cartao de Credito;6;27;sim;nao
+celular;Bateria Samsung A03s;;;15000;17000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung S23 Ultra;Original Nacional;;241000;277000;10;Cartao de Credito;6;27;sim;nao
+celular;Tela Realme C53;Original Nacional;;25000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela LG K41s;Original Nacional;;20000;33000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria LG k40s;Gold;;16000;19000;4;Cartao de Credito;6;27;sim;nao
+celular;Tampa traseira iphone 11;Original Nacional;;31000;35000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto G9 Play;Original Nacional;;32000;36000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Samsung J4 Plus - J4 Core - J6 Plus - J7 Prime;Gold;;13000;16000;4;Cartao de Credito;3;27;sim;nao
+celular;Bateria Moto G10 - G20 - G30;Gold;;15000;18000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A10;Original Nacional;;27000;29000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Samsung A23 5G;Original Nacional;;35000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria Samsung S22;Gold;;25000;28000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung J4 Plus J4 Core J6 Plus;Original Importada;;25000;28000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela G8 Power;Original Nacional;;22000;31000;4;Cartao de Credito;6;27;sim;nao
+celular;Tampa traseira traseira iphone XR;;;25000;28000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung J6;Original Importada;;20000;38000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Samsung A12;Original Nacional;;30000;34000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria iPhone Xr;Gold;;35000;39000;4;Cartao de Credito;6;27;nao;nao
+celular;Tela Samsung A53;Original Nacional;;80000;85000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Realme C3;Original Nacional;;34000;38000;4;Cartao de Credito;6;27;sim;sim
+celular;Bateria poco X3 pro;Gold;;18000;20000;5;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A50;Vivid;;36000;38000;4;Cartao de Credito;3;27;sim;sim
+celular;Tampa traseira Samsung A7;;;11000;13000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung A14;Original Nacional;;30000;34000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto E20;Original Importada;;22000;25000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto G5s;Original Importada;;26000;29000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela Moto G10/ G20 / G30;Original Importada;;22000;25000;4;Cartao de Credito;3;27;sim;sim
+celular;Tela Moto G31;Original Importada;;35000;38000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela A33 4G;Original Nacional;;78000;82000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Moto E22;Original Nacional;;32000;35000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Relme C55;Original Nacional;;30000;48000;4;Cartao de Credito;6;27;sim;sim
+celular;Tela Redmi Note 10 Pro;Original Nacional;;55000;58000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela G9 Play;Original Nacional;;30000;32000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela G6 Play;Original Nacional;;30000;32000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Samsung A34 5G;Original Nacional;;80000;83000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Realme C55;Original Importada;;30000;33000;4;Cartao de Credito;3;27;sim;nao
+celular;Bateria Redmi Note 7;Original Nacional;;18000;20000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela LG K52;Original Importada;;22000;24000;4;Cartao de Credito;3;27;nao;nao
+celular;Bateria Moto G9 Play;Gold;;13000;15000;4;Cartao de Credito;3;27;sim;nao
+celular;Tela G9 Plus;Original Nacional;;38000;41000;4;Cartao de Credito;6;27;sim;nao
+celular;Tela Moto G82;Original Nacional;;22000;50000;4;Cartao de Credito;6;27;sim;sim
+celular;Tampa traseira G8 Power;;;8000;9000;2;Cartao de Credito;3;27;sim;nao
+celular;Tela Samsung S10 Plus;;;142000;155000;4;Cartao de Credito;6;27;sim;nao

@@ -91,6 +91,21 @@ export const DashboardLiteHelpSupport = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Link de Suporte WhatsApp */}
+        <div className="flex justify-center">
+          <a 
+            href="https://wa.me/556496028022" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-green-700 dark:text-green-300 bg-green-50 dark:bg-green-950/20 hover:bg-green-100 dark:hover:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg transition-colors duration-200 hover:scale-105 transform"
+            style={{ touchAction: 'manipulation' }}
+          >
+            <MessageCircle className="h-4 w-4" />
+            <span>Precisa de ajuda? Fale conosco no WhatsApp</span>
+            <ArrowRight className="h-3 w-3" />
+          </a>
+        </div>
       </div>
 
       <IOSHelpSystem isOpen={isHelpSystemOpen} onClose={() => setHelpSystemOpen(false)} initialContext="dashboard" />

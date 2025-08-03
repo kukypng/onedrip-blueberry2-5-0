@@ -42,7 +42,7 @@ export const DeviceSection = ({
         </div>
 
         <div>
-          <Label className="text-sm font-medium text-foreground">Modelo do Aparelho</Label>
+          <Label className="text-sm font-medium text-foreground">Serviço/Aparelho</Label>
           <Input type="text" value={formData.device_model} onChange={e => onInputChange('device_model', e.target.value)} placeholder="Ex: iPhone 12, Redmi Note 8" className="mt-1" autoComplete="off" autoFocus={false} />
         </div>
 

@@ -14,7 +14,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Plus,
-  RefreshCw
+  RefreshCw,
+  Shuffle
 } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
@@ -34,7 +35,7 @@ interface LicenseStats {
 
 export const LicenseReportsPanel: React.FC = () => {
   const [customCode, setCustomCode] = useState('');
-  const [customDays, setCustomDays] = useState(365);
+  const [customDays, setCustomDays] = useState(30);
   const [isCreatingCustom, setIsCreatingCustom] = useState(false);
   const [stats, setStats] = useState<LicenseStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +43,15 @@ export const LicenseReportsPanel: React.FC = () => {
   const [bulkQuantity, setBulkQuantity] = useState(10);
   const [bulkDays, setBulkDays] = useState(365);
   const { showSuccess, showError } = useToast();
+
+  const generateRandomCode = () => {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    for (let i = 0; i < 13; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    setCustomCode(result);
+  };
 
   const fetchLicenseStats = async () => {
     try {
@@ -345,13 +355,24 @@ export const LicenseReportsPanel: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="custom-code">Código da Licença</Label>
-              <Input
-                id="custom-code"
-                value={customCode}
-                onChange={(e) => setCustomCode(e.target.value)}
-                placeholder="Insira o código desejado"
-              />
-              <p className="text-xs text-muted-foreground">Qualquer combinação de caracteres</p>
+              <div className="flex gap-2">
+                <Input
+                  id="custom-code"
+                  value={customCode}
+                  onChange={(e) => setCustomCode(e.target.value)}
+                  placeholder="Insira o código desejado"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={generateRandomCode}
+                  title="Gerar código aleatório"
+                >
+                  <Shuffle className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Qualquer combinação de caracteres ou use o botão para gerar</p>
             </div>
             
             <div className="space-y-2">

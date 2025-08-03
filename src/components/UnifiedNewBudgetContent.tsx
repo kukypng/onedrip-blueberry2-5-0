@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { BudgetFormSteps } from './budget/BudgetFormSteps';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Plus, ArrowLeft, Search, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { BudgetCardModern } from './budget/BudgetCardModern';
@@ -17,6 +18,7 @@ import { BudgetBreadcrumbs } from './budget/BudgetBreadcrumbs';
 import { useBudgetErrorHandler } from './budgets/hooks/useBudgetErrorHandler';
 import { useBudgetActions } from './budgets/hooks/useBudgetActions';
 import { BudgetViewModal } from './BudgetViewModal';
+import { useBudgetSearch } from './budgets/hooks/useBudgetSearch';
 
 interface UnifiedNewBudgetContentProps {
   userId?: string;
@@ -47,11 +49,23 @@ export const UnifiedNewBudgetContent = ({
   const { handleAsyncError } = useBudgetErrorHandler();
   const { handleCopy } = useBudgetActions();
 
-  const [recentBudgets, setRecentBudgets] = useState<any[]>([]);
+  const [allBudgets, setAllBudgets] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(isLite);
+  const [showSearchResults, setShowSearchResults] = useState(false);
+
+  // Hook de pesquisa
+  const {
+    searchTerm,
+    setSearchTerm,
+    filteredBudgets,
+    handleSearch,
+    handleKeyPress,
+    clearSearch,
+    hasActiveSearch
+  } = useBudgetSearch(allBudgets);
 
   useEffect(() => {
-    const fetchRecentBudgets = async () => {
+    const fetchBudgets = async () => {
       const targetUserId = userId || user?.id;
       if (!targetUserId) {
         setIsLoading(false);
@@ -64,32 +78,35 @@ export const UnifiedNewBudgetContent = ({
           .from('budgets')
           .select('*')
           .eq('owner_id', targetUserId)
-          .order('created_at', { ascending: false })
-          .limit(3);
+          .is('deleted_at', null) // Sempre excluir orçamentos na lixeira
+          .order('created_at', { ascending: false });
 
-        // Add deleted_at filter for lite version
-        if (isLite) {
-          query.is('deleted_at', null);
+        // Se não há pesquisa ativa, limitar a 3 para mostrar apenas recentes
+        if (!hasActiveSearch) {
+          query.limit(3);
         }
 
         const { data, error } = await query;
         
         if (error) {
-          console.error('Error fetching recent budgets:', error);
-          setRecentBudgets([]);
+          console.error('Error fetching budgets:', error);
+          setAllBudgets([]);
         } else {
-          setRecentBudgets(data || []);
+          setAllBudgets(data || []);
         }
       } catch (error) {
-        console.error('Error fetching recent budgets:', error);
-        setRecentBudgets([]);
+        console.error('Error fetching budgets:', error);
+        setAllBudgets([]);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchRecentBudgets();
-  }, [user?.id, userId, isLite]);
+    fetchBudgets();
+  }, [user?.id, userId, isLite, hasActiveSearch]);
+
+  // Determinar quais orçamentos mostrar
+  const budgetsToShow = hasActiveSearch ? filteredBudgets : allBudgets;
 
   const handleEdit = (budget: any) => {
     setSelectedBudget(budget);
@@ -209,18 +226,42 @@ export const UnifiedNewBudgetContent = ({
         {/* Recent Budgets */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Orçamentos Recentes</CardTitle>
+            <CardTitle className="text-lg">
+              {hasActiveSearch ? `Resultados da Pesquisa (${budgetsToShow.length})` : 'Orçamentos Recentes'}
+            </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
+            {/* Search Bar */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Pesquisar por cliente, dispositivo ou problema..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleKeyPress}
+                className="pl-10 pr-10"
+              />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSearch}
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-8 w-8 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
             {isLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {[1, 2, 3].map(i => (
                   <BudgetCardSkeleton key={i} />
                 ))}
               </div>
-            ) : recentBudgets && recentBudgets.length > 0 ? (
+            ) : budgetsToShow && budgetsToShow.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {recentBudgets.map(budget => (
+                {budgetsToShow.map(budget => (
                   <BudgetCardModern
                     key={budget.id}
                     budget={budget}
@@ -236,11 +277,27 @@ export const UnifiedNewBudgetContent = ({
             ) : (
               <div className="text-center py-8">
                 <div className="w-12 h-12 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <Plus className="h-6 w-6 text-muted-foreground" />
+                  {hasActiveSearch ? (
+                    <Search className="h-6 w-6 text-muted-foreground" />
+                  ) : (
+                    <Plus className="h-6 w-6 text-muted-foreground" />
+                  )}
                 </div>
                 <p className="text-muted-foreground">
-                  Ainda não há orçamentos criados. Crie seu primeiro orçamento!
+                  {hasActiveSearch 
+                    ? 'Nenhum orçamento encontrado para sua pesquisa.'
+                    : 'Ainda não há orçamentos criados. Crie seu primeiro orçamento!'
+                  }
                 </p>
+                {hasActiveSearch && (
+                  <Button
+                    variant="outline"
+                    onClick={clearSearch}
+                    className="mt-3"
+                  >
+                    Limpar pesquisa
+                  </Button>
+                )}
               </div>
             )}
           </CardContent>

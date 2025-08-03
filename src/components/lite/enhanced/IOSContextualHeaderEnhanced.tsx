@@ -172,9 +172,7 @@ export const IOSContextualHeaderEnhanced = ({
                     </AnimatePresence>
                     
                     {/* Search button */}
-                    <button type="button" className={cn("absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200", currentSearchValue.trim() && !isSearching ? "bg-primary/20 hover:bg-primary/30 border border-primary/30" : "bg-muted/30 hover:bg-muted/50 border border-border/50", isSearching && "opacity-75 cursor-not-allowed")} onClick={handleSearchSubmit} disabled={!currentSearchValue.trim() || isSearching}>
-                      {isSearching ? <RefreshCw className="h-4 w-4 text-primary animate-spin" /> : <Search className={cn("h-4 w-4 transition-colors", currentSearchValue.trim() ? "text-primary" : "text-muted-foreground")} />}
-                    </button>
+                    
                   </div>
                 </motion.div>}
             </AnimatePresence>

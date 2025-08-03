@@ -271,7 +271,18 @@ export const AdminLicenseManagerEnhanced = () => {
       {/* Licenses Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Licenças ({filteredLicenses?.length || 0})</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>Licenças ({filteredLicenses?.length || 0})</CardTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-licenses'] })}
+              className="flex items-center space-x-2"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span>Atualizar</span>
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (

@@ -173,10 +173,7 @@ export const AdminUserActions = ({
               {sendRecoveryEmailMutation.isPending ? 'Enviando...' : 'Enviar Recuperação de Senha'}
             </Button>
 
-            <Button variant="outline" size="sm" onClick={handleLoadMetrics} disabled={loadUserMetricsMutation.isPending} className="justify-start">
-              <TrendingUp className="mr-2 h-4 w-4" />
-              {loadUserMetricsMutation.isPending ? 'Carregando...' : 'Ver Métricas Detalhadas'}
-            </Button>
+            
 
             <div className="grid grid-cols-2 gap-2">
               

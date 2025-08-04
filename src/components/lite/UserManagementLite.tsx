@@ -15,11 +15,10 @@ interface UserManagementLiteProps {
   onBack: () => void;
 }
 
-interface UserProfile {
+interface UserManagementUser {
   id: string;
   name: string;
   role: string;
-  expiration_date: string;
   budget_limit: number | null;
   email?: string;
 }
@@ -27,18 +26,17 @@ interface UserProfile {
 export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
   const { user, hasRole } = useAuth();
   const { showSuccess, showError } = useToast();
-  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [users, setUsers] = useState<UserManagementUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+  const [editingUser, setEditingUser] = useState<UserManagementUser | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   const [newUser, setNewUser] = useState({
     name: '',
     email: '',
     role: 'user',
-    budget_limit: '',
-    expiration_date: ''
+    budget_limit: ''
   });
 
   useEffect(() => {
@@ -121,19 +119,13 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
 
       if (authError) throw authError;
 
-      // Criar perfil
-      const expirationDate = newUser.expiration_date || 
-        new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-
       const { error: profileError } = await supabase
         .from('user_profiles')
         .insert({
           id: authUser.user.id,
           name: newUser.name,
           role: newUser.role,
-          
-          budget_limit: newUser.budget_limit ? parseInt(newUser.budget_limit) : null,
-          expiration_date: expirationDate
+          budget_limit: newUser.budget_limit ? parseInt(newUser.budget_limit) : null
         });
 
       if (profileError) throw profileError;
@@ -147,8 +139,7 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
         name: '',
         email: '',
         role: 'user',
-        budget_limit: '',
-        expiration_date: ''
+        budget_limit: ''
       });
       setShowCreateForm(false);
       loadUsers();
@@ -162,7 +153,7 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
     }
   };
 
-  const handleUpdateUser = async (userId: string, updates: Partial<UserProfile>) => {
+  const handleUpdateUser = async (userId: string, updates: Partial<UserManagementUser>) => {
     try {
       const { error } = await supabase
         .from('user_profiles')
@@ -189,25 +180,11 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
   };
 
   const handleRenewLicense = async (userId: string) => {
-    try {
-      const newExpirationDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-
-      await handleUpdateUser(userId, {
-        expiration_date: newExpirationDate
-      });
-
-      showSuccess({
-        title: 'Licença renovada',
-        description: 'A licença foi renovada por mais 1 ano.'
-      });
-
-    } catch (error: any) {
-      console.error('Error renewing license:', error);
-      showError({
-        title: 'Erro ao renovar',
-        description: 'Não foi possível renovar a licença.'
-      });
-    }
+    // License renewal now handled by license system
+    showError({
+      title: 'Funcionalidade Desabilitada',
+      description: 'A renovação foi removida. Use o sistema de licenças.'
+    });
   };
 
   const filteredUsers = users.filter(user =>
@@ -315,18 +292,7 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
                   />
                 </div>
 
-                <div>
-                  <Label htmlFor="expiration_date">Data de Expiração</Label>
-                  <Input
-                    id="expiration_date"
-                    type="date"
-                    value={newUser.expiration_date}
-                    onChange={(e) => setNewUser({...newUser, expiration_date: e.target.value})}
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Deixe vazio para 1 ano a partir de hoje
-                  </p>
-                </div>
+                {/* Expiration date removed - now handled by license system */}
               </CardContent>
             </Card>
 
@@ -411,7 +377,7 @@ export const UserManagementLite = ({ onBack }: UserManagementLiteProps) => {
                 </div>
 
                 <div className="text-xs text-muted-foreground mb-3">
-                  <p>Expira em: {new Date(user.expiration_date).toLocaleDateString('pt-BR')}</p>
+                  {/* Expiration info removed - now handled by license system */}
                   {user.budget_limit && (
                     <p>Limite: {user.budget_limit} orçamentos</p>
                   )}

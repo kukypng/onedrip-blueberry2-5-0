@@ -267,9 +267,7 @@ const AdminLiteComponent = ({
                         Editar
                       </Button>
                       
-                      {user.expiration_date && new Date(user.expiration_date) <= new Date() && <Button size="sm" variant="outline" onClick={() => handleRenew(user)} className="text-xs border-orange-500 text-orange-700 hover:bg-orange-50">
-                          Renovar
-                        </Button>}
+                      {/* Renewal button removed - now handled by license system */}
                       
                       
                       
@@ -293,7 +291,7 @@ const AdminLiteComponent = ({
 
       {userToDelete && <UserDeletionDialog userToDelete={userToDelete} setUserToDelete={setUserToDelete} confirmDelete={confirmDelete} isPending={deleteUserMutation.isPending} />}
 
-      {userToRenew && <UserRenewalDialog user={userToRenew} isOpen={!!userToRenew} onClose={() => setUserToRenew(null)} onConfirm={confirmRenewal} isPending={renewUserLicenseMutation.isPending} />}
+      {userToRenew && <UserRenewalDialog user={userToRenew} isOpen={!!userToRenew} onClose={() => setUserToRenew(null)} onConfirm={() => {}} />}
     </div>;
 };
 export const AdminLite = (props: AdminLiteProps) => {

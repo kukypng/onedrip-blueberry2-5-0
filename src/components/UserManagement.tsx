@@ -97,8 +97,7 @@ export const UserManagement = () => {
         user={userToRenew}
         isOpen={!!userToRenew}
         onClose={() => setUserToRenew(null)}
-        onConfirm={confirmRenewal}
-        isPending={renewUserLicenseMutation.isPending}
+        onConfirm={() => {}} // Disabled - now handled by license system
       />
 
       <UserDeletionDialog

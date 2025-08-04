@@ -24,8 +24,7 @@ export const UserEditModal = ({ user, isOpen, onClose, onSuccess }: UserEditModa
   const [formData, setFormData] = useState({
     name: '',
     role: 'user',
-    license_active: true,
-    expiration_date: '',
+    license_active: true
   });
   
   const { showSuccess, showError } = useToast();
@@ -35,8 +34,7 @@ export const UserEditModal = ({ user, isOpen, onClose, onSuccess }: UserEditModa
       setFormData({
         name: user.name,
         role: user.role,
-        license_active: user.license_active,
-        expiration_date: format(new Date(user.expiration_date), "yyyy-MM-dd'T'HH:mm"),
+        license_active: user.license_active
       });
     }
   }, [user]);
@@ -49,8 +47,7 @@ export const UserEditModal = ({ user, isOpen, onClose, onSuccess }: UserEditModa
         p_user_id: user.id,
         p_name: data.name,
         p_role: data.role,
-        p_is_active: data.license_active,
-        p_expiration_date: new Date(data.expiration_date).toISOString(),
+        p_is_active: data.license_active
       });
       
       if (error) throw error;
@@ -118,16 +115,7 @@ export const UserEditModal = ({ user, isOpen, onClose, onSuccess }: UserEditModa
                 </Select>
               </div>
 
-              <div>
-                <Label htmlFor="expiration_date">Data de Expiração</Label>
-                <Input
-                  id="expiration_date"
-                  type="datetime-local"
-                  value={formData.expiration_date}
-                  onChange={(e) => setFormData({ ...formData, expiration_date: e.target.value })}
-                  required
-                />
-              </div>
+              {/* User expiration removed - now handled by license system */}
 
               <div className="flex items-center space-x-2">
                 <Switch

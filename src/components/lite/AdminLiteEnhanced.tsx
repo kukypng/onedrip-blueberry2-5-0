@@ -20,10 +20,12 @@ import { UserSettings } from '@/components/UserManagement/UserSettings';
 import { BetaFeaturesSettingsLite } from '@/components/lite/BetaFeaturesSettingsLite';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
+
 interface AdminLiteEnhancedProps {
   userId: string;
   onBack: () => void;
 }
+
 const AdminLiteEnhancedComponent = ({
   userId,
   onBack,
@@ -39,7 +41,9 @@ const AdminLiteEnhancedComponent = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  
   const navigate = useNavigate();
+  
   const {
     searchTerm,
     setSearchTerm,
@@ -68,10 +72,17 @@ const AdminLiteEnhancedComponent = ({
   // Enhanced filtering and sorting
   const enhancedFilteredUsers = React.useMemo(() => {
     if (!users) return [];
+    
     let filtered = users.filter((user: any) => {
-      const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) || user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesSearch = user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      
       const matchesRole = filterRole === 'all' || user.role === filterRole;
-      const matchesStatus = filterStatus === 'all' || filterStatus === 'active' && user.license_active && new Date(user.expiration_date) > new Date() || filterStatus === 'expired' && (!user.license_active || new Date(user.expiration_date) <= new Date());
+      
+      const matchesStatus = filterStatus === 'all' || 
+                           (filterStatus === 'active' && user.license_active && new Date(user.expiration_date) > new Date()) ||
+                           (filterStatus === 'expired' && (!user.license_active || new Date(user.expiration_date) <= new Date()));
+      
       return matchesSearch && matchesRole && matchesStatus;
     });
 
@@ -79,34 +90,35 @@ const AdminLiteEnhancedComponent = ({
     filtered.sort((a: any, b: any) => {
       let aValue = a[sortBy];
       let bValue = b[sortBy];
+      
       if (sortBy === 'expiration_date') {
         aValue = new Date(aValue || 0);
         bValue = new Date(bValue || 0);
       }
+      
       if (typeof aValue === 'string') {
         aValue = aValue.toLowerCase();
         bValue = bValue.toLowerCase();
       }
+      
       if (sortOrder === 'asc') {
         return aValue > bValue ? 1 : -1;
       } else {
         return aValue < bValue ? 1 : -1;
       }
     });
+
     return filtered;
   }, [users, searchTerm, filterRole, filterStatus, sortBy, sortOrder]);
+
   const handleCreateUser = () => {
     navigate('/signup');
   };
 
   // Enhanced stats calculation
   const stats = React.useMemo(() => {
-    if (!users) return {
-      totalUsers: 0,
-      activeUsers: 0,
-      expiredUsers: 0,
-      adminUsers: 0
-    };
+    if (!users) return { totalUsers: 0, activeUsers: 0, expiredUsers: 0, adminUsers: 0 };
+    
     return {
       totalUsers: users.length,
       activeUsers: users.filter((user: any) => user.license_active && new Date(user.expiration_date) > new Date()).length,
@@ -114,6 +126,7 @@ const AdminLiteEnhancedComponent = ({
       adminUsers: users.filter((user: any) => user.role === 'admin').length
     };
   }, [users]);
+
   const getLicenseStatus = (user: any) => {
     if (!user.expiration_date) return 'Sem licença';
     const now = new Date();
@@ -125,6 +138,7 @@ const AdminLiteEnhancedComponent = ({
       return 'Expirada';
     }
   };
+
   const getStatusColor = (user: any) => {
     if (!user.expiration_date) return 'bg-gray-500/20 text-gray-900 dark:text-gray-200';
     const now = new Date();
@@ -135,6 +149,7 @@ const AdminLiteEnhancedComponent = ({
       return 'bg-red-500/20 text-red-900 dark:text-red-200';
     }
   };
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('pt-BR', {
       day: '2-digit',
@@ -151,8 +166,13 @@ const AdminLiteEnhancedComponent = ({
       setSelectedUsers(enhancedFilteredUsers.map((user: any) => user.id));
     }
   };
+
   const handleSelectUser = (userId: string) => {
-    setSelectedUsers(prev => prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]);
+    setSelectedUsers(prev => 
+      prev.includes(userId) 
+        ? prev.filter(id => id !== userId)
+        : [...prev, userId]
+    );
   };
 
   // Export functions
@@ -161,19 +181,29 @@ const AdminLiteEnhancedComponent = ({
     const csv = generateCSV(selectedUserData);
     downloadCSV(csv, 'usuarios_selecionados.csv');
   };
+
   const exportAllUsers = () => {
     const csv = generateCSV(enhancedFilteredUsers);
     downloadCSV(csv, 'todos_usuarios.csv');
   };
+
   const generateCSV = (userData: any[]) => {
     const headers = ['Nome', 'Email', 'Função', 'Status', 'Data de Expiração', 'Último Acesso', 'Orçamentos'];
-    const rows = userData.map(user => [user.name || '', user.email || '', user.role === 'admin' ? 'Admin' : 'Usuário', getLicenseStatus(user), user.expiration_date ? formatDate(user.expiration_date) : '', user.last_sign_in_at ? formatDate(user.last_sign_in_at) : '', user.budget_count || 0]);
+    const rows = userData.map(user => [
+      user.name || '',
+      user.email || '',
+      user.role === 'admin' ? 'Admin' : 'Usuário',
+      getLicenseStatus(user),
+      user.expiration_date ? formatDate(user.expiration_date) : '',
+      user.last_sign_in_at ? formatDate(user.last_sign_in_at) : '',
+      user.budget_count || 0
+    ]);
+    
     return [headers, ...rows].map(row => row.join(',')).join('\n');
   };
+
   const downloadCSV = (csv: string, filename: string) => {
-    const blob = new Blob([csv], {
-      type: 'text/csv;charset=utf-8;'
-    });
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
@@ -183,8 +213,10 @@ const AdminLiteEnhancedComponent = ({
     link.click();
     document.body.removeChild(link);
   };
+
   if (!debugInfo?.is_admin) {
-    return <div className="h-[100dvh] bg-background flex flex-col">
+    return (
+      <div className="h-[100dvh] bg-background flex flex-col">
         <div className="flex items-center p-4 border-b">
           <Button variant="ghost" onClick={onBack} className="mr-2">
             <ArrowLeft className="h-4 w-4" />
@@ -202,10 +234,13 @@ const AdminLiteEnhancedComponent = ({
             </CardContent>
           </Card>
         </div>
-      </div>;
+      </div>
+    );
   }
+
   if (error) {
-    return <div className="h-[100dvh] bg-background flex flex-col">
+    return (
+      <div className="h-[100dvh] bg-background flex flex-col">
         <div className="flex items-center p-4 border-b">
           <Button variant="ghost" onClick={onBack} className="mr-2">
             <ArrowLeft className="h-4 w-4" />
@@ -226,9 +261,12 @@ const AdminLiteEnhancedComponent = ({
             </CardContent>
           </Card>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="h-[100dvh] bg-background flex flex-col">
+
+  return (
+    <div className="h-[100dvh] bg-background flex flex-col">
       <div className="flex items-center p-4 border-b">
         <Button variant="ghost" onClick={onBack} className="mr-2">
           <ArrowLeft className="h-4 w-4" />
@@ -236,10 +274,8 @@ const AdminLiteEnhancedComponent = ({
         <h1 className="text-xl font-bold">Painel Admin</h1>
       </div>
 
-      <div className="flex-1 overflow-auto" style={{
-      WebkitOverflowScrolling: 'touch'
-    }}>
-        <Tabs value={activeTab} onValueChange={value => setActiveTab(value as any)} className="h-full">
+      <div className="flex-1 overflow-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
+        <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="h-full">
           <TabsList className="grid w-full grid-cols-7 sticky top-0 z-10 bg-background">
             <TabsTrigger value="users" className="flex items-center gap-1">
               <Users className="h-4 w-4" />
@@ -247,14 +283,18 @@ const AdminLiteEnhancedComponent = ({
             <TabsTrigger value="analytics" className="flex items-center gap-1">
               <BarChart3 className="h-4 w-4" />
             </TabsTrigger>
-            
+            <TabsTrigger value="activities" className="flex items-center gap-1">
+              <Activity className="h-4 w-4" />
+            </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-1">
               <Settings className="h-4 w-4" />
             </TabsTrigger>
             <TabsTrigger value="licenses" className="flex items-center gap-1">
               <Key className="h-4 w-4" />
             </TabsTrigger>
-            
+            <TabsTrigger value="beta" className="flex items-center gap-1">
+              <Settings className="h-4 w-4" />
+            </TabsTrigger>
             <TabsTrigger value="game" className="flex items-center gap-1">
               <Gamepad2 className="h-4 w-4" />
             </TabsTrigger>
@@ -306,16 +346,30 @@ const AdminLiteEnhancedComponent = ({
               <div className="flex flex-col sm:flex-row gap-2 flex-1">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input type="search" placeholder="Buscar usuários..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
+                  <Input
+                    type="search"
+                    placeholder="Buscar usuários..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
                 </div>
-                <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="flex items-center gap-2"
+                >
                   <Filter className="h-4 w-4" />
                   Filtros
                 </Button>
               </div>
               
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={() => setViewMode(viewMode === 'table' ? 'cards' : 'table')}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setViewMode(viewMode === 'table' ? 'cards' : 'table')}
+                >
                   {viewMode === 'table' ? <Grid className="h-4 w-4" /> : <List className="h-4 w-4" />}
                 </Button>
                 <Button onClick={handleCreateUser} className="flex items-center gap-2">
@@ -326,7 +380,8 @@ const AdminLiteEnhancedComponent = ({
             </div>
 
             {/* Filters */}
-            {showFilters && <Card>
+            {showFilters && (
+              <Card>
                 <CardContent className="p-4">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div>
@@ -357,11 +412,11 @@ const AdminLiteEnhancedComponent = ({
                     </div>
                     <div>
                       <label className="text-sm font-medium mb-2 block">Ordenar por</label>
-                      <Select value={`${sortBy}-${sortOrder}`} onValueChange={value => {
-                    const [field, order] = value.split('-');
-                    setSortBy(field);
-                    setSortOrder(order as 'asc' | 'desc');
-                  }}>
+                      <Select value={`${sortBy}-${sortOrder}`} onValueChange={(value) => {
+                        const [field, order] = value.split('-');
+                        setSortBy(field);
+                        setSortOrder(order as 'asc' | 'desc');
+                      }}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -377,26 +432,38 @@ const AdminLiteEnhancedComponent = ({
                     </div>
                   </div>
                 </CardContent>
-              </Card>}
+              </Card>
+            )}
 
             {/* Bulk Actions */}
-            {selectedUsers.length > 0 && <Card>
+            {selectedUsers.length > 0 && (
+              <Card>
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="text-sm font-medium">
                       {selectedUsers.length} usuário(s) selecionado(s)
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm" onClick={exportSelectedUsers} className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={exportSelectedUsers}
+                        className="flex items-center gap-2"
+                      >
                         <Download className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm" onClick={() => setSelectedUsers([])}>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setSelectedUsers([])}
+                      >
                         Limpar
                       </Button>
                     </div>
                   </div>
                 </CardContent>
-              </Card>}
+              </Card>
+            )}
 
             {/* Users List */}
             <Card>
@@ -407,28 +474,52 @@ const AdminLiteEnhancedComponent = ({
                     Usuários ({enhancedFilteredUsers?.length || 0})
                   </CardTitle>
                   <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={exportAllUsers} className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={exportAllUsers}
+                      className="flex items-center gap-2"
+                    >
                       <Download className="h-4 w-4" />
                     </Button>
-                    {enhancedFilteredUsers?.length > 0 && <Button variant="outline" size="sm" onClick={handleSelectAll} className="flex items-center gap-2">
+                    {enhancedFilteredUsers?.length > 0 && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleSelectAll}
+                        className="flex items-center gap-2"
+                      >
                         <CheckSquare className="h-4 w-4" />
-                      </Button>}
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardHeader>
               <CardContent>
-                {isLoading ? <div className="space-y-3">
-                    {[1, 2, 3].map(i => <div key={i} className="animate-pulse border rounded-lg p-3">
+                {isLoading ? (
+                  <div className="space-y-3">
+                    {[1, 2, 3].map(i => (
+                      <div key={i} className="animate-pulse border rounded-lg p-3">
                         <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
                         <div className="h-3 bg-muted rounded w-1/2"></div>
-                      </div>)}
-                  </div> : enhancedFilteredUsers?.length === 0 ? <div className="text-center py-8 text-muted-foreground">
+                      </div>
+                    ))}
+                  </div>
+                ) : enhancedFilteredUsers?.length === 0 ? (
+                  <div className="text-center py-8 text-muted-foreground">
                     <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
                     <p>Nenhum usuário encontrado</p>
-                  </div> : <div className={viewMode === 'cards' ? "space-y-3 max-h-[400px] overflow-auto" : "overflow-x-auto"}>
-                    {viewMode === 'cards' ? enhancedFilteredUsers?.slice(0, 20).map((user: any) => <div key={user.id} className="border rounded-lg p-3 space-y-2">
+                  </div>
+                ) : (
+                  <div className={viewMode === 'cards' ? "space-y-3 max-h-[400px] overflow-auto" : "overflow-x-auto"}>
+                    {viewMode === 'cards' ? (
+                      enhancedFilteredUsers?.slice(0, 20).map((user: any) => (
+                        <div key={user.id} className="border rounded-lg p-3 space-y-2">
                           <div className="flex items-start gap-3">
-                            <Checkbox checked={selectedUsers.includes(user.id)} onCheckedChange={() => handleSelectUser(user.id)} />
+                            <Checkbox
+                              checked={selectedUsers.includes(user.id)}
+                              onCheckedChange={() => handleSelectUser(user.id)}
+                            />
                             <div className="flex-1">
                               <h4 className="font-medium text-sm">{user.name}</h4>
                               <p className="text-xs text-muted-foreground">{user.email}</p>
@@ -455,17 +546,26 @@ const AdminLiteEnhancedComponent = ({
                                 <DropdownMenuItem onClick={() => handleRenew(user)}>
                                   Renovar Licença
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
+                                <DropdownMenuItem 
+                                  onClick={() => handleDelete(user)}
+                                  className="text-destructive"
+                                >
                                   Excluir
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
-                        </div>) : <table className="w-full">
+                        </div>
+                      ))
+                    ) : (
+                      <table className="w-full">
                         <thead>
                           <tr className="border-b">
                             <th className="text-left p-2">
-                              <Checkbox checked={selectedUsers.length === enhancedFilteredUsers.length} onCheckedChange={handleSelectAll} />
+                              <Checkbox
+                                checked={selectedUsers.length === enhancedFilteredUsers.length}
+                                onCheckedChange={handleSelectAll}
+                              />
                             </th>
                             <th className="text-left p-2">Nome</th>
                             <th className="text-left p-2">Email</th>
@@ -476,9 +576,13 @@ const AdminLiteEnhancedComponent = ({
                           </tr>
                         </thead>
                         <tbody>
-                          {enhancedFilteredUsers?.slice(0, 20).map((user: any) => <tr key={user.id} className="border-b">
+                          {enhancedFilteredUsers?.slice(0, 20).map((user: any) => (
+                            <tr key={user.id} className="border-b">
                               <td className="p-2">
-                                <Checkbox checked={selectedUsers.includes(user.id)} onCheckedChange={() => handleSelectUser(user.id)} />
+                                <Checkbox
+                                  checked={selectedUsers.includes(user.id)}
+                                  onCheckedChange={() => handleSelectUser(user.id)}
+                                />
                               </td>
                               <td className="p-2 font-medium">{user.name}</td>
                               <td className="p-2 text-sm text-muted-foreground">{user.email}</td>
@@ -507,16 +611,22 @@ const AdminLiteEnhancedComponent = ({
                                     <DropdownMenuItem onClick={() => handleRenew(user)}>
                                       Renovar Licença
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
+                                    <DropdownMenuItem 
+                                      onClick={() => handleDelete(user)}
+                                      className="text-destructive"
+                                    >
                                       Excluir
                                     </DropdownMenuItem>
                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </td>
-                            </tr>)}
+                            </tr>
+                          ))}
                         </tbody>
-                      </table>}
-                  </div>}
+                      </table>
+                    )}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -548,40 +658,64 @@ const AdminLiteEnhancedComponent = ({
       </div>
 
       {/* Modals */}
-      {selectedUser && <UserEditModal user={selectedUser} isOpen={isEditModalOpen} onClose={() => {
-      setIsEditModalOpen(false);
-      setSelectedUser(null);
-    }} onSuccess={() => {
-      setIsEditModalOpen(false);
-      setSelectedUser(null);
-    }} />}
+      {selectedUser && (
+        <UserEditModal
+          user={selectedUser}
+          isOpen={isEditModalOpen}
+          onClose={() => {
+            setIsEditModalOpen(false);
+            setSelectedUser(null);
+          }}
+          onSuccess={() => {
+            setIsEditModalOpen(false);
+            setSelectedUser(null);
+          }}
+        />
+      )}
 
-      {userToDelete && <UserDeletionDialog userToDelete={userToDelete} setUserToDelete={setUserToDelete} confirmDelete={confirmDelete} isPending={deleteUserMutation.isPending} />}
+      {userToDelete && (
+        <UserDeletionDialog
+          userToDelete={userToDelete}
+          setUserToDelete={setUserToDelete}
+          confirmDelete={confirmDelete}
+          isPending={deleteUserMutation.isPending}
+        />
+      )}
 
-      {userToRenew && <UserRenewalDialog user={userToRenew} isOpen={!!userToRenew} onClose={() => setUserToRenew(null)} onConfirm={() => {}} />}
-    </div>;
+      {userToRenew && (
+        <UserRenewalDialog
+          user={userToRenew}
+          isOpen={!!userToRenew}
+          onClose={() => setUserToRenew(null)}
+          onConfirm={() => {}}
+        />
+      )}
+    </div>
+  );
 };
+
 export const AdminLiteEnhanced = (props: AdminLiteEnhancedProps) => {
   const [profile, setProfile] = useState<any>(null);
+
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
+        const { data: { user } } = await supabase.auth.getUser();
         if (user) {
-          const {
-            data: profileData
-          } = await supabase.from('user_profiles').select('*').eq('id', user.id).single();
+          const { data: profileData } = await supabase
+            .from('user_profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single();
           setProfile(profileData);
         }
       } catch (error) {
         console.error('Error loading profile:', error);
       }
     };
+
     loadProfile();
   }, []);
+
   return <AdminLiteEnhancedComponent {...props} profile={profile} />;
 };

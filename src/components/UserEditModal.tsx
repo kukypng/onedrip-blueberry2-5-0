@@ -46,8 +46,7 @@ export const UserEditModal = ({ user, isOpen, onClose, onSuccess }: UserEditModa
       const { error } = await supabase.rpc('admin_update_user', {
         p_user_id: user.id,
         p_name: data.name,
-        p_role: data.role,
-        p_is_active: data.license_active
+        p_role: data.role
       });
       
       if (error) throw error;

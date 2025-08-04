@@ -16,7 +16,6 @@ interface DebugInfo {
   user_id: string | null;
   user_email: string | null;
   user_role: string | null;
-  is_active: boolean | null;
   is_admin: boolean | null;
 }
 export const AdminTestPanel = () => {
@@ -54,7 +53,6 @@ export const AdminTestPanel = () => {
           user_id: debugData?.user_id || null,
           user_email: debugData?.user_email || null,
           user_role: debugData?.user_role || null,
-          is_active: debugData?.is_active || null,
           is_admin: debugData?.is_admin || null
         };
       } catch (err) {
@@ -181,7 +179,7 @@ export const AdminTestPanel = () => {
                 <div><strong>ID:</strong> <code className="text-xs bg-muted px-1 rounded">{debugInfo.user_id || 'N/A'}</code></div>
                 <div><strong>Email:</strong> {debugInfo.user_email || 'N/A'}</div>
                 <div><strong>Role:</strong> <Badge variant="secondary">{debugInfo.user_role || 'N/A'}</Badge></div>
-                <div><strong>Ativo:</strong> {debugInfo.is_active ? <Badge className="border-transparent bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Sim</Badge> : <Badge variant="destructive">Não</Badge>}</div>
+
                 <div><strong>É Admin:</strong> {debugInfo.is_admin ? <Badge className="border-transparent bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Sim</Badge> : <Badge variant="destructive">Não</Badge>}</div>
                 <div><strong>Status:</strong> {debugInfo.is_admin ? <Badge className="border-transparent bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-300">Admin Ativo</Badge> : (debugInfo.user_role === 'admin' ? <Badge className="border-transparent bg-yellow-100 text-yellow-800 dark:bg-yellow-900/50 dark:text-yellow-300">Admin Inativo</Badge> : <Badge variant="secondary">Usuário</Badge>)}</div>
               </div> : <p className="text-sm text-destructive">Erro ao carregar informações do usuário.</p>}

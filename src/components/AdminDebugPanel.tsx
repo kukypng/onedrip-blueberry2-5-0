@@ -10,7 +10,6 @@ interface DebugInfo {
   user_id: string | null;
   user_email: string | null;
   user_role: string | null;
-  is_active: boolean | null;
   is_admin: boolean | null;
 }
 interface AdminDebugPanelProps {
@@ -48,7 +47,6 @@ export const AdminDebugPanel = ({
           user_id: debugData?.user_id || null,
           user_email: debugData?.user_email || null,
           user_role: debugData?.user_role || null,
-          is_active: debugData?.is_active || null,
           is_admin: debugData?.is_admin || null
         };
       } catch (err) {
@@ -104,11 +102,6 @@ export const AdminDebugPanel = ({
             <div className="space-y-2">
               <h4 className="font-semibold text-yellow-900 dark:text-yellow-200">Status de Permissões</h4>
               <div className="space-y-1 text-yellow-800 dark:text-yellow-300">
-                <p><strong>Usuário Ativo:</strong> 
-                  <Badge className={`${debugInfo.is_active ? 'bg-green-500/20 text-green-900 dark:text-green-200' : 'bg-red-500/20 text-red-900 dark:text-red-200'} border-none`}>
-                    {debugInfo.is_active ? 'Sim' : 'Não'}
-                  </Badge>
-                </p>
                 <p><strong>Permissão Admin:</strong> 
                   <Badge className={`${debugInfo.is_admin ? 'bg-green-500/20 text-green-900 dark:text-green-200' : 'bg-red-500/20 text-red-900 dark:text-red-200'} border-none`}>
                     {debugInfo.is_admin ? 'Sim' : 'Não'}
@@ -124,7 +117,7 @@ export const AdminDebugPanel = ({
             {debugInfo && !debugInfo.is_admin && <div className="mt-2 p-2 bg-red-500/20 rounded">
                 <p className="text-red-800 dark:text-red-300 text-xs">
                   <strong>Possível Causa:</strong> O usuário atual não possui permissões de administrador. 
-                  Verifique se o role está correto e se o usuário está ativo.
+                  Verifique se o role está correto.
                 </p>
               </div>}
           </div>}

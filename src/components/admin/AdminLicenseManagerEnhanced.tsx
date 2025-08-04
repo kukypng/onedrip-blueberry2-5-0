@@ -19,7 +19,6 @@ interface License {
   user_name: string | null;
   expires_at: string | null;
   created_at: string;
-  is_active: boolean;
 }
 export const AdminLicenseManagerEnhanced = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -56,8 +55,7 @@ export const AdminLicenseManagerEnhanced = () => {
         user_email: item.user_email || null,
         user_name: item.user_name || null,
         expires_at: item.expires_at || null,
-        created_at: item.created_at || new Date().toISOString(),
-        is_active: Boolean(item.is_active)
+        created_at: item.created_at || new Date().toISOString()
       }));
       console.log('Transformed licenses data:', transformedData);
       return transformedData;
@@ -129,8 +127,7 @@ export const AdminLicenseManagerEnhanced = () => {
       const {
         error
       } = await supabase.from('licenses').update({
-        user_id: null,
-        is_active: false
+        user_id: null
       }).eq('id', licenseId);
       if (error) throw error;
     },
@@ -154,7 +151,8 @@ export const AdminLicenseManagerEnhanced = () => {
     const matchesSearch = license.code.toLowerCase().includes(searchTerm.toLowerCase()) || license.user_name && license.user_name.toLowerCase().includes(searchTerm.toLowerCase()) || license.user_email && license.user_email.toLowerCase().includes(searchTerm.toLowerCase());
     const now = new Date();
     const isExpired = license.expires_at && new Date(license.expires_at) < now;
-    const matchesStatus = statusFilter === 'all' || statusFilter === 'active' && license.is_active && !isExpired || statusFilter === 'inactive' && !license.is_active || statusFilter === 'expired' && isExpired;
+    const isActive = !license.expires_at || new Date(license.expires_at) > new Date();
+    const matchesStatus = statusFilter === 'all' || statusFilter === 'active' && isActive && !isExpired || statusFilter === 'inactive' && !isActive || statusFilter === 'expired' && isExpired;
     return matchesSearch && matchesStatus;
   });
   const getStatusBadge = (license: License) => {
@@ -166,13 +164,10 @@ export const AdminLicenseManagerEnhanced = () => {
         <span>Expirada</span>
       </Badge>;
     }
-    if (license.is_active) {
-      return <Badge variant="default" className="flex items-center space-x-1">
-        <CheckCircle className="h-3 w-3" />
-        <span>Ativa</span>
-      </Badge>;
-    }
-    return <Badge variant="secondary">Inativa</Badge>;
+    return <Badge variant="default" className="flex items-center space-x-1">
+      <CheckCircle className="h-3 w-3" />
+      <span>Ativa</span>
+    </Badge>;
   };
   return <div className="space-y-6">
       {/* Header Actions */}

@@ -13,7 +13,6 @@ interface AdminUserActionsProps {
   userEmail: string;
   userName: string;
   userRole?: string;
-  isActive?: boolean;
   expirationDate?: string;
   budgetCount?: number;
   onSuccess?: () => void;
@@ -23,7 +22,6 @@ export const AdminUserActions = ({
   userEmail,
   userName,
   userRole = 'user',
-  isActive = true,
   expirationDate,
   budgetCount = 0,
   onSuccess
@@ -35,7 +33,8 @@ export const AdminUserActions = ({
   const [showUserBlock, setShowUserBlock] = useState(false);
   const [userMetrics, setUserMetrics] = useState<any>(null);
   const [activityHistory, setActivityHistory] = useState<any[]>([]);
-  const [isBlocked, setIsBlocked] = useState(!isActive);
+  // Status baseado na expiração da licença
+  const isExpired = expirationDate ? new Date(expirationDate) < new Date() : false;
   const {
     showSuccess,
     showError
@@ -170,7 +169,6 @@ export const AdminUserActions = ({
         name: userName,
         email: userEmail,
         role: userRole,
-        isActive,
         expirationDate,
         budgetCount,
         exportedAt: new Date().toISOString()
@@ -211,7 +209,6 @@ export const AdminUserActions = ({
   const handleRenewLicense = (days: number) => {
     renewLicenseMutation.mutate(days);
   };
-  const isExpired = expirationDate ? new Date(expirationDate) < new Date() : false;
   const daysUntilExpiry = expirationDate ? Math.ceil((new Date(expirationDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)) : 0;
   return <div className="space-y-4">
       <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-900 dark:bg-blue-950/20">
@@ -236,8 +233,8 @@ export const AdminUserActions = ({
             </div>
             <div>
               <span className="text-muted-foreground">Status:</span>
-              <Badge variant={isActive && !isExpired ? 'default' : 'secondary'} className="ml-2">
-                {isActive && !isExpired ? 'Ativo' : 'Inativo'}
+              <Badge variant={!isExpired ? 'default' : 'secondary'} className="ml-2">
+                {!isExpired ? 'Ativo' : 'Inativo'}
               </Badge>
             </div>
             <div>

@@ -419,7 +419,6 @@ export type Database = {
           created_at: string
           expires_at: string | null
           id: string
-          is_active: boolean
           last_validation: string | null
           user_id: string | null
         }
@@ -429,7 +428,6 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
-          is_active?: boolean
           last_validation?: string | null
           user_id?: string | null
         }
@@ -439,7 +437,6 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
-          is_active?: boolean
           last_validation?: string | null
           user_id?: string | null
         }
@@ -852,15 +849,11 @@ export type Database = {
       admin_get_all_users: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          name: string
-          email: string
-          role: string
-          license_active: boolean
-          expiration_date: string
+          user_id: string
+          user_email: string
+          user_name: string
+          expires_at: string
           created_at: string
-          last_sign_in_at: string
-          budget_count: number
         }[]
       }
       admin_get_dashboard_stats: {
@@ -881,7 +874,6 @@ export type Database = {
           user_name: string
           expires_at: string
           created_at: string
-          is_active: boolean
         }[]
       }
       admin_get_logs: {
@@ -938,7 +930,6 @@ export type Database = {
           p_user_id: string
           p_name?: string
           p_role?: string
-          p_is_active?: boolean
           p_expiration_date?: string
         }
         Returns: boolean
@@ -1016,7 +1007,6 @@ export type Database = {
           user_id: string
           user_email: string
           user_role: string
-          is_active: boolean
           is_admin: boolean
         }[]
       }
@@ -1284,7 +1274,6 @@ export type Database = {
           user_id: string
           user_name: string
           user_role: string
-          is_active: boolean
           is_admin: boolean
           can_manage_users: boolean
           can_manage_settings: boolean

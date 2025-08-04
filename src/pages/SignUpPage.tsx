@@ -16,7 +16,6 @@ interface UserFormData {
   confirmPassword: string;
   role: string;
   licenseDays: number;
-  isActive: boolean;
 }
 
 interface ToastState {
@@ -35,8 +34,7 @@ const AdminUserCreationForm = () => {
     password: '',
     confirmPassword: '',
     role: 'user',
-    licenseDays: 30,
-    isActive: true
+    licenseDays: 30
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -138,7 +136,6 @@ const AdminUserCreationForm = () => {
               name: userForm.name,
               email: userForm.email,
               role: userForm.role,
-              is_active: userForm.isActive,
               license_expires_at: new Date(Date.now() + userForm.licenseDays * 24 * 60 * 60 * 1000).toISOString()
             }
           ]);
@@ -161,8 +158,7 @@ const AdminUserCreationForm = () => {
         password: '',
         confirmPassword: '',
         role: 'user',
-        licenseDays: 30,
-        isActive: true
+        licenseDays: 30
       });
 
     } catch (error: any) {
@@ -379,20 +375,7 @@ const AdminUserCreationForm = () => {
                   </p>
                 </div>
 
-                {/* Status Ativo */}
-                <div className="flex items-center justify-between py-2">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="isActive" className="text-sm font-medium">Conta Ativa</Label>
-                    <p className="text-xs text-muted-foreground">
-                      Usuário poderá acessar o sistema
-                    </p>
-                  </div>
-                  <Switch
-                    id="isActive"
-                    checked={userForm.isActive}
-                    onCheckedChange={(checked) => setUserForm({ ...userForm, isActive: checked })}
-                  />
-                </div>
+
 
                 {/* Botão de Criar */}
                 <Button

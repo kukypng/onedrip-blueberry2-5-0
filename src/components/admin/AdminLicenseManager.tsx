@@ -47,7 +47,6 @@ interface License {
   user_name: string | null;
   expires_at: string | null;
   created_at: string;
-  is_active: boolean;
 }
 
 export const AdminLicenseManager = () => {
@@ -143,10 +142,6 @@ export const AdminLicenseManager = () => {
   };
 
   const getStatusBadge = (license: License) => {
-    if (!license.is_active) {
-      return <Badge variant="secondary">Inativa</Badge>;
-    }
-    
     if (!license.expires_at) {
       return <Badge variant="default">Ativa (Sem Expiração)</Badge>;
     }
@@ -240,7 +235,7 @@ export const AdminLicenseManager = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Ativas</p>
                   <p className="text-lg font-semibold">
-                    {licenses?.filter(l => l.is_active).length || 0}
+                    {licenses?.filter(l => !l.expires_at || new Date(l.expires_at) > new Date()).length || 0}
                   </p>
                 </div>
               </div>
@@ -254,7 +249,7 @@ export const AdminLicenseManager = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Inativas</p>
                   <p className="text-lg font-semibold">
-                    {licenses?.filter(l => !l.is_active).length || 0}
+                    {licenses?.filter(l => l.expires_at && new Date(l.expires_at) <= new Date()).length || 0}
                   </p>
                 </div>
               </div>
@@ -269,7 +264,7 @@ export const AdminLicenseManager = () => {
                   <p className="text-sm text-muted-foreground">Expirando (7d)</p>
                   <p className="text-lg font-semibold">
                     {licenses?.filter(l => {
-                      if (!l.is_active || !l.expires_at) return false;
+                      if (!l.expires_at) return false;
                       const expirationDate = new Date(l.expires_at);
                       const weekFromNow = new Date();
                       weekFromNow.setDate(weekFromNow.getDate() + 7);

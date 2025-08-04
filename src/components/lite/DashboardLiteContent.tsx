@@ -5,7 +5,7 @@ import { BudgetViewLite } from './BudgetViewLite';
 import { NewBudgetLite } from './NewBudgetLite';
 import { DataManagementLite } from './DataManagementLite';
 import { SettingsLite } from './SettingsLite';
-import { AdminLite } from './AdminLite';
+import { AdminLiteEnhanced } from './AdminLiteEnhanced';
 import { ClientsLite } from './ClientsLite';
 
 interface DashboardLiteContentProps {
@@ -92,7 +92,7 @@ export const DashboardLiteContent = ({
     case 'admin':
       if (!hasPermission?.('manage_users')) return null;
       return (
-        <AdminLite
+        <AdminLiteEnhanced
           userId={userId || ''}
           onBack={onNavigateBack || (() => {})}
         />

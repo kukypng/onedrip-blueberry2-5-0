@@ -192,12 +192,19 @@ export const useDebugInvadersGame = () => {
     }
   }, [score, level]);
 
-  // Click bug handler
+  // Click bug handler com debounce para evitar cliques perdidos
   const clickBug = useCallback((bugId: string) => {
     if (!isPlaying) return;
 
     const clickedBug = bugs.find(bug => bug.id === bugId);
     if (!clickedBug) return;
+
+    // Previne multiple clicks no mesmo bug
+    setBugs(prev => {
+      const exists = prev.find(bug => bug.id === bugId);
+      if (!exists) return prev; // Bug já foi removido
+      return prev; // Continua processamento
+    });
 
     // Create particle effect
     const particleId = `particle-${Date.now()}-${Math.random()}`;

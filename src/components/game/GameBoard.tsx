@@ -30,10 +30,10 @@ const BugComponent: React.FC<{ bug: Bug; onClick: () => void }> = ({ bug, onClic
   };
 
   const getBugSize = (type: Bug['type']) => {
-    // Tamanhos maiores e hitbox generosa para melhor jogabilidade
-    if (type === 'boss-bug') return 'text-6xl w-20 h-20 min-w-[80px] min-h-[80px]';
-    if (type === 'speed-bug') return 'text-4xl w-16 h-16 min-w-[64px] min-h-[64px]';
-    return 'text-3xl w-14 h-14 min-w-[56px] min-h-[56px]';
+    // Hitboxes aumentadas significativamente para melhor detecção de cliques
+    if (type === 'boss-bug') return 'text-6xl w-24 h-24 min-w-[96px] min-h-[96px]';
+    if (type === 'speed-bug') return 'text-4xl w-20 h-20 min-w-[80px] min-h-[80px]';
+    return 'text-3xl w-18 h-18 min-w-[72px] min-h-[72px]';
   };
 
   const getClickEffect = () => ({
@@ -46,7 +46,8 @@ const BugComponent: React.FC<{ bug: Bug; onClick: () => void }> = ({ bug, onClic
   return (
     <motion.button
       onClick={onClick}
-      className={`absolute z-10 ${getBugSize(bug.type)} hover:scale-110 transition-transform cursor-pointer select-none ${getBugColor(bug.type)} 
+      onTouchStart={onClick} // Melhora responsividade em mobile
+      className={`absolute z-20 ${getBugSize(bug.type)} hover:scale-110 transition-transform cursor-pointer select-none ${getBugColor(bug.type)} 
         flex items-center justify-center rounded-lg
         active:scale-95 touch-manipulation
         before:absolute before:inset-0 before:w-full before:h-full before:z-[-1]`}
@@ -54,9 +55,11 @@ const BugComponent: React.FC<{ bug: Bug; onClick: () => void }> = ({ bug, onClic
         left: `${bug.x}%`,
         top: `${bug.y}%`,
         transform: 'translate(-50%, -50%)',
-        // Hitbox expandida invisível para facilitar cliques
-        padding: '10px',
-        margin: '-10px'
+        // Hitbox muito expandida para garantir cliques
+        padding: '20px',
+        margin: '-20px',
+        // Força um z-index alto para evitar sobreposição
+        zIndex: 1000 + parseInt(bug.id.slice(-3), 10) || 1000
       }}
       animate={
         bug.type === 'boss-bug' 

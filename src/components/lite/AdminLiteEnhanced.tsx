@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Activity, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
@@ -15,11 +15,16 @@ import { UserEditModal } from '@/components/UserEditModal';
 import { UserDeletionDialog } from '@/components/UserManagement/UserDeletionDialog';
 import { UserRenewalDialog } from '@/components/UserManagement/UserRenewalDialog';
 import { UserAnalytics } from '@/components/UserManagement/UserAnalytics';
-import { UserActivityHistory } from '@/components/UserManagement/UserActivityHistory';
 import { UserSettings } from '@/components/UserManagement/UserSettings';
 import { BetaFeaturesSettingsLite } from '@/components/lite/BetaFeaturesSettingsLite';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
+import { AdminLogs } from '@/components/AdminLogs';
+import { AdminDebugPanel } from '@/components/AdminDebugPanel';
+import { AdminTestPanel } from '@/components/AdminTestPanel';
+import { AdminImageManager } from '@/components/admin/AdminImageManager';
+import { SiteSettingsContent } from '@/components/SiteSettingsContent';
+import { toast } from 'sonner';
 
 interface AdminLiteEnhancedProps {
   userId: string;
@@ -33,7 +38,7 @@ const AdminLiteEnhancedComponent = ({
 }: AdminLiteEnhancedProps & {
   profile: any;
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'activities' | 'settings' | 'licenses' | 'beta' | 'game'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -214,6 +219,54 @@ const AdminLiteEnhancedComponent = ({
     document.body.removeChild(link);
   };
 
+  // Functions for UserSettings component
+  const handleExportUsers = () => {
+    const csv = generateCSV(enhancedFilteredUsers);
+    downloadCSV(csv, `usuarios_${new Date().toISOString().split('T')[0]}.csv`);
+    toast.success(`${enhancedFilteredUsers.length} usuários exportados com sucesso!`);
+  };
+
+  const handleImportUsers = (file: File) => {
+    // TODO: Implement user import functionality
+    console.log('Importing users from file:', file.name);
+    toast.success('Funcionalidade de importação será implementada em breve');
+  };
+
+  const handleBackupData = () => {
+    // TODO: Implement backup functionality
+    const backupData = {
+      users: enhancedFilteredUsers,
+      timestamp: new Date().toISOString(),
+      version: '1.0'
+    };
+    
+    const dataStr = JSON.stringify(backupData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast.success('Backup dos dados realizado com sucesso!');
+  };
+
+  const handleCleanupInactiveUsers = () => {
+    // TODO: Implement cleanup functionality
+    const inactiveUsers = enhancedFilteredUsers.filter((user: any) => {
+      const lastSignIn = user.last_sign_in_at ? new Date(user.last_sign_in_at) : null;
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      
+      return !lastSignIn || lastSignIn < thirtyDaysAgo;
+    });
+    
+    console.log(`Found ${inactiveUsers.length} inactive users for cleanup`);
+    toast.success(`Identificados ${inactiveUsers.length} usuários inativos. Funcionalidade de limpeza será implementada em breve.`);
+  };
+
   if (!debugInfo?.is_admin) {
     return (
       <div className="h-[100dvh] bg-background flex flex-col">
@@ -276,27 +329,39 @@ const AdminLiteEnhancedComponent = ({
 
       <div className="flex-1 overflow-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="h-full">
-          <TabsList className="grid w-full grid-cols-7 sticky top-0 z-10 bg-background">
+          <TabsList className="grid w-full grid-cols-11 sticky top-0 z-10 bg-background text-xs">
             <TabsTrigger value="users" className="flex items-center gap-1">
-              <Users className="h-4 w-4" />
+              <Users className="h-3 w-3" />
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-1">
-              <BarChart3 className="h-4 w-4" />
-            </TabsTrigger>
-            <TabsTrigger value="activities" className="flex items-center gap-1">
-              <Activity className="h-4 w-4" />
+              <BarChart3 className="h-3 w-3" />
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-1">
-              <Settings className="h-4 w-4" />
+              <Settings className="h-3 w-3" />
             </TabsTrigger>
             <TabsTrigger value="licenses" className="flex items-center gap-1">
-              <Key className="h-4 w-4" />
+              <Key className="h-3 w-3" />
             </TabsTrigger>
             <TabsTrigger value="beta" className="flex items-center gap-1">
-              <Settings className="h-4 w-4" />
+              <Settings className="h-3 w-3" />
             </TabsTrigger>
             <TabsTrigger value="game" className="flex items-center gap-1">
-              <Gamepad2 className="h-4 w-4" />
+              <Gamepad2 className="h-3 w-3" />
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+            </TabsTrigger>
+            <TabsTrigger value="debug" className="flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+            </TabsTrigger>
+            <TabsTrigger value="tests" className="flex items-center gap-1">
+              <Shield className="h-3 w-3" />
+            </TabsTrigger>
+            <TabsTrigger value="images" className="flex items-center gap-1">
+              <Image className="h-3 w-3" />
+            </TabsTrigger>
+            <TabsTrigger value="site" className="flex items-center gap-1">
+              <Globe className="h-3 w-3" />
             </TabsTrigger>
           </TabsList>
 
@@ -632,15 +697,16 @@ const AdminLiteEnhancedComponent = ({
           </TabsContent>
 
           <TabsContent value="analytics" className="p-4">
-            <UserAnalytics />
-          </TabsContent>
-
-          <TabsContent value="activities" className="p-4">
-            <UserActivityHistory />
+            <UserAnalytics users={users || []} />
           </TabsContent>
 
           <TabsContent value="settings" className="p-4">
-            <UserSettings />
+            <UserSettings 
+              onExportUsers={handleExportUsers}
+              onImportUsers={handleImportUsers}
+              onBackupData={handleBackupData}
+              onCleanupInactiveUsers={handleCleanupInactiveUsers}
+            />
           </TabsContent>
 
           <TabsContent value="licenses" className="p-4">
@@ -653,6 +719,26 @@ const AdminLiteEnhancedComponent = ({
 
           <TabsContent value="game" className="p-4">
             <GameSettingsPanel />
+          </TabsContent>
+
+          <TabsContent value="logs" className="p-4">
+            <AdminLogs />
+          </TabsContent>
+
+          <TabsContent value="debug" className="p-4">
+            <AdminDebugPanel />
+          </TabsContent>
+
+          <TabsContent value="tests" className="p-4">
+            <AdminTestPanel />
+          </TabsContent>
+
+          <TabsContent value="images" className="p-4">
+            <AdminImageManager />
+          </TabsContent>
+
+          <TabsContent value="site" className="p-4">
+            <SiteSettingsContent />
           </TabsContent>
         </Tabs>
       </div>

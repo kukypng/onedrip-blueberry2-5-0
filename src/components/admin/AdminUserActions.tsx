@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Settings, Send, Calendar, Shield, Eye, TrendingUp, RefreshCw } from 'lucide-react';
+import { Settings, Send, Calendar, Shield, Eye, TrendingUp, RefreshCw, Lock, Unlock, History, Download, Bell, UserX, RotateCcw } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/useToast';
@@ -30,7 +30,12 @@ export const AdminUserActions = ({
 }: AdminUserActionsProps) => {
   const [showEmailRecovery, setShowEmailRecovery] = useState(false);
   const [showMetrics, setShowMetrics] = useState(false);
+  const [showActivityHistory, setShowActivityHistory] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [showUserBlock, setShowUserBlock] = useState(false);
   const [userMetrics, setUserMetrics] = useState<any>(null);
+  const [activityHistory, setActivityHistory] = useState<any[]>([]);
+  const [isBlocked, setIsBlocked] = useState(!isActive);
   const {
     showSuccess,
     showError
@@ -107,6 +112,69 @@ export const AdminUserActions = ({
       });
     }
   });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: async () => {
+      await SecurityValidation.logAdminAccess('password_reset', 'user', userId);
+      const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+        redirectTo: `${window.location.origin}/reset-password`
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      showSuccess({
+        title: 'Email de reset enviado',
+        description: 'Um email de reset foi enviado ao usuário.'
+      });
+      setShowPasswordReset(false);
+    },
+    onError: (error: any) => {
+      showError({
+        title: 'Erro ao enviar reset',
+        description: error.message || 'Não foi possível enviar o email de reset.'
+      });
+    }
+  });
+
+  const exportUserDataMutation = useMutation({
+    mutationFn: async () => {
+      // Exportar dados básicos do usuário
+      const userData = {
+        id: userId,
+        name: userName,
+        email: userEmail,
+        role: userRole,
+        isActive,
+        expirationDate,
+        budgetCount,
+        exportedAt: new Date().toISOString()
+      };
+      return userData;
+    },
+    onSuccess: (data) => {
+      // Criar e baixar arquivo JSON
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `usuario-${userName}-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showSuccess({
+        title: 'Dados exportados',
+        description: 'Os dados do usuário foram exportados com sucesso.'
+      });
+    },
+    onError: (error: any) => {
+      showError({
+        title: 'Erro ao exportar dados',
+        description: error.message || 'Não foi possível exportar os dados do usuário.'
+      });
+    }
+  });
   const handleRecoveryEmail = () => {
     sendRecoveryEmailMutation.mutate(userEmail);
   };
@@ -166,19 +234,44 @@ export const AdminUserActions = ({
               </div>
             </div>}
           
-          {/* Ações administrativas */}
-          <div className="grid grid-cols-1 gap-2">
-            <Button variant="outline" size="sm" onClick={() => setShowEmailRecovery(true)} disabled={sendRecoveryEmailMutation.isPending} className="justify-start">
-              <Send className="mr-2 h-4 w-4" />
-              {sendRecoveryEmailMutation.isPending ? 'Enviando...' : 'Enviar Recuperação de Senha'}
-            </Button>
+          {/* Ações administrativas principais */}
+          <div className="space-y-3">
+            <div className="grid grid-cols-1 gap-2">
+              <Button variant="outline" size="sm" onClick={() => setShowEmailRecovery(true)} disabled={sendRecoveryEmailMutation.isPending} className="justify-start">
+                <Send className="mr-2 h-4 w-4" />
+                {sendRecoveryEmailMutation.isPending ? 'Enviando...' : 'Enviar Recuperação de Senha'}
+              </Button>
 
-            
+              <Button variant="outline" size="sm" onClick={() => setShowPasswordReset(true)} disabled={resetPasswordMutation.isPending} className="justify-start">
+                <RotateCcw className="mr-2 h-4 w-4" />
+                {resetPasswordMutation.isPending ? 'Enviando...' : 'Reset de Senha (Admin)'}
+              </Button>
+            </div>
 
+            {/* Ações de análise e dados */}
             <div className="grid grid-cols-2 gap-2">
-              
-              
-              
+              <Button variant="outline" size="sm" onClick={handleLoadMetrics} disabled={loadUserMetricsMutation.isPending} className="justify-start">
+                <TrendingUp className="mr-2 h-4 w-4" />
+                {loadUserMetricsMutation.isPending ? 'Carregando...' : 'Ver Métricas'}
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={() => exportUserDataMutation.mutate()} disabled={exportUserDataMutation.isPending} className="justify-start">
+                <Download className="mr-2 h-4 w-4" />
+                {exportUserDataMutation.isPending ? 'Exportando...' : 'Exportar Dados'}
+              </Button>
+            </div>
+
+            {/* Ações de licença */}
+            <div className="grid grid-cols-2 gap-2">
+              <Button variant="outline" size="sm" onClick={() => handleRenewLicense(30)} disabled={renewLicenseMutation.isPending} className="justify-start">
+                <Calendar className="mr-2 h-4 w-4" />
+                {renewLicenseMutation.isPending ? 'Renovando...' : 'Renovar +30 dias'}
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={() => handleRenewLicense(365)} disabled={renewLicenseMutation.isPending} className="justify-start">
+                <Shield className="mr-2 h-4 w-4" />
+                {renewLicenseMutation.isPending ? 'Renovando...' : 'Renovar +1 ano'}
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -226,7 +319,23 @@ export const AdminUserActions = ({
           </CardContent>
         </Card>}
 
-      {/* Dialog para confirmar envio de email de recuperação */}
-      <ConfirmationDialog open={showEmailRecovery} onOpenChange={setShowEmailRecovery} onConfirm={handleRecoveryEmail} title="Enviar Email de Recuperação" description={`Enviar email de recuperação de senha para ${userEmail}? O usuário receberá um link seguro para redefinir sua senha.`} confirmButtonText="Enviar Email" />
+      {/* Dialogs de confirmação */}
+      <ConfirmationDialog 
+        open={showEmailRecovery} 
+        onOpenChange={setShowEmailRecovery} 
+        onConfirm={handleRecoveryEmail} 
+        title="Enviar Email de Recuperação" 
+        description={`Enviar email de recuperação de senha para ${userEmail}? O usuário receberá um link seguro para redefinir sua senha.`} 
+        confirmButtonText="Enviar Email" 
+      />
+
+      <ConfirmationDialog 
+        open={showPasswordReset} 
+        onOpenChange={setShowPasswordReset} 
+        onConfirm={() => resetPasswordMutation.mutate()} 
+        title="Reset de Senha (Admin)" 
+        description={`Forçar reset de senha para ${userEmail}? Um email com instruções de reset será enviado ao usuário.`} 
+        confirmButtonText="Resetar Senha" 
+      />
     </div>;
 };

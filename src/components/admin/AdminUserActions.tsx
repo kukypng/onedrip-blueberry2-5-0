@@ -112,11 +112,12 @@ export const AdminUserActions = ({
       });
     }
   });
-
   const resetPasswordMutation = useMutation({
     mutationFn: async () => {
       await SecurityValidation.logAdminAccess('password_reset', 'user', userId);
-      const { error } = await supabase.auth.resetPasswordForEmail(userEmail, {
+      const {
+        error
+      } = await supabase.auth.resetPasswordForEmail(userEmail, {
         redirectTo: `${window.location.origin}/reset-password`
       });
       if (error) throw error;
@@ -135,7 +136,6 @@ export const AdminUserActions = ({
       });
     }
   });
-
   const exportUserDataMutation = useMutation({
     mutationFn: async () => {
       // Exportar dados básicos do usuário
@@ -151,9 +151,11 @@ export const AdminUserActions = ({
       };
       return userData;
     },
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Criar e baixar arquivo JSON
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: 'application/json'
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -162,7 +164,6 @@ export const AdminUserActions = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
       showSuccess({
         title: 'Dados exportados',
         description: 'Os dados do usuário foram exportados com sucesso.'
@@ -242,10 +243,7 @@ export const AdminUserActions = ({
                 {sendRecoveryEmailMutation.isPending ? 'Enviando...' : 'Enviar Recuperação de Senha'}
               </Button>
 
-              <Button variant="outline" size="sm" onClick={() => setShowPasswordReset(true)} disabled={resetPasswordMutation.isPending} className="justify-start">
-                <RotateCcw className="mr-2 h-4 w-4" />
-                {resetPasswordMutation.isPending ? 'Enviando...' : 'Reset de Senha (Admin)'}
-              </Button>
+              
             </div>
 
             {/* Ações de análise e dados */}
@@ -320,22 +318,8 @@ export const AdminUserActions = ({
         </Card>}
 
       {/* Dialogs de confirmação */}
-      <ConfirmationDialog 
-        open={showEmailRecovery} 
-        onOpenChange={setShowEmailRecovery} 
-        onConfirm={handleRecoveryEmail} 
-        title="Enviar Email de Recuperação" 
-        description={`Enviar email de recuperação de senha para ${userEmail}? O usuário receberá um link seguro para redefinir sua senha.`} 
-        confirmButtonText="Enviar Email" 
-      />
+      <ConfirmationDialog open={showEmailRecovery} onOpenChange={setShowEmailRecovery} onConfirm={handleRecoveryEmail} title="Enviar Email de Recuperação" description={`Enviar email de recuperação de senha para ${userEmail}? O usuário receberá um link seguro para redefinir sua senha.`} confirmButtonText="Enviar Email" />
 
-      <ConfirmationDialog 
-        open={showPasswordReset} 
-        onOpenChange={setShowPasswordReset} 
-        onConfirm={() => resetPasswordMutation.mutate()} 
-        title="Reset de Senha (Admin)" 
-        description={`Forçar reset de senha para ${userEmail}? Um email com instruções de reset será enviado ao usuário.`} 
-        confirmButtonText="Resetar Senha" 
-      />
+      <ConfirmationDialog open={showPasswordReset} onOpenChange={setShowPasswordReset} onConfirm={() => resetPasswordMutation.mutate()} title="Reset de Senha (Admin)" description={`Forçar reset de senha para ${userEmail}? Um email com instruções de reset será enviado ao usuário.`} confirmButtonText="Resetar Senha" />
     </div>;
 };

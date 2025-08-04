@@ -763,9 +763,7 @@ export type Database = {
           budget_warning_days: number
           budget_warning_enabled: boolean
           created_at: string
-          expiration_date: string
           id: string
-          is_active: boolean
           name: string
           role: string | null
           updated_at: string
@@ -777,9 +775,7 @@ export type Database = {
           budget_warning_days?: number
           budget_warning_enabled?: boolean
           created_at?: string
-          expiration_date?: string
           id: string
-          is_active?: boolean
           name: string
           role?: string | null
           updated_at?: string
@@ -791,9 +787,7 @@ export type Database = {
           budget_warning_days?: number
           budget_warning_enabled?: boolean
           created_at?: string
-          expiration_date?: string
           id?: string
-          is_active?: boolean
           name?: string
           role?: string | null
           updated_at?: string

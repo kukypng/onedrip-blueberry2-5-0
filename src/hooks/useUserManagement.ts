@@ -27,8 +27,10 @@ export const useUserManagement = () => {
           user_id: debugData?.user_id || null,
           user_email: debugData?.user_email || null,
           user_role: debugData?.user_role || null,
-          is_active: debugData?.is_active || null,
           is_admin: debugData?.is_admin || null,
+          license_valid: null,
+          budget_count: null,
+          timestamp: null
         };
       } catch (err) {
         return null;

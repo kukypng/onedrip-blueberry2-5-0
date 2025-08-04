@@ -5,16 +5,30 @@ export interface User {
   email: string;
   role: string;
   license_active: boolean;
-  expiration_date: string;
   created_at: string;
   last_sign_in_at: string | null;
   budget_count: number;
+}
+
+export interface UserProfile {
+  id: string;
+  name: string;
+  username?: string;
+  role: string;
+  budget_limit: number;
+  budget_warning_enabled: boolean;
+  budget_warning_days: number;
+  advanced_features_enabled: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DebugInfo {
   user_id: string | null;
   user_email: string | null;
   user_role: string | null;
-  is_active: boolean | null;
   is_admin: boolean | null;
+  license_valid: boolean | null;
+  budget_count: number | null;
+  timestamp: string | null;
 }

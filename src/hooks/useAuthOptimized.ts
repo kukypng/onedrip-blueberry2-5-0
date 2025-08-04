@@ -12,7 +12,6 @@ export interface UserProfile {
   name: string;
   role: UserRole;
   budget_limit: number | null;
-  expiration_date: string;
   budget_warning_enabled: boolean;
   budget_warning_days: number;
   advanced_features_enabled: boolean;
@@ -118,8 +117,7 @@ export const useAuthOptimized = (): AuthContextType => {
                     .insert({
                       id: session.user.id,
                       name: session.user.user_metadata?.name || session.user.email || 'Usuário',
-                      role: 'user',
-                      expiration_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString()
+                      role: 'user'
                     });
               }
             } catch (error) {

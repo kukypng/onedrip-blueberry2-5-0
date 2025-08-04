@@ -10,8 +10,6 @@ export interface UserProfile {
   id: string;
   name: string;
   role: UserRole;
-  is_active: boolean;
-  expiration_date: string;
   budget_limit?: number;
   advanced_features_enabled: boolean;
 }
@@ -81,8 +79,6 @@ export function useOptimizedAuth(): OptimizedAuthContextType {
           id: data.id,
           name: data.name,
           role: data.role as UserRole,
-          is_active: (data as any).is_active ?? true,
-          expiration_date: data.expiration_date,
           budget_limit: data.budget_limit,
           advanced_features_enabled: data.advanced_features_enabled
         };

@@ -23,7 +23,7 @@ export const UserManagementDebug = ({ debugInfo, error }: Props) => (
           <p><strong>ID do Usuário:</strong> {debugInfo.user_id || 'N/A'}</p>
           <p><strong>Email:</strong> {debugInfo.user_email || 'N/A'}</p>
           <p><strong>Role:</strong> {debugInfo.user_role || 'N/A'}</p>
-          <p><strong>Ativo:</strong> {debugInfo.is_active ? 'Sim' : 'Não'}</p>
+          <p><strong>Licença Válida:</strong> {debugInfo.license_valid ? 'Sim' : 'Não'}</p>
           <p><strong>É Admin:</strong> {debugInfo.is_admin ? 'Sim' : 'Não'}</p>
         </div>
       ) : (

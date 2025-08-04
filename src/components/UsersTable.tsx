@@ -28,7 +28,7 @@ export const UsersTable = ({ users, onEdit, onDelete, onRenew }: UsersTableProps
 
   const getStatusBadge = (user: User) => {
     const now = new Date();
-    const expiration = new Date(user.expiration_date);
+    // Expiration removed - now handled by license system
     const isExpired = expiration < now;
     
     if (!(user as any).license_active) {
@@ -84,7 +84,7 @@ export const UsersTable = ({ users, onEdit, onDelete, onRenew }: UsersTableProps
                       </div>
                       <div className="grid grid-cols-2 items-center">
                         <strong>Expira em:</strong>
-                        <span>{format(new Date(user.expiration_date), 'dd/MM/yyyy', { locale: ptBR })}</span>
+                        <span>-</span>
                       </div>
                        <div className="grid grid-cols-2 items-center">
                         <strong>Criado em:</strong>

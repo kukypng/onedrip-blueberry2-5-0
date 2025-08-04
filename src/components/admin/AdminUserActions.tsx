@@ -136,6 +136,32 @@ export const AdminUserActions = ({
       });
     }
   });
+  const sendMagicLinkMutation = useMutation({
+    mutationFn: async () => {
+      await SecurityValidation.logAdminAccess('magic_link_sent', 'user', userId);
+      const { error } = await supabase.auth.signInWithOtp({
+        email: userEmail,
+        options: {
+          shouldCreateUser: false,
+          emailRedirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      showSuccess({
+        title: 'Link mágico enviado',
+        description: 'O usuário receberá um email com link de acesso direto.'
+      });
+    },
+    onError: (error: any) => {
+      showError({
+        title: 'Erro ao enviar link mágico',
+        description: error.message || 'Não foi possível enviar o link mágico.'
+      });
+    }
+  });
+
   const exportUserDataMutation = useMutation({
     mutationFn: async () => {
       // Exportar dados básicos do usuário
@@ -241,6 +267,11 @@ export const AdminUserActions = ({
               <Button variant="outline" size="sm" onClick={() => setShowEmailRecovery(true)} disabled={sendRecoveryEmailMutation.isPending} className="justify-start">
                 <Send className="mr-2 h-4 w-4" />
                 {sendRecoveryEmailMutation.isPending ? 'Enviando...' : 'Enviar Recuperação de Senha'}
+              </Button>
+
+              <Button variant="outline" size="sm" onClick={() => sendMagicLinkMutation.mutate()} disabled={sendMagicLinkMutation.isPending} className="justify-start">
+                <Send className="mr-2 h-4 w-4" />
+                {sendMagicLinkMutation.isPending ? 'Enviando...' : 'Enviar Link Mágico'}
               </Button>
 
               

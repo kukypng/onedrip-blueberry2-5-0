@@ -352,44 +352,7 @@ const AdminLiteEnhancedComponent = ({
 
           <TabsContent value="users" className="p-4 space-y-4">
             {/* Enhanced Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <Users className="h-8 w-8 text-primary mx-auto mb-2" />
-                  <div className="text-2xl font-bold">
-                    {isLoading ? '--' : stats.totalUsers}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Total</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <Shield className="h-8 w-8 text-green-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold">
-                    {isLoading ? '--' : stats.activeUsers}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Ativos</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <UserPlus className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold">
-                    {isLoading ? '--' : stats.expiredUsers}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Expirados</div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <Settings className="h-8 w-8 text-blue-500 mx-auto mb-2" />
-                  <div className="text-2xl font-bold">
-                    {isLoading ? '--' : stats.adminUsers}
-                  </div>
-                  <div className="text-sm text-muted-foreground">Admins</div>
-                </CardContent>
-              </Card>
-            </div>
+            
 
             {/* Controls */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">

@@ -314,6 +314,32 @@ export const SignPage = () => {
                   Precisa de ajuda? Fale conosco
                 </button>
               </div>
+              
+              {/* Links para políticas */}
+              <div className="text-center pt-4 border-t border-border/20">
+                <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+                  <Link 
+                    to="/terms" 
+                    className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+                  >
+                    Termos de Uso
+                  </Link>
+                  <span>•</span>
+                  <Link 
+                    to="/privacy" 
+                    className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+                  >
+                    Privacidade
+                  </Link>
+                  <span>•</span>
+                  <Link 
+                    to="/cookies" 
+                    className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+                  >
+                    Cookies
+                  </Link>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -232,6 +232,32 @@ export const PlansPage = () => {
           ctaButtonText={config.cta_button_text}
           onPlanSelection={handlePlanSelection}
         />
+        
+        {/* Footer com links para políticas */}
+        <div className="text-center py-8 border-t border-border/20">
+          <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
+            <Link 
+              to="/terms" 
+              className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+            >
+              Termos de Uso
+            </Link>
+            <span>•</span>
+            <Link 
+              to="/privacy" 
+              className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+            >
+              Política de Privacidade
+            </Link>
+            <span>•</span>
+            <Link 
+              to="/cookies" 
+              className="hover:text-primary transition-colors underline-offset-4 hover:underline"
+            >
+              Política de Cookies
+            </Link>
+          </div>
+        </div>
       </div>
 
       {/* Contact Section */}

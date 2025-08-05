@@ -202,9 +202,31 @@ const Index = () => {
             <Text color="secondary" className="mb-4">
               © 2025 Sistema profissional para gestão de orçamentos.
             </Text>
-            <Text size="sm" color="muted">
+            <Text size="sm" color="muted" className="mb-4">
               Transformando a gestão de assistências técnicas através da tecnologia
             </Text>
+            <div className="flex justify-center gap-4 mt-4">
+              <Link 
+                to="/terms" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
+              >
+                Termos de Uso
+              </Link>
+              <span className="text-muted-foreground">|</span>
+              <Link 
+                to="/privacy" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
+              >
+                Política de Privacidade
+              </Link>
+              <span className="text-muted-foreground">|</span>
+              <Link 
+                to="/cookies" 
+                className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
+              >
+                Política de Cookies
+              </Link>
+            </div>
           </FadeInUp>
         </div>
       </footer>

@@ -11,9 +11,23 @@
   [![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase)](https://supabase.com/)
   [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
   [![Vite](https://img.shields.io/badge/Vite-5.4.1-646CFF?style=for-the-badge&logo=vite)](https://vitejs.dev/)
+  [![License](https://img.shields.io/badge/License-Restricted-red?style=for-the-badge)](./LICENSE)
+  [![Security](https://img.shields.io/badge/Security-Hardened-green?style=for-the-badge&logo=shield)](./SECURITY.md)
   
   ---
 </div>
+
+## 📋 **Índice**
+
+- [Sobre o OneDrip](#-sobre-o-onedrip)
+- [Funcionalidades Principais](#-funcionalidades-principais)
+- [Acesso ao Sistema](#-acesso-ao-sistema)
+- [Instalação e Desenvolvimento](#-instalação-e-desenvolvimento)
+- [Arquitetura Técnica](#️-arquitetura-técnica)
+- [Diferenciais Competitivos](#-diferenciais-competitivos)
+- [Roadmap de Desenvolvimento](#-roadmap-de-desenvolvimento)
+- [Contribuição](#-contribuição)
+- [Licença & Suporte](#-licença--suporte)
 
 ## ✨ **Sobre o OneDrip**
 
@@ -74,6 +88,72 @@ O **OneDrip** é uma plataforma SaaS desenvolvida especificamente para assistên
 💰 Planos: https://kuky.pro/plans
 📱 Suporte: WhatsApp (64) 9602-8022
 ```
+
+---
+
+## 🛠️ **Instalação e Desenvolvimento**
+
+### **Pré-requisitos**
+- Node.js 18+ 
+- npm ou yarn
+- Conta no Supabase
+- Git
+
+### **Configuração do Ambiente**
+
+1. **Clone o repositório**
+```bash
+git clone https://github.com/kukysolutions/onedrip-system.git
+cd onedrip-system
+```
+
+2. **Instale as dependências**
+```bash
+npm install
+# ou
+yarn install
+```
+
+3. **Configure as variáveis de ambiente**
+```bash
+cp .env.example .env.local
+```
+
+Edite o arquivo `.env.local` com suas credenciais do Supabase:
+```env
+VITE_SUPABASE_URL=sua_url_do_supabase
+VITE_SUPABASE_ANON_KEY=sua_chave_anonima
+```
+
+4. **Execute o projeto em desenvolvimento**
+```bash
+npm run dev
+# ou
+yarn dev
+```
+
+5. **Acesse o sistema**
+```
+http://localhost:5173
+```
+
+### **Scripts Disponíveis**
+
+```bash
+npm run dev          # Inicia o servidor de desenvolvimento
+npm run build        # Gera build de produção
+npm run preview      # Visualiza o build de produção
+npm run lint         # Executa o linter
+npm run type-check   # Verifica tipos TypeScript
+```
+
+### **Estrutura de Branches**
+
+- `main` - Produção estável
+- `develop` - Desenvolvimento ativo
+- `feature/*` - Novas funcionalidades
+- `hotfix/*` - Correções urgentes
+
 ---
 
 ## 🏗️ **Arquitetura Técnica**
@@ -164,14 +244,37 @@ src/
 - [ ] **Agenda Online**: Agendamento para clientes
 - [ ] **Sistema de Notas Fiscais**: Integração com SEFAZ
 
+---
+
+## 🤝 **Contribuição**
+
+Valorizamos sua participação no desenvolvimento do OneDrip! Existem várias formas de contribuir:
+
+### **Como Contribuir**
+
+1. **Reporte Bugs**: Use as [Issues](https://github.com/kukysolutions/onedrip-system/issues) para reportar problemas
+2. **Sugira Melhorias**: Compartilhe suas ideias para novas funcionalidades
+3. **Documentação**: Ajude a melhorar nossa documentação
+4. **Testes**: Contribua com testes automatizados
+
+### **Processo de Contribuição**
+
+1. Fork o projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
+3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. Push para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um Pull Request
+
 ### **Conecte-se Conosco**
 
-**Nos fale sua ideia** mande suas ideias de melhorias ou sujestoes de reparos na nossa comunidade do discord ou na comunidade do whatsapp
+**Compartilhe suas ideias!** Envie suas sugestões de melhorias ou reportes de problemas em nossa comunidade:
 
 <div align="center">
 
-[![WhatsApp](https://img.shields.io/badge/WhatsApp-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/GPwLAJHurVnA0fJa9aWlEL?mode=r_t)
+[![WhatsApp Community](https://img.shields.io/badge/WhatsApp_Community-25D366?style=for-the-badge&logo=whatsapp&logoColor=white)](https://chat.whatsapp.com/GPwLAJHurVnA0fJa9aWlEL)
+[![Discord](https://img.shields.io/badge/Discord-7289DA?style=for-the-badge&logo=discord&logoColor=white)](#)
 [![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:suporte@onedrip.com)
+[![GitHub Issues](https://img.shields.io/badge/GitHub_Issues-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/kukysolutions/onedrip-system/issues)
 
 </div>
 
@@ -200,8 +303,33 @@ src/
 
 ---
 
-**Desenvolvido com ❤️ usando [Lovable](https://lovable.dev)**
+## 🏆 **Reconhecimentos**
 
-*Seus clientes merecem o melhor*
+- **Desenvolvido com ❤️ usando [Lovable](https://lovable.dev)**
+- **Powered by [Supabase](https://supabase.com)** - Backend as a Service
+- **UI Components by [Radix UI](https://radix-ui.com)** - Primitivos acessíveis
+- **Styling by [Tailwind CSS](https://tailwindcss.com)** - Framework CSS utilitário
+
+## 📊 **Estatísticas do Projeto**
+
+- **Linhas de Código**: 50,000+
+- **Componentes React**: 200+
+- **Hooks Customizados**: 30+
+- **Páginas**: 15+
+- **Tempo de Desenvolvimento**: 6+ meses
+
+## 🌟 **Agradecimentos Especiais**
+
+Agradecemos a todos que contribuíram para o desenvolvimento do OneDrip:
+
+- **Oliveira Imports** - Cliente pioneiro e feedback valioso
+- **Comunidade de Desenvolvedores** - Sugestões e melhorias
+- **Beta Testers** - Testes e validações do sistema
+
+---
+
+*"Seus clientes merecem o melhor. O OneDrip entrega excelência."*
+
+**© 2025 OneDrip System - Desenvolvido por KukySolutions™**
 
 </div>

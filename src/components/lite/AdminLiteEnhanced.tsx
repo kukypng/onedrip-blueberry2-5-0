@@ -320,33 +320,11 @@ const AdminLiteEnhancedComponent = ({
 
   return (
     <div className="h-[100dvh] bg-background flex flex-col">
-      <div className="relative bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 border-b border-border/50">
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent" />
-        <div className="relative flex items-center justify-between p-6">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              onClick={onBack} 
-              className="hover:bg-background/50 transition-all duration-200 hover:scale-105"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                Painel Admin
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Gerencie usuários, configurações e sistema
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20">
-              <Shield className="h-3 w-3 mr-1" />
-              Admin
-            </Badge>
-          </div>
-        </div>
+      <div className="flex items-center p-4 border-b">
+        <Button variant="ghost" onClick={onBack} className="mr-2">
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <h1 className="text-xl font-bold">Painel Admin</h1>
       </div>
 
       <div className="flex-1 overflow-auto" style={{ WebkitOverflowScrolling: 'touch' }}>

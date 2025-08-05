@@ -548,12 +548,13 @@ export const EnhancedUserManagement = () => {
 
         {/* Aba de Atividades */}
         <TabsContent value="activity">
-          <UserActivityHistory users={filteredAndSortedUsers} />
+          <UserActivityHistory />
         </TabsContent>
 
         {/* Aba de Configurações */}
         <TabsContent value="settings">
           <UserSettings 
+            onExportUsers={exportAllUsers}
             onImportUsers={importUsers}
             onBackupData={backupData}
             onCleanupInactiveUsers={cleanupInactiveUsers}

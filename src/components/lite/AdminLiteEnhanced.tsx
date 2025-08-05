@@ -523,7 +523,9 @@ const AdminLiteEnhancedComponent = ({
                               <h4 className="font-medium text-sm">{user.name}</h4>
                               <p className="text-xs text-muted-foreground">{user.email}</p>
                               <div className="flex items-center gap-2 mt-1">
-                                
+                                <Badge className={getStatusColor(user)}>
+                                  {getLicenseStatus(user)}
+                                </Badge>
                                 <Badge variant="outline" className="text-xs">
                                   {user.role === 'admin' ? 'Admin' : 'Usuário'}
                                 </Badge>

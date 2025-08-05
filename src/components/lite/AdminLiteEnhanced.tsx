@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe } from 'lucide-react';
+import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, DropdownMenuLabel } from '@/components/ui/dropdown-menu';
 import { useUserManagement } from '@/hooks/useUserManagement';
 import { UserEditModal } from '@/components/UserEditModal';
 import { UserDeletionDialog } from '@/components/UserManagement/UserDeletionDialog';
@@ -329,41 +329,115 @@ const AdminLiteEnhancedComponent = ({
 
       <div className="flex-1 overflow-auto" style={{ WebkitOverflowScrolling: 'touch' }}>
         <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as any)} className="h-full">
-          <TabsList className="grid w-full grid-cols-11 sticky top-0 z-10 bg-background text-xs">
-            <TabsTrigger value="users" className="flex items-center gap-1">
-              <Users className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-1">
-              <BarChart3 className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-1">
-              <Settings className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="licenses" className="flex items-center gap-1">
-              <Key className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="beta" className="flex items-center gap-1">
-              <Settings className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="game" className="flex items-center gap-1">
-              <Gamepad2 className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="logs" className="flex items-center gap-1">
-              <Shield className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="debug" className="flex items-center gap-1">
-              <Shield className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="tests" className="flex items-center gap-1">
-              <Shield className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="images" className="flex items-center gap-1">
-              <Image className="h-3 w-3" />
-            </TabsTrigger>
-            <TabsTrigger value="site" className="flex items-center gap-1">
-              <Globe className="h-3 w-3" />
-            </TabsTrigger>
-          </TabsList>
+          <div className="sticky top-0 z-10 bg-background border-b p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold flex items-center gap-2">
+                {activeTab === 'users' && <><Users className="h-5 w-5" />Usuários</>}
+                {activeTab === 'analytics' && <><BarChart3 className="h-5 w-5" />Analytics</>}
+                {activeTab === 'settings' && <><Settings className="h-5 w-5" />Configurações</>}
+                {activeTab === 'licenses' && <><Key className="h-5 w-5" />Licenças</>}
+                {activeTab === 'beta' && <><Settings className="h-5 w-5" />Beta</>}
+                {activeTab === 'game' && <><Gamepad2 className="h-5 w-5" />Jogo</>}
+                {activeTab === 'logs' && <><Shield className="h-5 w-5" />Logs</>}
+                {activeTab === 'debug' && <><Shield className="h-5 w-5" />Debug</>}
+                {activeTab === 'tests' && <><Shield className="h-5 w-5" />Testes</>}
+                {activeTab === 'images' && <><Image className="h-5 w-5" />Imagens</>}
+                {activeTab === 'site' && <><Globe className="h-5 w-5" />Site</>}
+              </h2>
+              
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="flex items-center gap-2">
+                    <Menu className="h-4 w-4" />
+                    Menu
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuLabel>Seções</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('users')}
+                    className={activeTab === 'users' ? 'bg-accent' : ''}
+                  >
+                    <Users className="h-4 w-4 mr-2" />
+                    Usuários
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('analytics')}
+                    className={activeTab === 'analytics' ? 'bg-accent' : ''}
+                  >
+                    <BarChart3 className="h-4 w-4 mr-2" />
+                    Analytics
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('settings')}
+                    className={activeTab === 'settings' ? 'bg-accent' : ''}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Configurações
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('licenses')}
+                    className={activeTab === 'licenses' ? 'bg-accent' : ''}
+                  >
+                    <Key className="h-4 w-4 mr-2" />
+                    Licenças
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuLabel>Ferramentas</DropdownMenuLabel>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('beta')}
+                    className={activeTab === 'beta' ? 'bg-accent' : ''}
+                  >
+                    <Settings className="h-4 w-4 mr-2" />
+                    Beta
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('game')}
+                    className={activeTab === 'game' ? 'bg-accent' : ''}
+                  >
+                    <Gamepad2 className="h-4 w-4 mr-2" />
+                    Jogo
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('logs')}
+                    className={activeTab === 'logs' ? 'bg-accent' : ''}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Logs
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('debug')}
+                    className={activeTab === 'debug' ? 'bg-accent' : ''}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Debug
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('tests')}
+                    className={activeTab === 'tests' ? 'bg-accent' : ''}
+                  >
+                    <Shield className="h-4 w-4 mr-2" />
+                    Testes
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('images')}
+                    className={activeTab === 'images' ? 'bg-accent' : ''}
+                  >
+                    <Image className="h-4 w-4 mr-2" />
+                    Imagens
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setActiveTab('site')}
+                    className={activeTab === 'site' ? 'bg-accent' : ''}
+                  >
+                    <Globe className="h-4 w-4 mr-2" />
+                    Site
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
 
           <TabsContent value="users" className="p-4 space-y-4">
             {/* Enhanced Stats */}

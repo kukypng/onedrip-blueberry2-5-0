@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe, Menu } from 'lucide-react';
+import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe, Menu, Plus, RefreshCw, Clock, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
@@ -36,7 +36,7 @@ const AdminLiteEnhancedComponent = ({
 }: AdminLiteEnhancedProps & {
   profile: any;
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -44,6 +44,9 @@ const AdminLiteEnhancedComponent = ({
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
+  const [showLicenseActions, setShowLicenseActions] = useState(false);
+  const [isCreatingLicense, setIsCreatingLicense] = useState(false);
+  const [licenseCreationDays, setLicenseCreationDays] = useState(365);
   const navigate = useNavigate();
   const {
     searchTerm,
@@ -231,6 +234,89 @@ const AdminLiteEnhancedComponent = ({
     console.log(`Found ${inactiveUsers.length} inactive users for cleanup`);
     toast.success(`Identificados ${inactiveUsers.length} usuários inativos. Funcionalidade de limpeza será implementada em breve.`);
   };
+
+  // License management functions
+  const handleCreateLicense = async () => {
+    if (isCreatingLicense) return;
+    
+    setIsCreatingLicense(true);
+    try {
+      const { data, error } = await supabase.rpc('admin_create_license', {
+        p_expires_at: new Date(Date.now() + licenseCreationDays * 24 * 60 * 60 * 1000).toISOString()
+      });
+      
+      if (error) throw error;
+      
+      toast.success(`Licença criada com sucesso! Código: ${(data as any)?.code || 'Nova licença'}`);
+      // Refresh users data to show new license
+      window.location.reload();
+    } catch (error) {
+      console.error('Error creating license:', error);
+      toast.error('Erro ao criar licença');
+    } finally {
+      setIsCreatingLicense(false);
+    }
+  };
+
+  const handleActivateLicense = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('licenses')
+        .update({ 
+          user_id: userId, 
+          activated_at: new Date().toISOString()
+        })
+        .eq('user_id', null)
+        .limit(1);
+      
+      if (error) throw error;
+      
+      toast.success('Licença ativada com sucesso!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error activating license:', error);
+      toast.error('Erro ao ativar licença');
+    }
+  };
+
+  const handleDeactivateLicense = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('licenses')
+        .update({ 
+          user_id: null,
+          activated_at: null
+        })
+        .eq('user_id', userId);
+      
+      if (error) throw error;
+      
+      toast.success('Licença desativada com sucesso!');
+      window.location.reload();
+    } catch (error) {
+      console.error('Error deactivating license:', error);
+      toast.error('Erro ao desativar licença');
+    }
+  };
+
+  const handleExtendLicense = async (userId: string, additionalDays: number = 30) => {
+    try {
+      const { error } = await supabase
+        .from('licenses')
+        .update({ 
+          expires_at: new Date(Date.now() + additionalDays * 24 * 60 * 60 * 1000).toISOString()
+        })
+        .eq('user_id', userId);
+      
+      if (error) throw error;
+      
+      toast.success(`Licença estendida por ${additionalDays} dias!`);
+      window.location.reload();
+    } catch (error) {
+      console.error('Error extending license:', error);
+      toast.error('Erro ao estender licença');
+    }
+  };
   if (!debugInfo?.is_admin) {
     return <div className="h-[100dvh] bg-background flex flex-col">
         <div className="flex items-center p-4 border-b">
@@ -291,10 +377,9 @@ const AdminLiteEnhancedComponent = ({
           <div className="sticky top-0 z-10 bg-background border-b p-4">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold flex items-center gap-2">
-                {activeTab === 'users' && <><Users className="h-5 w-5" />Usuários</>}
+                {activeTab === 'users' && <><Users className="h-5 w-5" />Usuários & Licenças</>}
                 {activeTab === 'analytics' && <><BarChart3 className="h-5 w-5" />Analytics</>}
                 {activeTab === 'settings' && <><Settings className="h-5 w-5" />Configurações</>}
-                {activeTab === 'licenses' && <><Key className="h-5 w-5" />Licenças</>}
                 {activeTab === 'beta' && <><Settings className="h-5 w-5" />Beta</>}
                 {activeTab === 'game' && <><Gamepad2 className="h-5 w-5" />Jogo</>}
                 {activeTab === 'logs' && <><Shield className="h-5 w-5" />Logs</>}
@@ -325,10 +410,6 @@ const AdminLiteEnhancedComponent = ({
                   <DropdownMenuItem onClick={() => setActiveTab('settings')} className={activeTab === 'settings' ? 'bg-accent' : ''}>
                     <Settings className="h-4 w-4 mr-2" />
                     Configurações
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('licenses')} className={activeTab === 'licenses' ? 'bg-accent' : ''}>
-                    <Key className="h-4 w-4 mr-2" />
-                    Licenças
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Ferramentas</DropdownMenuLabel>
@@ -390,6 +471,146 @@ const AdminLiteEnhancedComponent = ({
                 </CardContent>
               </Card>
             </div>
+
+            {/* License Management Panel */}
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Key className="h-5 w-5" />
+                    Gerenciamento de Licenças
+                  </CardTitle>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowLicenseActions(!showLicenseActions)}
+                    className="flex items-center gap-2"
+                  >
+                    <Settings className="h-4 w-4" />
+                    {showLicenseActions ? 'Ocultar' : 'Mostrar'} Ações
+                  </Button>
+                </div>
+              </CardHeader>
+              {showLicenseActions && (
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Create License */}
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Plus className="h-4 w-4 text-green-500" />
+                          <h4 className="font-medium">Criar Licença</h4>
+                        </div>
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-sm font-medium">Validade (dias)</label>
+                            <Input
+                              type="number"
+                              value={licenseCreationDays}
+                              onChange={(e) => setLicenseCreationDays(parseInt(e.target.value) || 365)}
+                              min="1"
+                              max="3650"
+                            />
+                          </div>
+                          <Button
+                            onClick={handleCreateLicense}
+                            disabled={isCreatingLicense}
+                            className="w-full"
+                            size="sm"
+                          >
+                            {isCreatingLicense ? (
+                              <>
+                                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                Criando...
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Criar Licença
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* License Stats */}
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <BarChart3 className="h-4 w-4 text-blue-500" />
+                          <h4 className="font-medium">Estatísticas</h4>
+                        </div>
+                        <div className="space-y-2 text-sm">
+                          <div className="flex justify-between">
+                            <span>Licenças Ativas:</span>
+                            <span className="font-medium text-green-600">{stats.activeUsers}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Licenças Expiradas:</span>
+                            <span className="font-medium text-red-600">{stats.expiredUsers}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Sem Licença:</span>
+                            <span className="font-medium text-gray-600">
+                              {stats.totalUsers - stats.activeUsers - stats.expiredUsers}
+                            </span>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    {/* Quick Actions */}
+                    <Card>
+                      <CardContent className="p-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <RefreshCw className="h-4 w-4 text-orange-500" />
+                          <h4 className="font-medium">Ações Rápidas</h4>
+                        </div>
+                        <div className="space-y-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => {
+                              selectedUsers.forEach(userId => handleActivateLicense(userId));
+                            }}
+                            disabled={selectedUsers.length === 0}
+                          >
+                            <Shield className="h-4 w-4 mr-2" />
+                            Ativar Licenças
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full"
+                            onClick={() => {
+                              selectedUsers.forEach(userId => handleExtendLicense(userId, 30));
+                            }}
+                            disabled={selectedUsers.length === 0}
+                          >
+                            <Clock className="h-4 w-4 mr-2" />
+                            Estender 30 dias
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full text-red-600 hover:text-red-700"
+                            onClick={() => {
+                              selectedUsers.forEach(userId => handleDeactivateLicense(userId));
+                            }}
+                            disabled={selectedUsers.length === 0}
+                          >
+                            <AlertTriangle className="h-4 w-4 mr-2" />
+                            Desativar Licenças
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CardContent>
+              )}
+            </Card>
 
             {/* Controls */}
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
@@ -538,17 +759,30 @@ const AdminLiteEnhancedComponent = ({
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent>
-                                <DropdownMenuItem onClick={() => handleEdit(user)}>
-                                  Editar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleRenew(user)}>
-                                  Renovar Licença
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
-                                  Excluir
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
+                               <DropdownMenuContent>
+                                 <DropdownMenuItem onClick={() => handleEdit(user)}>
+                                   Editar
+                                 </DropdownMenuItem>
+                                 <DropdownMenuSeparator />
+                                 <DropdownMenuLabel>Licenças</DropdownMenuLabel>
+                                 <DropdownMenuItem onClick={() => handleActivateLicense(user.id)}>
+                                   <Shield className="h-4 w-4 mr-2" />
+                                   Ativar Licença
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleExtendLicense(user.id, 30)}>
+                                   <Clock className="h-4 w-4 mr-2" />
+                                   Estender 30 dias
+                                 </DropdownMenuItem>
+                                 <DropdownMenuItem onClick={() => handleDeactivateLicense(user.id)} className="text-orange-600">
+                                   <AlertTriangle className="h-4 w-4 mr-2" />
+                                   Desativar Licença
+                                 </DropdownMenuItem>
+                                 <DropdownMenuSeparator />
+                                 <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
+                                   <Trash2 className="h-4 w-4 mr-2" />
+                                   Excluir
+                                 </DropdownMenuItem>
+                               </DropdownMenuContent>
                             </DropdownMenu>
                           </div>
                         </div>) : <table className="w-full">
@@ -590,17 +824,30 @@ const AdminLiteEnhancedComponent = ({
                                       <MoreHorizontal className="h-4 w-4" />
                                     </Button>
                                   </DropdownMenuTrigger>
-                                  <DropdownMenuContent>
-                                    <DropdownMenuItem onClick={() => handleEdit(user)}>
-                                      Editar
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleRenew(user)}>
-                                      Renovar Licença
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
-                                      Excluir
-                                    </DropdownMenuItem>
-                                  </DropdownMenuContent>
+                                   <DropdownMenuContent>
+                                     <DropdownMenuItem onClick={() => handleEdit(user)}>
+                                       Editar
+                                     </DropdownMenuItem>
+                                     <DropdownMenuSeparator />
+                                     <DropdownMenuLabel>Licenças</DropdownMenuLabel>
+                                     <DropdownMenuItem onClick={() => handleActivateLicense(user.id)}>
+                                       <Shield className="h-4 w-4 mr-2" />
+                                       Ativar Licença
+                                     </DropdownMenuItem>
+                                     <DropdownMenuItem onClick={() => handleExtendLicense(user.id, 30)}>
+                                       <Clock className="h-4 w-4 mr-2" />
+                                       Estender 30 dias
+                                     </DropdownMenuItem>
+                                     <DropdownMenuItem onClick={() => handleDeactivateLicense(user.id)} className="text-orange-600">
+                                       <AlertTriangle className="h-4 w-4 mr-2" />
+                                       Desativar Licença
+                                     </DropdownMenuItem>
+                                     <DropdownMenuSeparator />
+                                     <DropdownMenuItem onClick={() => handleDelete(user)} className="text-destructive">
+                                       <Trash2 className="h-4 w-4 mr-2" />
+                                       Excluir
+                                     </DropdownMenuItem>
+                                   </DropdownMenuContent>
                                 </DropdownMenu>
                               </td>
                             </tr>)}
@@ -619,9 +866,6 @@ const AdminLiteEnhancedComponent = ({
             <UserSettings onExportUsers={handleExportUsers} onImportUsers={handleImportUsers} onBackupData={handleBackupData} onCleanupInactiveUsers={handleCleanupInactiveUsers} />
           </TabsContent>
 
-          <TabsContent value="licenses" className="p-4">
-            <AdminLicenseManagerEnhanced />
-          </TabsContent>
 
           <TabsContent value="beta" className="p-4">
             <BetaFeaturesSettingsLite userId={userId} profile={profile} />

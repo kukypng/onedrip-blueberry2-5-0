@@ -332,10 +332,7 @@ const AdminLiteEnhancedComponent = ({
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Ferramentas</DropdownMenuLabel>
-                  <DropdownMenuItem onClick={() => setActiveTab('beta')} className={activeTab === 'beta' ? 'bg-accent' : ''}>
-                    <Settings className="h-4 w-4 mr-2" />
-                    Beta
-                  </DropdownMenuItem>
+                  
                   <DropdownMenuItem onClick={() => setActiveTab('game')} className={activeTab === 'game' ? 'bg-accent' : ''}>
                     <Gamepad2 className="h-4 w-4 mr-2" />
                     Jogo
@@ -344,22 +341,10 @@ const AdminLiteEnhancedComponent = ({
                     <Shield className="h-4 w-4 mr-2" />
                     Logs
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('debug')} className={activeTab === 'debug' ? 'bg-accent' : ''}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Debug
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('tests')} className={activeTab === 'tests' ? 'bg-accent' : ''}>
-                    <Shield className="h-4 w-4 mr-2" />
-                    Testes
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('images')} className={activeTab === 'images' ? 'bg-accent' : ''}>
-                    <Image className="h-4 w-4 mr-2" />
-                    Imagens
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setActiveTab('site')} className={activeTab === 'site' ? 'bg-accent' : ''}>
-                    <Globe className="h-4 w-4 mr-2" />
-                    Site
-                  </DropdownMenuItem>
+                  
+                  
+                  
+                  
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

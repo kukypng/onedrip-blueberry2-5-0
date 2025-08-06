@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, FileText, Edit, Trash2 } from 'lucide-react';
+import { MessageCircle, FileText, Edit, Trash2, Eye, Share } from 'lucide-react';
 import { BudgetLiteStatusBadge } from './BudgetLiteStatusBadge';
 import { BudgetLiteWorkflowActions } from './BudgetLiteWorkflowActions';
 import { BudgetEditFormIOS } from './BudgetEditFormIOS';
@@ -8,6 +8,7 @@ import { shareViaWhatsApp, generateWhatsAppMessage, sharePDFViaWhatsApp } from '
 import { supabase } from '@/integrations/supabase/client';
 import { useShopProfile } from '@/hooks/useShopProfile';
 import { useIOSFeedback } from './IOSFeedback';
+import { generateBudgetPDF } from '@/utils/pdfGenerator';
 interface Budget {
   id: string;
   client_name?: string;
@@ -94,9 +95,6 @@ export const BudgetLiteCardiOS = ({
       }
 
       // Usar geradores de PDF diretamente com dados completos
-      const {
-        generateBudgetPDF
-      } = await import('@/utils/pdfGenerator');
       const budgetData = {
         device_model: fullBudget.device_model || 'Dispositivo',
         device_type: fullBudget.device_type || 'Smartphone',
@@ -124,7 +122,12 @@ export const BudgetLiteCardiOS = ({
       if (blob) {
         const url = URL.createObjectURL(blob);
         window.open(url, '_blank');
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        
+        // Limpar a URL após um tempo para liberar memória
+        setTimeout(() => {
+          URL.revokeObjectURL(url);
+        }, 10000);
+        
         showSuccessAction('PDF aberto com sucesso');
       }
     } catch (error) {
@@ -419,25 +422,72 @@ export const BudgetLiteCardiOS = ({
       {/* Action Buttons - Diretas e intuitivas para iOS */}
       <div className="grid grid-cols-2 gap-3 pt-4">
         {/* WhatsApp - Ação direta */}
-        <button onClick={handleWhatsAppShare} className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 active:scale-95" style={{
-        minHeight: '48px',
-        touchAction: 'manipulation',
-        WebkitTapHighlightColor: 'transparent'
-      }}>
+        <button 
+          onClick={handleWhatsAppShare} 
+          disabled={isGeneratingPDF}
+          className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 active:scale-95" 
+          style={{
+            minHeight: '48px',
+            touchAction: 'manipulation',
+            WebkitTapHighlightColor: 'transparent'
+          }}
+        >
           <MessageCircle className="h-5 w-5 flex-shrink-0" />
           <span className="text-sm font-medium">WhatsApp</span>
         </button>
         
-        {/* PDF - Ação com compartilhamento */}
-        <button onClick={handlePDFShare} className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 active:scale-95" style={{
-        minHeight: '48px',
-        touchAction: 'manipulation',
-        WebkitTapHighlightColor: 'transparent'
-      }}>
-          <FileText className="h-5 w-5 flex-shrink-0" />
-          <span className="text-sm font-medium">Compartilhar PDF</span>
+        {/* PDF - Ação com compartilhamento melhorada */}
+        <button 
+          onClick={handlePDFShare} 
+          disabled={isGeneratingPDF}
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white py-3 px-4 rounded-xl font-medium transition-all duration-200 active:scale-95 relative overflow-hidden" 
+          style={{
+            minHeight: '48px',
+            touchAction: 'manipulation',
+            WebkitTapHighlightColor: 'transparent'
+          }}
+        >
+          {isGeneratingPDF ? (
+            <>
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+              <span className="text-sm font-medium">Gerando...</span>
+            </>
+          ) : (
+            <>
+              <FileText className="h-5 w-5 flex-shrink-0" />
+              <span className="text-sm font-medium">Gerar PDF</span>
+            </>
+          )}
         </button>
       </div>
+
+      {/* PDF Options - Expandido quando necessário */}
+      {!isGeneratingPDF && (
+        <div className="flex justify-center gap-2 pt-2">
+          <button 
+            onClick={handlePDFView}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-700 py-1 px-2 rounded-lg hover:bg-blue-50 transition-all duration-200 text-xs"
+            style={{
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            <Eye className="h-3 w-3" />
+            <span>Visualizar</span>
+          </button>
+          <button 
+            onClick={handlePDFShare}
+            className="flex items-center gap-1 text-blue-600 hover:text-blue-700 py-1 px-2 rounded-lg hover:bg-blue-50 transition-all duration-200 text-xs"
+            style={{
+              touchAction: 'manipulation',
+              WebkitTapHighlightColor: 'transparent'
+            }}
+          >
+            <Share className="h-3 w-3" />
+            <span>Compartilhar</span>
+          </button>
+        </div>
+      )}
 
       {/* Secondary Actions - Compactas */}
       <div className="flex justify-center gap-4 pt-3">

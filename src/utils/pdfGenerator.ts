@@ -483,13 +483,18 @@ export const generatePDFImage = async (data: BudgetPDFData): Promise<string> => 
         currency: 'BRL'
       });
       installmentSection = `
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 15px; background: #f0f0f0; border-radius: 8px; border: 1px solid #ccc;">
-          <div>
-            <p style="margin: 0; font-size: 12px; color: #666; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">VALOR PARCELADO</p>
-            <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: bold; color: #000;">${installmentPrice}</p>
-          </div>
-          <div style="background: #666; color: white; padding: 8px 16px; border-radius: 4px; font-weight: bold; font-size: 14px;">
-            ${data.installments}x
+        <!-- Valor Parcelado -->
+        <div style="padding: 25px; background: #fff3cd; border-radius: 8px; border: 1px solid #ffeaa7;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <p style="margin: 0; font-size: 14px; color: #856404; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">VALOR PARCELADO</p>
+              <p style="margin: 8px 0 0 0; font-size: 28px; font-weight: bold; color: #856404;">${installmentPrice} em ${data.installments}x</p>
+              <p style="margin: 5px 0 0 0; font-size: 12px; color: #856404;">Método de Pagamento: Cartão de Crédito</p>
+            </div>
+            <div style="background: #ffc107; color: #212529; padding: 12px 20px; border-radius: 8px; text-align: center; min-width: 100px;">
+              <div style="font-size: 12px; margin-bottom: 2px; opacity: 0.8;">OPÇÃO</div>
+              <div style="font-size: 14px; font-weight: bold;">PARCELADA</div>
+            </div>
           </div>
         </div>
       `;
@@ -595,17 +600,23 @@ export const generatePDFImage = async (data: BudgetPDFData): Promise<string> => 
       <!-- Valores -->
       <div style="margin-bottom: 30px;">
         <h3 style="color: #000; margin-bottom: 20px; font-size: 18px; font-weight: bold; text-transform: uppercase;">Valores do Serviço</h3>
-        <div style="background: white; padding: 25px; border-radius: 8px; border: 2px solid #666;">
-          <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div>
-              <p style="margin: 0; font-size: 12px; color: #666; font-weight: 600; text-transform: uppercase;">VALOR À VISTA</p>
-              <p style="margin: 5px 0 0 0; font-size: 24px; font-weight: bold; color: #000;">${cashPrice}</p>
-            </div>
-            <div style="background: #666; color: white; padding: 15px 25px; border-radius: 8px; text-align: center; min-width: 120px;">
-              <div style="font-size: 12px; margin-bottom: 5px;">ECONOMIA</div>
-              <div style="font-size: 16px; font-weight: bold;">À VISTA</div>
+        <div style="background: white; padding: 30px; border-radius: 12px; border: 2px solid #dee2e6; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Valor à Vista -->
+          <div style="padding: 25px; background: #f8f9fa; border-radius: 8px; border: 1px solid #e9ecef; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <p style="margin: 0; font-size: 14px; color: #6c757d; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">VALOR À VISTA</p>
+                <p style="margin: 8px 0 0 0; font-size: 32px; font-weight: bold; color: #198754;">${cashPrice}</p>
+                <p style="margin: 5px 0 0 0; font-size: 12px; color: #6c757d;">Método de Pagamento: Dinheiro, PIX ou Débito</p>
+              </div>
+              <div style="background: #198754; color: white; padding: 12px 20px; border-radius: 8px; text-align: center; min-width: 100px;">
+                <div style="font-size: 12px; margin-bottom: 2px; opacity: 0.9;">MELHOR</div>
+                <div style="font-size: 14px; font-weight: bold;">PREÇO</div>
+              </div>
             </div>
           </div>
+          
           ${installmentSection}
         </div>
       </div>

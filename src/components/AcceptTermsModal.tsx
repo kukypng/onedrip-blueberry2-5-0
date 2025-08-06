@@ -135,92 +135,101 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-md sm:max-w-4xl max-h-[85vh] sm:max-h-[90vh] p-0 gap-0 overflow-hidden mx-4 sm:mx-auto">
-        {/* Header */}
-        <div className="p-3 sm:p-6 pb-3 sm:pb-4 border-b bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800">
-          <DialogHeader className="space-y-1 sm:space-y-2">
-            <DialogTitle className="text-lg sm:text-2xl font-bold text-center text-gray-900 dark:text-white">
+      <DialogContent className="max-w-md sm:max-w-4xl max-h-[90vh] sm:max-h-[90vh] p-0 gap-0 overflow-hidden mx-2 sm:mx-auto rounded-3xl sm:rounded-xl backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 border-0 shadow-2xl">
+        {/* Header - Estilo iOS */}
+        <div className="relative p-4 sm:p-6 pb-4 sm:pb-4 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 dark:from-gray-800/80 dark:via-gray-800/80 dark:to-gray-800/80 backdrop-blur-sm rounded-t-3xl sm:rounded-t-xl">
+          {/* Indicador de modal iOS */}
+          <div className="flex justify-center mb-3 sm:hidden">
+            <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full"></div>
+          </div>
+          
+          <DialogHeader className="space-y-2 sm:space-y-2">
+            <DialogTitle className="text-xl sm:text-2xl font-bold text-center text-gray-900 dark:text-white tracking-tight">
               🔒 Termos e Políticas
             </DialogTitle>
-            <p className="text-xs sm:text-sm text-muted-foreground text-center">
+            <p className="text-sm sm:text-sm text-gray-600 dark:text-gray-300 text-center font-medium">
               Para continuar usando o sistema, aceite nossos termos
             </p>
           </DialogHeader>
         </div>
 
         <ScrollArea className="max-h-[60vh] sm:max-h-[65vh] px-4 sm:px-6">
-          <CardContent className="space-y-4 sm:space-y-6 p-0">
-            {/* Aceitar todos - Destaque principal */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 rounded-xl p-4 sm:p-6">
+          <CardContent className="space-y-5 sm:space-y-6 p-0 pt-4">
+            {/* Aceitar todos - Estilo iOS Card */}
+            <div className="bg-gradient-to-br from-green-50/90 to-emerald-50/90 dark:from-green-900/30 dark:to-emerald-900/30 border border-green-200/50 dark:border-green-700/50 rounded-2xl p-5 sm:p-6 backdrop-blur-sm shadow-lg shadow-green-100/50 dark:shadow-green-900/20">
               <div className="text-center space-y-4">
                 <div>
-                  <h3 className="font-semibold text-lg sm:text-xl text-green-800 dark:text-green-200 mb-2">
+                  <h3 className="font-bold text-lg sm:text-xl text-green-800 dark:text-green-200 mb-2 tracking-tight">
                     🚀 Aceitar Todos os Termos
                   </h3>
-                  <p className="text-sm sm:text-base text-green-700 dark:text-green-300">
+                  <p className="text-sm sm:text-base text-green-700 dark:text-green-300 font-medium leading-relaxed">
                     Aceite rapidamente todos os termos e políticas para começar a usar o sistema
                   </p>
                 </div>
                 
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center justify-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-xl backdrop-blur-sm">
                   <Checkbox
                     id="select-all"
                     checked={allTermsAccepted}
                     onCheckedChange={handleSelectAll}
-                    className="h-6 w-6 border-2"
+                    className="h-6 w-6 border-2 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                   />
                   <label
                     htmlFor="select-all"
-                    className="text-base sm:text-lg font-medium cursor-pointer text-green-800 dark:text-green-200"
+                    className="text-base sm:text-lg font-semibold cursor-pointer text-green-800 dark:text-green-200 select-none"
                   >
                     Aceito todos os termos
                   </label>
                 </div>
                 
                 {allTermsAccepted && (
-                  <div className="text-green-600 dark:text-green-400 text-sm font-medium">
+                  <div className="text-green-600 dark:text-green-400 text-sm font-semibold bg-green-100/80 dark:bg-green-900/40 px-4 py-2 rounded-xl backdrop-blur-sm">
                     ✅ Perfeito! Você pode continuar agora
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Divisor */}
-            <div className="relative">
+            {/* Divisor - Estilo iOS */}
+            <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
+                <span className="w-full border-t border-gray-200/60 dark:border-gray-700/60" />
               </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">ou aceite individualmente</span>
+              <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                <span className="bg-white/80 dark:bg-gray-900/80 px-4 py-1 text-gray-500 dark:text-gray-400 font-semibold rounded-full backdrop-blur-sm">ou aceite individualmente</span>
               </div>
             </div>
 
-            {/* Lista de termos compacta */}
+            {/* Lista de termos - Estilo iOS Cards */}
             <div className="space-y-3">
               {termsData.map((term) => {
                 const IconComponent = term.icon;
                 const isAccepted = acceptedTerms[term.key];
                 
                 return (
-                  <div key={term.id} className={`border rounded-lg p-3 sm:p-4 transition-all duration-200 ${
-                    isAccepted ? 'border-green-300 bg-green-50 dark:border-green-600 dark:bg-green-900/20' : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
+                  <div key={term.id} className={`border rounded-2xl p-4 sm:p-4 transition-all duration-300 backdrop-blur-sm shadow-sm ${
+                    isAccepted 
+                      ? 'border-green-300/60 bg-green-50/80 dark:border-green-600/60 dark:bg-green-900/30 shadow-green-100/50 dark:shadow-green-900/20' 
+                      : 'border-gray-200/60 bg-white/80 dark:border-gray-700/60 dark:bg-gray-800/60 hover:bg-gray-50/90 dark:hover:bg-gray-800/80'
                   }`}>
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-4">
                       <div className="flex-shrink-0">
-                        <div className={`p-2 rounded-lg ${
-                          isAccepted ? 'bg-green-100 dark:bg-green-800/30' : 'bg-gray-100 dark:bg-gray-700'
+                        <div className={`p-3 rounded-xl transition-all duration-200 ${
+                          isAccepted 
+                            ? 'bg-green-100/80 dark:bg-green-800/40 shadow-sm' 
+                            : 'bg-gray-100/80 dark:bg-gray-700/60'
                         }`}>
-                          <IconComponent className={`h-4 w-4 ${
+                          <IconComponent className={`h-5 w-5 ${
                             isAccepted ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'
                           }`} />
                         </div>
                       </div>
                       
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <div>
-                            <h4 className="font-medium text-sm sm:text-base text-foreground">{term.title}</h4>
-                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+                        <div className="flex items-center justify-between gap-3">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white tracking-tight">{term.title}</h4>
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 line-clamp-1 mt-1 font-medium">
                               {term.description}
                             </p>
                           </div>
@@ -228,30 +237,30 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => openExternalPage(term.path)}
-                            className="flex items-center gap-1 text-xs px-2 py-1 h-auto hover:bg-blue-50 text-blue-600"
+                            className="flex items-center gap-1 text-xs px-3 py-2 h-auto hover:bg-blue-50/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl font-semibold transition-all duration-200"
                           >
                             <ExternalLink className="h-3 w-3" />
                             <span className="hidden sm:inline">Ler</span>
                           </Button>
                         </div>
                         
-                        <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center gap-3 mt-3 p-2 bg-white/60 dark:bg-gray-800/60 rounded-xl backdrop-blur-sm">
                           <Checkbox
                             id={term.id}
                             checked={isAccepted}
                             onCheckedChange={(checked) => 
                               handleAcceptanceChange(term.key, checked as boolean)
                             }
-                            className="h-4 w-4"
+                            className="h-5 w-5 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
                           />
                           <label
                             htmlFor={term.id}
-                            className="text-xs sm:text-sm font-medium cursor-pointer text-foreground"
+                            className="text-sm sm:text-sm font-semibold cursor-pointer text-gray-800 dark:text-gray-200 select-none flex-1"
                           >
                             Li e aceito
                           </label>
                           {isAccepted && (
-                            <span className="text-green-600 text-xs">✓</span>
+                            <span className="text-green-600 dark:text-green-400 text-sm font-bold bg-green-100/80 dark:bg-green-900/40 px-2 py-1 rounded-lg">✓</span>
                           )}
                         </div>
                       </div>
@@ -261,65 +270,67 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
               })}
             </div>
 
-            {/* Informação legal compacta */}
-            <div className="text-center text-xs sm:text-sm text-muted-foreground bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
-              <p>
+            {/* Informação legal - Estilo iOS */}
+            <div className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400 bg-gray-50/80 dark:bg-gray-900/60 p-4 rounded-2xl backdrop-blur-sm border border-gray-200/50 dark:border-gray-700/50">
+              <p className="font-medium leading-relaxed">
                 Ao aceitar, você confirma ter 18+ anos ou autorização legal.
               </p>
             </div>
           </CardContent>
         </ScrollArea>
 
-        {/* Footer com botões otimizado para mobile */}
-        <div className="p-4 sm:p-6 pt-0 border-t">
-          {/* Botão principal destacado */}
-          <div className="space-y-3">
+        {/* Footer - Estilo iOS */}
+        <div className="p-4 sm:p-6 pt-4 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-b-3xl sm:rounded-b-xl border-t border-gray-200/50 dark:border-gray-700/50">
+          {/* Botão principal - Estilo iOS */}
+          <div className="space-y-4">
             <Button
               onClick={handleAcceptAll}
               disabled={!allTermsAccepted}
               size="lg"
-              className={`w-full h-12 text-base font-semibold transition-all ${
+              className={`w-full h-14 text-base font-bold transition-all duration-300 rounded-2xl shadow-lg ${
                 allTermsAccepted 
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white' 
-                  : 'bg-muted dark:bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-200/50 dark:shadow-green-900/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]' 
+                  : 'bg-gray-200/80 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60 backdrop-blur-sm'
               }`}
             >
               {allTermsAccepted ? (
-                <span className="flex items-center gap-2">
+                <span className="flex items-center gap-2 tracking-tight">
                   ✅ Aceitar e Continuar
                 </span>
               ) : (
-                `Aceitar Termos (${Object.values(acceptedTerms).filter(Boolean).length}/3)`
+                <span className="tracking-tight">
+                  Aceitar Termos ({Object.values(acceptedTerms).filter(Boolean).length}/3)
+                </span>
               )}
             </Button>
             
-            {/* Botão secundário menor */}
+            {/* Botão secundário - Estilo iOS */}
             <div className="flex justify-center">
               <Button
                 variant="ghost"
                 onClick={handleDecline}
                 size="sm"
-                className="text-muted-foreground hover:text-red-600 text-sm transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-sm transition-all duration-200 font-semibold px-6 py-2 rounded-xl hover:bg-red-50/80 dark:hover:bg-red-900/20"
               >
                 Não aceito - Sair
               </Button>
             </div>
           </div>
           
-          {/* Feedback visual */}
+          {/* Feedback visual - Estilo iOS */}
           {!allTermsAccepted && (
-            <div className="text-center mt-3">
-              <p className="text-xs text-muted-foreground">
+            <div className="text-center mt-4 p-3 bg-blue-50/80 dark:bg-blue-900/20 rounded-xl backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50">
+              <p className="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-3">
                 📋 Aceite todos os termos acima para continuar
               </p>
-              <div className="flex justify-center gap-1 mt-2">
+              <div className="flex justify-center gap-2">
                 {termsData.map((term, index) => (
                   <div
                     key={term.id}
-                    className={`w-2 h-2 rounded-full transition-colors ${
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
                       acceptedTerms[term.key] 
-                        ? 'bg-green-500' 
-                        : 'bg-muted-foreground/30'
+                        ? 'bg-green-500 shadow-lg shadow-green-200/50 scale-110' 
+                        : 'bg-gray-300/60 dark:bg-gray-600/60'
                     }`}
                   />
                 ))}

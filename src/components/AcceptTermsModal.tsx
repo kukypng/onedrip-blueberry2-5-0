@@ -7,31 +7,27 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Shield, FileText, Cookie, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
-
 interface AcceptTermsModalProps {
   isOpen: boolean;
   onAccept: () => void;
   onDecline: () => void;
 }
-
 export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
   isOpen,
   onAccept,
   onDecline
 }) => {
   const navigate = useNavigate();
-  const { toast } = useToast();
-  
+  const {
+    toast
+  } = useToast();
   const [acceptedTerms, setAcceptedTerms] = useState({
     privacy: false,
     terms: false,
     cookies: false
   });
-
   const [showDetails, setShowDetails] = useState(false);
-
   const allTermsAccepted = acceptedTerms.privacy && acceptedTerms.terms && acceptedTerms.cookies;
-
   const handleSelectAll = () => {
     const newState = !allTermsAccepted;
     setAcceptedTerms({
@@ -40,14 +36,12 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
       cookies: newState
     });
   };
-
   const handleAcceptanceChange = (type: keyof typeof acceptedTerms, checked: boolean) => {
     setAcceptedTerms(prev => ({
       ...prev,
       [type]: checked
     }));
   };
-
   const handleAcceptAll = () => {
     if (!allTermsAccepted) {
       toast({
@@ -64,17 +58,13 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
       timestamp: new Date().toISOString(),
       version: '1.0'
     };
-    
     localStorage.setItem('termsAcceptance', JSON.stringify(acceptanceData));
-    
     toast({
       title: "Termos aceitos",
-      description: "Obrigado por aceitar nossos termos e políticas.",
+      description: "Obrigado por aceitar nossos termos e políticas."
     });
-    
     onAccept();
   };
-
   const handleDecline = () => {
     toast({
       title: "Termos não aceitos",
@@ -83,58 +73,35 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
     });
     onDecline();
   };
-
   const openExternalPage = (path: string) => {
     window.open(path, '_blank', 'noopener,noreferrer');
   };
-
-  const termsData = [
-    {
-      id: 'privacy',
-      title: 'Política de Privacidade',
-      description: 'Como coletamos, usamos e protegemos seus dados pessoais em conformidade com a LGPD.',
-      icon: Shield,
-      path: '/privacy',
-      key: 'privacy' as keyof typeof acceptedTerms,
-      highlights: [
-        'Proteção de dados pessoais',
-        'Conformidade com LGPD',
-        'Direitos do titular dos dados',
-        'Segurança da informação'
-      ]
-    },
-    {
-      id: 'terms',
-      title: 'Termos de Uso',
-      description: 'Regras e condições para uso do sistema OneDrip.',
-      icon: FileText,
-      path: '/terms',
-      key: 'terms' as keyof typeof acceptedTerms,
-      highlights: [
-        'Licença de uso do sistema',
-        'Responsabilidades do usuário',
-        'Propriedade intelectual',
-        'Limitações de responsabilidade'
-      ]
-    },
-    {
-      id: 'cookies',
-      title: 'Política de Cookies',
-      description: 'Como usamos cookies para melhorar sua experiência no sistema.',
-      icon: Cookie,
-      path: '/cookies',
-      key: 'cookies' as keyof typeof acceptedTerms,
-      highlights: [
-        'Tipos de cookies utilizados',
-        'Controle de preferências',
-        'Cookies de terceiros',
-        'Configurações do navegador'
-      ]
-    }
-  ];
-
-  return (
-    <Dialog open={isOpen} onOpenChange={() => {}}>
+  const termsData = [{
+    id: 'privacy',
+    title: 'Política de Privacidade',
+    description: 'Como coletamos, usamos e protegemos seus dados pessoais em conformidade com a LGPD.',
+    icon: Shield,
+    path: '/privacy',
+    key: 'privacy' as keyof typeof acceptedTerms,
+    highlights: ['Proteção de dados pessoais', 'Conformidade com LGPD', 'Direitos do titular dos dados', 'Segurança da informação']
+  }, {
+    id: 'terms',
+    title: 'Termos de Uso',
+    description: 'Regras e condições para uso do sistema OneDrip.',
+    icon: FileText,
+    path: '/terms',
+    key: 'terms' as keyof typeof acceptedTerms,
+    highlights: ['Licença de uso do sistema', 'Responsabilidades do usuário', 'Propriedade intelectual', 'Limitações de responsabilidade']
+  }, {
+    id: 'cookies',
+    title: 'Política de Cookies',
+    description: 'Como usamos cookies para melhorar sua experiência no sistema.',
+    icon: Cookie,
+    path: '/cookies',
+    key: 'cookies' as keyof typeof acceptedTerms,
+    highlights: ['Tipos de cookies utilizados', 'Controle de preferências', 'Cookies de terceiros', 'Configurações do navegador']
+  }];
+  return <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent className="max-w-md sm:max-w-4xl max-h-[90vh] sm:max-h-[90vh] p-0 gap-0 overflow-hidden mx-2 sm:mx-auto rounded-3xl sm:rounded-xl backdrop-blur-xl bg-white/95 dark:bg-gray-900/95 border-0 shadow-2xl">
         {/* Header - Estilo iOS */}
         <div className="relative p-4 sm:p-6 pb-4 sm:pb-4 bg-gradient-to-br from-blue-50/80 via-indigo-50/80 to-purple-50/80 dark:from-gray-800/80 dark:via-gray-800/80 dark:to-gray-800/80 backdrop-blur-sm rounded-t-3xl sm:rounded-t-xl">
@@ -168,25 +135,15 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
                 </div>
                 
                 <div className="flex items-center justify-center gap-3 p-3 bg-white/60 dark:bg-gray-800/60 rounded-xl backdrop-blur-sm">
-                  <Checkbox
-                    id="select-all"
-                    checked={allTermsAccepted}
-                    onCheckedChange={handleSelectAll}
-                    className="h-6 w-6 border-2 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
-                  />
-                  <label
-                    htmlFor="select-all"
-                    className="text-base sm:text-lg font-semibold cursor-pointer text-green-800 dark:text-green-200 select-none"
-                  >
+                  <Checkbox id="select-all" checked={allTermsAccepted} onCheckedChange={handleSelectAll} className="h-6 w-6 border-2 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" />
+                  <label htmlFor="select-all" className="text-base sm:text-lg font-semibold cursor-pointer text-green-800 dark:text-green-200 select-none">
                     Aceito todos os termos
                   </label>
                 </div>
                 
-                {allTermsAccepted && (
-                  <div className="text-green-600 dark:text-green-400 text-sm font-semibold bg-green-100/80 dark:bg-green-900/40 px-4 py-2 rounded-xl backdrop-blur-sm">
+                {allTermsAccepted && <div className="text-green-600 dark:text-green-400 text-sm font-semibold bg-green-100/80 dark:bg-green-900/40 px-4 py-2 rounded-xl backdrop-blur-sm">
                     ✅ Perfeito! Você pode continuar agora
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
 
@@ -202,26 +159,14 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
 
             {/* Lista de termos - Estilo iOS Cards */}
             <div className="space-y-3">
-              {termsData.map((term) => {
-                const IconComponent = term.icon;
-                const isAccepted = acceptedTerms[term.key];
-                
-                return (
-                  <div key={term.id} className={`border rounded-2xl p-4 sm:p-4 transition-all duration-300 backdrop-blur-sm shadow-sm ${
-                    isAccepted 
-                      ? 'border-green-300/60 bg-green-50/80 dark:border-green-600/60 dark:bg-green-900/30 shadow-green-100/50 dark:shadow-green-900/20' 
-                      : 'border-gray-200/60 bg-white/80 dark:border-gray-700/60 dark:bg-gray-800/60 hover:bg-gray-50/90 dark:hover:bg-gray-800/80'
-                  }`}>
+              {termsData.map(term => {
+              const IconComponent = term.icon;
+              const isAccepted = acceptedTerms[term.key];
+              return <div key={term.id} className={`border rounded-2xl p-4 sm:p-4 transition-all duration-300 backdrop-blur-sm shadow-sm ${isAccepted ? 'border-green-300/60 bg-green-50/80 dark:border-green-600/60 dark:bg-green-900/30 shadow-green-100/50 dark:shadow-green-900/20' : 'border-gray-200/60 bg-white/80 dark:border-gray-700/60 dark:bg-gray-800/60 hover:bg-gray-50/90 dark:hover:bg-gray-800/80'}`}>
                     <div className="flex items-center gap-4">
                       <div className="flex-shrink-0">
-                        <div className={`p-3 rounded-xl transition-all duration-200 ${
-                          isAccepted 
-                            ? 'bg-green-100/80 dark:bg-green-800/40 shadow-sm' 
-                            : 'bg-gray-100/80 dark:bg-gray-700/60'
-                        }`}>
-                          <IconComponent className={`h-5 w-5 ${
-                            isAccepted ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'
-                          }`} />
+                        <div className={`p-3 rounded-xl transition-all duration-200 ${isAccepted ? 'bg-green-100/80 dark:bg-green-800/40 shadow-sm' : 'bg-gray-100/80 dark:bg-gray-700/60'}`}>
+                          <IconComponent className={`h-5 w-5 ${isAccepted ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'}`} />
                         </div>
                       </div>
                       
@@ -233,41 +178,23 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
                               {term.description}
                             </p>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => openExternalPage(term.path)}
-                            className="flex items-center gap-1 text-xs px-3 py-2 h-auto hover:bg-blue-50/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl font-semibold transition-all duration-200"
-                          >
+                          <Button variant="ghost" size="sm" onClick={() => openExternalPage(term.path)} className="flex items-center gap-1 text-xs px-3 py-2 h-auto hover:bg-blue-50/80 dark:hover:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-xl font-semibold transition-all duration-200">
                             <ExternalLink className="h-3 w-3" />
                             <span className="hidden sm:inline">Ler</span>
                           </Button>
                         </div>
                         
                         <div className="flex items-center gap-3 mt-3 p-2 bg-white/60 dark:bg-gray-800/60 rounded-xl backdrop-blur-sm">
-                          <Checkbox
-                            id={term.id}
-                            checked={isAccepted}
-                            onCheckedChange={(checked) => 
-                              handleAcceptanceChange(term.key, checked as boolean)
-                            }
-                            className="h-5 w-5 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
-                          />
-                          <label
-                            htmlFor={term.id}
-                            className="text-sm sm:text-sm font-semibold cursor-pointer text-gray-800 dark:text-gray-200 select-none flex-1"
-                          >
+                          <Checkbox id={term.id} checked={isAccepted} onCheckedChange={checked => handleAcceptanceChange(term.key, checked as boolean)} className="h-5 w-5 rounded-lg data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600" />
+                          <label htmlFor={term.id} className="text-sm sm:text-sm font-semibold cursor-pointer text-gray-800 dark:text-gray-200 select-none flex-1">
                             Li e aceito
                           </label>
-                          {isAccepted && (
-                            <span className="text-green-600 dark:text-green-400 text-sm font-bold bg-green-100/80 dark:bg-green-900/40 px-2 py-1 rounded-lg">✓</span>
-                          )}
+                          {isAccepted && <span className="text-green-600 dark:text-green-400 text-sm font-bold bg-green-100/80 dark:bg-green-900/40 px-2 py-1 rounded-lg">✓</span>}
                         </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
 
             {/* Informação legal - Estilo iOS */}
@@ -279,79 +206,27 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
 
             {/* Botão principal - Estilo iOS - Movido para cima */}
             <div className="mt-6 mb-4">
-              <Button
-                onClick={handleAcceptAll}
-                disabled={!allTermsAccepted}
-                size="lg"
-                className={`w-full h-14 text-base font-bold transition-all duration-300 rounded-2xl shadow-lg ${
-                  allTermsAccepted 
-                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-200/50 dark:shadow-green-900/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]' 
-                    : 'bg-gray-200/80 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60 backdrop-blur-sm'
-                }`}
-              >
-                {allTermsAccepted ? (
-                  <span className="flex items-center gap-2 tracking-tight">
+              <Button onClick={handleAcceptAll} disabled={!allTermsAccepted} size="lg" className={`w-full h-14 text-base font-bold transition-all duration-300 rounded-2xl shadow-lg ${allTermsAccepted ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-200/50 dark:shadow-green-900/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]' : 'bg-gray-200/80 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60 backdrop-blur-sm'}`}>
+                {allTermsAccepted ? <span className="flex items-center gap-2 tracking-tight">
                     ✅ Aceitar e Continuar
-                  </span>
-                ) : (
-                  <span className="tracking-tight">
+                  </span> : <span className="tracking-tight">
                     Aceitar Termos ({Object.values(acceptedTerms).filter(Boolean).length}/3)
-                  </span>
-                )}
+                  </span>}
               </Button>
             </div>
           </CardContent>
         </ScrollArea>
 
         {/* Footer - Estilo iOS */}
-        <div className="p-4 sm:p-6 pt-4 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-b-3xl sm:rounded-b-xl border-t border-gray-200/50 dark:border-gray-700/50">
-          {/* Botões secundários - Estilo iOS */}
-          <div className="space-y-4">
-            
-            {/* Botão secundário - Estilo iOS */}
-            <div className="flex justify-center">
-              <Button
-                variant="ghost"
-                onClick={handleDecline}
-                size="sm"
-                className="text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 text-sm transition-all duration-200 font-semibold px-6 py-2 rounded-xl hover:bg-red-50/80 dark:hover:bg-red-900/20"
-              >
-                Não aceito - Sair
-              </Button>
-            </div>
-          </div>
-          
-          {/* Feedback visual - Estilo iOS */}
-          {!allTermsAccepted && (
-            <div className="text-center mt-4 p-3 bg-blue-50/80 dark:bg-blue-900/20 rounded-xl backdrop-blur-sm border border-blue-200/50 dark:border-blue-700/50">
-              <p className="text-xs text-blue-700 dark:text-blue-300 font-semibold mb-3">
-                📋 Aceite todos os termos acima para continuar
-              </p>
-              <div className="flex justify-center gap-2">
-                {termsData.map((term, index) => (
-                  <div
-                    key={term.id}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      acceptedTerms[term.key] 
-                        ? 'bg-green-500 shadow-lg shadow-green-200/50 scale-110' 
-                        : 'bg-gray-300/60 dark:bg-gray-600/60'
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
+        
       </DialogContent>
-    </Dialog>
-  );
+    </Dialog>;
 };
 
 // Hook para verificar se os termos foram aceitos
 export const useTermsAcceptance = () => {
   const [needsAcceptance, setNeedsAcceptance] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const checkAcceptance = () => {
       try {
@@ -361,14 +236,13 @@ export const useTermsAcceptance = () => {
           setIsLoading(false);
           return;
         }
-
         const acceptance = JSON.parse(stored);
         const isValid = acceptance.privacy && acceptance.terms && acceptance.cookies;
-        
+
         // Verificar se a aceitação não é muito antiga (opcional)
         const acceptanceDate = new Date(acceptance.timestamp);
         const daysSinceAcceptance = (Date.now() - acceptanceDate.getTime()) / (1000 * 60 * 60 * 24);
-        
+
         // Se passou mais de 365 dias, pedir nova aceitação
         if (daysSinceAcceptance > 365) {
           setNeedsAcceptance(true);
@@ -382,19 +256,15 @@ export const useTermsAcceptance = () => {
         setIsLoading(false);
       }
     };
-
     checkAcceptance();
   }, []);
-
   const markAsAccepted = () => {
     setNeedsAcceptance(false);
   };
-
   const clearAcceptance = () => {
     localStorage.removeItem('termsAcceptance');
     setNeedsAcceptance(true);
   };
-
   return {
     needsAcceptance,
     isLoading,

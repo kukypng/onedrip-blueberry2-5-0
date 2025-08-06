@@ -26,9 +26,9 @@ export const ConfigValidationTest = () => {
     },
     {
       test: 'Full Name',
-      expected: 'OneDrip - Sistema de Orçamentos',
+      expected: 'OneDrip',
       actual: appInfo.fullName,
-      passed: appInfo.fullName === 'OneDrip - Sistema de Orçamentos'
+      passed: appInfo.fullName === 'OneDrip'
     },
     {
       test: 'Contact Email',
@@ -50,9 +50,11 @@ export const ConfigValidationTest = () => {
     },
     {
       test: 'PWA Share Title',
-      expected: 'OneDrip - Sistema de Orçamentos',
+      expected: 'OneDrip',
+
       actual: pwaConfig.shareTitle,
-      passed: pwaConfig.shareTitle === 'OneDrip - Sistema de Orçamentos'
+      passed: pwaConfig.shareTitle === 'OneDrip'
+
     },
     {
       test: 'Marketing Benefits Title',

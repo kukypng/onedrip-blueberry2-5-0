@@ -10,7 +10,7 @@ import { BudgetImportExport } from './BudgetImportExport';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { LogOut } from 'lucide-react';
+import { LogOut, FileText, Shield, Cookie } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 export const SettingsContent = () => {
@@ -70,6 +70,48 @@ export const SettingsContent = () => {
           <Separator />
           <div className="pt-6">
             <BudgetImportExport />
+          </div>
+        </section>
+        
+        <section id="policies-terms">
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground pb-4">Políticas e Termos</h2>
+          <Separator />
+          <div className="pt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.open('/terms', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <FileText className="h-5 w-5" />
+                  Termos de Uso
+                </CardTitle>
+                <CardDescription>
+                  Consulte os termos e condições de uso da plataforma
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.open('/privacy', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Shield className="h-5 w-5" />
+                  Política de Privacidade
+                </CardTitle>
+                <CardDescription>
+                  Saiba como protegemos e utilizamos seus dados
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            
+            <Card className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.open('/cookies', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Cookie className="h-5 w-5" />
+                  Política de Cookies
+                </CardTitle>
+                <CardDescription>
+                  Entenda como utilizamos cookies em nosso site
+                </CardDescription>
+              </CardHeader>
+            </Card>
           </div>
         </section>
         

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Eye, EyeOff, UserPlus, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 interface SignUpFormData {
   name: string;
   email: string;
@@ -305,7 +306,7 @@ export const SignPage = () => {
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => window.open('https://wa.me/556496028022', '_blank')}
+                  onClick={() => openWhatsApp('https://wa.me/556496028022')}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">

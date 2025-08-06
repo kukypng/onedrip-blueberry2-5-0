@@ -9,6 +9,7 @@ import { DashboardSkeleton } from '@/components/ui/loading-states';
 import { FadeInUp, ScaleOnHover, StaggerList } from '@/components/ui/animations';
 import { Heading, Text } from '@/components/ui/typography';
 import { useAppInfo, useMarketingConfig } from '@/hooks/useAppConfig';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 const Index = () => {
   const {
@@ -75,12 +76,12 @@ const Index = () => {
                 </Button>
               </ScaleOnHover>
               <ScaleOnHover>
-                <Button className="btn-mercadopago text-lg px-8 py-4" onClick={() => window.open('https://wa.me/556496028022', '_blank')}>
+                <Button className="btn-mercadopago text-lg px-8 py-4" onClick={() => openWhatsApp('https://wa.me/556496028022')}>
                   Confirmar Pagamento
                 </Button>
               </ScaleOnHover>
               <ScaleOnHover>
-                <Button variant="outline" className="btn-apple-secondary text-lg px-8 py-4" onClick={() => window.open('https://wa.me/556496028022', '_blank')}>
+                <Button variant="outline" className="btn-apple-secondary text-lg px-8 py-4" onClick={() => openWhatsApp('https://wa.me/556496028022')}>
                   Entre em contato
                 </Button>
               </ScaleOnHover>

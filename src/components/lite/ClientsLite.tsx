@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 interface Client {
   id: string;
@@ -424,7 +425,7 @@ export const ClientsLite = ({ userId, onBack }: ClientsLiteProps) => {
                        <Button 
                          size="sm" 
                          variant="outline"
-                         onClick={() => window.open(`https://wa.me/55${client.phone.replace(/\D/g, '')}`, '_blank')}
+                         onClick={() => openWhatsApp(`https://wa.me/55${client.phone.replace(/\D/g, '')}`)}
                          className="text-xs h-7 px-2 min-w-0 flex-shrink-0"
                        >
                          <MessageCircle className="h-3 w-3 sm:mr-1" />

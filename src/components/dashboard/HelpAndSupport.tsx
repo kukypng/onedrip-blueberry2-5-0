@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { HelpSystem } from '@/components/help/HelpSystem';
 import { LifeBuoy, MessageCircle, Sparkles } from 'lucide-react';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 export const HelpAndSupport = () => {
   const [isHelpSystemOpen, setHelpSystemOpen] = useState(false);
@@ -27,7 +28,7 @@ export const HelpAndSupport = () => {
           
           <Button 
             variant="outline" 
-            onClick={() => window.open('https://wa.me/556496028022', '_blank')} 
+            onClick={() => openWhatsApp('https://wa.me/556496028022')} 
             className="relative w-full sm:w-auto overflow-hidden bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] group"
           >
             {/* Background gradient overlay */}

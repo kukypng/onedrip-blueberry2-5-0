@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, User, Building2, Shield, Settings, Save, Star, Database } from 'lucide-react';
+import { ArrowLeft, User, Building2, Shield, Settings, Save, Star, Database, FileText, Cookie } from 'lucide-react';
 import { useIOSDetection } from '@/hooks/useIOSDetection';
 import { ProfileSettingsLite } from '@/components/lite/ProfileSettingsLite';
 import { SecuritySettingsLite } from '@/components/lite/SecuritySettingsLite';
@@ -35,6 +35,10 @@ export const SettingsLite = ({
     id: 'data',
     name: 'Gerenciamento de Dados',
     icon: Database
+  }, {
+    id: 'policies',
+    name: 'Políticas e Termos',
+    icon: FileText
   }
   // Seção "Recursos Avançados" removida da navegação mas funcionalidade mantida
   ];
@@ -54,6 +58,50 @@ export const SettingsLite = ({
       case 'data':
         return <div className="space-y-6">
             <BudgetImportExportLite />
+          </div>;
+      case 'policies':
+        return <div className="space-y-4">
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => window.open('/terms', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <FileText className="h-5 w-5" />
+                  Termos de Uso
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-sm text-muted-foreground">
+                  Consulte os termos e condições de uso da plataforma
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => window.open('/privacy', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Shield className="h-5 w-5" />
+                  Política de Privacidade
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-sm text-muted-foreground">
+                  Saiba como protegemos e utilizamos seus dados
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => window.open('/cookies', '_blank')}>
+              <CardHeader className="pb-3">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Cookie className="h-5 w-5" />
+                  Política de Cookies
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-sm text-muted-foreground">
+                  Entenda como utilizamos cookies em nosso site
+                </p>
+              </CardContent>
+            </Card>
           </div>;
       case 'advanced':
         return <div className="space-y-6">

@@ -13,6 +13,7 @@ import { Edit, Phone, Plus, Users, MessageCircle, FileText, Trash2 } from 'lucid
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/EmptyState';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 interface Client {
   id: string;
@@ -280,7 +281,7 @@ export const AdvancedClientsContent = () => {
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => window.open(`https://wa.me/55${client.phone.replace(/\D/g, '')}`, '_blank')}
+                          onClick={() => openWhatsApp(`https://wa.me/55${client.phone.replace(/\D/g, '')}`)}
                         >
                           <MessageCircle className="h-4 w-4" />
                         </Button>

@@ -4,10 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Shield, MessageCircle, Lock, Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 export const SecuritySettings = () => {
   const handleSupportContact = () => {
-    window.open('https://wa.me/556496028022', '_blank');
+    openWhatsApp('https://wa.me/556496028022');
   };
   return <Card style={{
     animationDelay: '100ms'

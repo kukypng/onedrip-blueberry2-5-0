@@ -5,13 +5,14 @@ import { Button } from '@/components/ui/button';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Shield, MessageCircle, Lock, Mail, LogOut } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 export const SecuritySettingsLite = () => {
   const navigate = useNavigate();
   const { signOut } = useAuth();
 
   const handleSupportContact = () => {
-    window.open('https://wa.me/556496028022', '_blank');
+    openWhatsApp('https://wa.me/556496028022');
   };
 
   const handleEmailChange = () => {

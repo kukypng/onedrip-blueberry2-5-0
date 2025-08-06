@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useNavigate } from 'react-router-dom';
 import { useEnhancedLicenseValidation } from '@/hooks/useEnhancedLicenseValidation';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 export const LicensePage = () => {
   const [licenseCode, setLicenseCode] = useState('');
@@ -93,9 +94,9 @@ export const LicensePage = () => {
     }
   };
   const handleWhatsAppContact = () => {
-    const message = encodeURIComponent(`Olá! Preciso de ajuda com minha licença do OneDrip.\n\nMeu email: ${user?.email || 'Não informado'}`);
-    const whatsappUrl = `https://wa.me/556496028022?text=${message}`;
-    window.open(whatsappUrl, '_blank');
+    const message = `Olá! Preciso de ajuda com minha licença do OneDrip.\n\nMeu email: ${user?.email || 'Não informado'}`;
+    const whatsappUrl = `https://wa.me/556496028022?text=${encodeURIComponent(message)}`;
+    openWhatsApp(whatsappUrl);
   };
   const handleEmailContact = () => {
     const subject = encodeURIComponent('Suporte - Licença OneDrip');

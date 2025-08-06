@@ -401,7 +401,7 @@ export const BudgetFormSteps = ({
 
                 <div>
                   <Label htmlFor="deviceModel" className="text-sm font-medium text-foreground">Aparelho/Serviço</Label>
-                  <Input id="deviceModel" value={formData.deviceModel} onChange={e => updateFormData('deviceModel', e.target.value)} placeholder="Ex: iPhone 12 Troca de tela, Troca de bateria Galaxy S23" className="mt-1" required />
+                  <Input id="deviceModel" value={formData.deviceModel} onChange={e => updateFormData('deviceModel', e.target.value)} placeholder="Ex: Tela iPhone 12, Troca de bateria Galaxy S23" className="mt-1" required />
                 </div>
               </CardContent>
             </Card>

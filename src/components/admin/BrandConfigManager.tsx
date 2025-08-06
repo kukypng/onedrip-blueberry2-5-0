@@ -303,7 +303,7 @@ export type MarketingConfig = typeof APP_CONFIG.marketing;`;
                   id="fullName"
                   value={config.fullName}
                   onChange={(e) => setConfig({...config, fullName: e.target.value})}
-                  placeholder="OneDrip - Sistema de Orçamentos"
+                  placeholder="OneDrip"
                 />
               </div>
               
@@ -464,7 +464,7 @@ export type MarketingConfig = typeof APP_CONFIG.marketing;`;
                     id="shareTitle"
                     value={config.shareTitle}
                     onChange={(e) => setConfig({...config, shareTitle: e.target.value})}
-                    placeholder="OneDrip - Sistema de Orçamentos"
+                    placeholder="OneDrip"
                   />
                 </div>
               </div>

@@ -14,6 +14,7 @@ import { Separator } from '@/components/ui/separator';
 import { LicenseActivationSection } from '@/components/auth/LicenseActivationSection';
 import { LicenseActivationIOS } from '@/components/auth/LicenseActivationIOS';
 import { useIOSDetection } from '@/hooks/useIOSDetection';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 export const AuthPage = () => {
   const [email, setEmail] = useState('');
@@ -224,7 +225,7 @@ export const AuthPage = () => {
               <div className="text-center">
                 <button
                   type="button"
-                  onClick={() => window.open('https://wa.me/556496028022', '_blank')}
+                  onClick={() => openWhatsApp('https://wa.me/556496028022')}
                   className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline flex items-center justify-center gap-2"
                 >
                   <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -247,7 +248,7 @@ export const AuthPage = () => {
                   <span className="text-muted-foreground">|</span>
                   <button
                     type="button"
-                    onClick={() => window.open('https://wa.me/64996028022', '_blank')}
+                    onClick={() => openWhatsApp('https://wa.me/64996028022')}
                     className="text-sm text-muted-foreground hover:text-primary transition-colors underline-offset-4 hover:underline"
                   >
                     Suporte

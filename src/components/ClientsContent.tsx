@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useSecureClients } from '@/hooks/useSecureClients';
 import { AdvancedClientsContent } from './AdvancedClientsContent';
 import { EmptyState } from './EmptyState';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 
 interface ClientFormData {
   name: string;
@@ -197,7 +198,7 @@ export const ClientsContent = () => {
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => window.open(`https://wa.me/55${client.phone.replace(/\D/g, '')}`, '_blank')}
+                          onClick={() => openWhatsApp(`https://wa.me/55${client.phone.replace(/\D/g, '')}`)}
                         >
                           <Phone className="h-4 w-4" />
                         </Button>

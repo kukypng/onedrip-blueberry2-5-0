@@ -5,13 +5,15 @@ import { useIOSOptimization } from '@/hooks/useIOSOptimization';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { openWhatsApp } from '@/utils/whatsappUtils';
+
 export const DashboardLiteHelpSupport = () => {
   const [isHelpSystemOpen, setHelpSystemOpen] = useState(false);
   const {
     isIOS
   } = useIOSOptimization();
   const handleWhatsAppSupport = () => {
-    window.open('https://wa.me/556496028022', '_blank');
+    openWhatsApp('https://wa.me/556496028022');
   };
   const quickHelpItems = [{
     id: 'create-budget',

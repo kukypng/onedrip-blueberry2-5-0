@@ -12,6 +12,7 @@ import { IOSFeedbackForm } from './IOSFeedbackForm';
 import { IOSTutorialOverlay } from './IOSTutorialOverlay';
 import { BookOpen, MessageCircle, Star, FileText, Lightbulb, HelpCircle, Filter, ArrowRight, ExternalLink, ChevronLeft, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { openWhatsApp } from '@/utils/whatsappUtils';
 interface HelpContent {
   id: string;
   title: string;
@@ -146,7 +147,7 @@ export const IOSHelpSystem = ({
     count: knowledgeBase.filter(c => c.category === 'tips').length
   }];
   const handleWhatsAppSupport = () => {
-    window.open('https://wa.me/556496028022', '_blank');
+    openWhatsApp('https://wa.me/556496028022');
   };
   const clearSearch = () => {
     setSearchQuery('');

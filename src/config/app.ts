@@ -11,7 +11,7 @@
 export const APP_CONFIG = {
   // Informações básicas da aplicação
   name: 'OneDrip',
-  fullName: 'OneDrip - Sistema de Orçamentos',
+  fullName: 'OneDrip',
   shortName: 'OneDrip',
   description: 'O melhor sistema de orçamentos para sua empresa. Gerencie orçamentos de forma profissional e eficiente.',
   tagline: 'Sistema de Gestão Profissional',
@@ -40,7 +40,8 @@ export const APP_CONFIG = {
   pwa: {
     installTitle: 'Instalar OneDrip como App',
     installDescription: 'Acesse rapidamente o sistema direto da sua tela inicial',
-    shareTitle: 'OneDrip - Sistema de Orçamentos',
+    shareTitle: 'OneDrip',
+
     shareText: 'O melhor sistema de orçamentos para sua empresa'
   },
   

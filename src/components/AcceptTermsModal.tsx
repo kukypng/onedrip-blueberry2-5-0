@@ -276,33 +276,37 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
                 Ao aceitar, você confirma ter 18+ anos ou autorização legal.
               </p>
             </div>
+
+            {/* Botão principal - Estilo iOS - Movido para cima */}
+            <div className="mt-6 mb-4">
+              <Button
+                onClick={handleAcceptAll}
+                disabled={!allTermsAccepted}
+                size="lg"
+                className={`w-full h-14 text-base font-bold transition-all duration-300 rounded-2xl shadow-lg ${
+                  allTermsAccepted 
+                    ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-200/50 dark:shadow-green-900/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]' 
+                    : 'bg-gray-200/80 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60 backdrop-blur-sm'
+                }`}
+              >
+                {allTermsAccepted ? (
+                  <span className="flex items-center gap-2 tracking-tight">
+                    ✅ Aceitar e Continuar
+                  </span>
+                ) : (
+                  <span className="tracking-tight">
+                    Aceitar Termos ({Object.values(acceptedTerms).filter(Boolean).length}/3)
+                  </span>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </ScrollArea>
 
         {/* Footer - Estilo iOS */}
         <div className="p-4 sm:p-6 pt-4 bg-white/60 dark:bg-gray-900/60 backdrop-blur-sm rounded-b-3xl sm:rounded-b-xl border-t border-gray-200/50 dark:border-gray-700/50">
-          {/* Botão principal - Estilo iOS */}
+          {/* Botões secundários - Estilo iOS */}
           <div className="space-y-4">
-            <Button
-              onClick={handleAcceptAll}
-              disabled={!allTermsAccepted}
-              size="lg"
-              className={`w-full h-14 text-base font-bold transition-all duration-300 rounded-2xl shadow-lg ${
-                allTermsAccepted 
-                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white shadow-green-200/50 dark:shadow-green-900/30 hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]' 
-                  : 'bg-gray-200/80 dark:bg-gray-700/60 text-gray-500 dark:text-gray-400 cursor-not-allowed opacity-60 backdrop-blur-sm'
-              }`}
-            >
-              {allTermsAccepted ? (
-                <span className="flex items-center gap-2 tracking-tight">
-                  ✅ Aceitar e Continuar
-                </span>
-              ) : (
-                <span className="tracking-tight">
-                  Aceitar Termos ({Object.values(acceptedTerms).filter(Boolean).length}/3)
-                </span>
-              )}
-            </Button>
             
             {/* Botão secundário - Estilo iOS */}
             <div className="flex justify-center">

@@ -135,206 +135,196 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent className="max-w-4xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-2xl font-bold text-center">
-            Bem-vindo ao OneDrip System
-          </DialogTitle>
-          <p className="text-center text-muted-foreground mt-2">
-            Para continuar, você precisa aceitar nossos termos e políticas
-          </p>
-        </DialogHeader>
+      <DialogContent className="max-w-md sm:max-w-4xl max-h-[85vh] sm:max-h-[90vh] p-0 gap-0 overflow-hidden mx-4 sm:mx-auto">
+        {/* Header */}
+        <div className="p-3 sm:p-6 pb-3 sm:pb-4 border-b bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-800">
+          <DialogHeader className="space-y-1 sm:space-y-2">
+            <DialogTitle className="text-lg sm:text-2xl font-bold text-center text-gray-900 dark:text-white">
+              🔒 Termos e Políticas
+            </DialogTitle>
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              Para continuar usando o sistema, aceite nossos termos
+            </p>
+          </DialogHeader>
+        </div>
 
-        <ScrollArea className="max-h-[70vh] px-6">
-          <CardContent className="space-y-6 p-0">
-            {/* Aviso importante */}
-            <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 mt-0.5" />
+        <ScrollArea className="max-h-[60vh] sm:max-h-[65vh] px-4 sm:px-6">
+          <CardContent className="space-y-4 sm:space-y-6 p-0">
+            {/* Aceitar todos - Destaque principal */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-2 border-green-200 dark:border-green-700 rounded-xl p-4 sm:p-6">
+              <div className="text-center space-y-4">
                 <div>
-                  <h3 className="font-medium text-amber-800 dark:text-amber-200 mb-2">
-                    Aceitação Obrigatória
+                  <h3 className="font-semibold text-lg sm:text-xl text-green-800 dark:text-green-200 mb-2">
+                    🚀 Aceitar Todos os Termos
                   </h3>
-                  <p className="text-sm text-amber-700 dark:text-amber-300">
-                    Para usar o OneDrip System, você deve aceitar todos os termos e políticas abaixo. 
-                    Isso garante que você está ciente de como tratamos seus dados e quais são suas 
-                    responsabilidades ao usar nosso sistema.
+                  <p className="text-sm sm:text-base text-green-700 dark:text-green-300">
+                    Aceite rapidamente todos os termos e políticas para começar a usar o sistema
                   </p>
                 </div>
-              </div>
-            </div>
-
-            {/* Opção de selecionar tudo */}
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-medium text-primary mb-1">
-                    Aceitar Todos os Termos
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Marque esta opção para aceitar automaticamente todos os termos e políticas
-                  </p>
-                </div>
-                <div className="flex items-center space-x-3">
+                
+                <div className="flex items-center justify-center gap-3">
                   <Checkbox
                     id="select-all"
                     checked={allTermsAccepted}
                     onCheckedChange={handleSelectAll}
-                    className="h-5 w-5"
+                    className="h-6 w-6 border-2"
                   />
                   <label
                     htmlFor="select-all"
-                    className="text-sm font-medium leading-none cursor-pointer"
+                    className="text-base sm:text-lg font-medium cursor-pointer text-green-800 dark:text-green-200"
                   >
-                    Selecionar tudo
+                    Aceito todos os termos
                   </label>
                 </div>
+                
+                {allTermsAccepted && (
+                  <div className="text-green-600 dark:text-green-400 text-sm font-medium">
+                    ✅ Perfeito! Você pode continuar agora
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Lista de termos */}
-            <div className="space-y-4">
+            {/* Divisor */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">ou aceite individualmente</span>
+              </div>
+            </div>
+
+            {/* Lista de termos compacta */}
+            <div className="space-y-3">
               {termsData.map((term) => {
                 const IconComponent = term.icon;
                 const isAccepted = acceptedTerms[term.key];
                 
                 return (
-                  <Card key={term.id} className={`border-2 transition-colors ${
-                    isAccepted ? 'border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/20' : 'border-muted'
+                  <div key={term.id} className={`border rounded-lg p-3 sm:p-4 transition-all duration-200 ${
+                    isAccepted ? 'border-green-300 bg-green-50 dark:border-green-600 dark:bg-green-900/20' : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
                   }`}>
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0">
-                          <div className={`p-3 rounded-lg ${
-                            isAccepted ? 'bg-green-100 dark:bg-green-900' : 'bg-primary/10'
-                          }`}>
-                            <IconComponent className={`h-6 w-6 ${
-                              isAccepted ? 'text-green-600 dark:text-green-400' : 'text-primary'
-                            }`} />
-                          </div>
-                        </div>
-                        
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-3 mb-3">
-                            <h3 className="font-semibold text-lg">{term.title}</h3>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => openExternalPage(term.path)}
-                              className="flex items-center gap-1 text-xs"
-                            >
-                              <ExternalLink className="h-3 w-3" />
-                              Ler completo
-                            </Button>
-                          </div>
-                          
-                          <p className="text-muted-foreground mb-4">
-                            {term.description}
-                          </p>
-                          
-                          {showDetails && (
-                            <div className="mb-4">
-                              <h4 className="font-medium mb-2 text-sm">Principais pontos:</h4>
-                              <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
-                                {term.highlights.map((highlight, index) => (
-                                  <li key={index}>{highlight}</li>
-                                ))}
-                              </ul>
-                            </div>
-                          )}
-                          
-                          <div className="flex items-center space-x-2">
-                            <Checkbox
-                              id={term.id}
-                              checked={isAccepted}
-                              onCheckedChange={(checked) => 
-                                handleAcceptanceChange(term.key, checked as boolean)
-                              }
-                            />
-                            <label
-                              htmlFor={term.id}
-                              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                            >
-                              Li e aceito a {term.title}
-                            </label>
-                          </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex-shrink-0">
+                        <div className={`p-2 rounded-lg ${
+                          isAccepted ? 'bg-green-100 dark:bg-green-800/30' : 'bg-gray-100 dark:bg-gray-700'
+                        }`}>
+                          <IconComponent className={`h-4 w-4 ${
+                            isAccepted ? 'text-green-600 dark:text-green-400' : 'text-gray-600 dark:text-gray-400'
+                          }`} />
                         </div>
                       </div>
-                    </CardContent>
-                  </Card>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div>
+                            <h4 className="font-medium text-sm sm:text-base text-foreground">{term.title}</h4>
+                            <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+                              {term.description}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => openExternalPage(term.path)}
+                            className="flex items-center gap-1 text-xs px-2 py-1 h-auto hover:bg-blue-50 text-blue-600"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                            <span className="hidden sm:inline">Ler</span>
+                          </Button>
+                        </div>
+                        
+                        <div className="flex items-center gap-2 mt-2">
+                          <Checkbox
+                            id={term.id}
+                            checked={isAccepted}
+                            onCheckedChange={(checked) => 
+                              handleAcceptanceChange(term.key, checked as boolean)
+                            }
+                            className="h-4 w-4"
+                          />
+                          <label
+                            htmlFor={term.id}
+                            className="text-xs sm:text-sm font-medium cursor-pointer text-foreground"
+                          >
+                            Li e aceito
+                          </label>
+                          {isAccepted && (
+                            <span className="text-green-600 text-xs">✓</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 );
               })}
             </div>
 
-            {/* Toggle para mostrar detalhes */}
-            <div className="text-center">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowDetails(!showDetails)}
-                className="text-muted-foreground"
-              >
-                {showDetails ? 'Ocultar detalhes' : 'Mostrar principais pontos'}
-              </Button>
-            </div>
-
-            {/* Resumo da aceitação */}
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <h3 className="font-medium mb-3">Resumo da sua aceitação:</h3>
-              <div className="space-y-2">
-                {termsData.map((term) => (
-                  <div key={term.id} className="flex items-center justify-between">
-                    <span className="text-sm">{term.title}</span>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      acceptedTerms[term.key]
-                        ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
-                        : 'bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300'
-                    }`}>
-                      {acceptedTerms[term.key] ? 'Aceito' : 'Pendente'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Informações adicionais */}
-            <div className="text-center text-sm text-muted-foreground">
+            {/* Informação legal compacta */}
+            <div className="text-center text-xs sm:text-sm text-muted-foreground bg-gray-50 dark:bg-gray-900/50 p-3 rounded-lg">
               <p>
-                Ao aceitar estes termos, você confirma que tem pelo menos 18 anos de idade 
-                ou possui autorização de um responsável legal.
-              </p>
-              <p className="mt-2">
-                Você pode revisar estes documentos a qualquer momento através do menu de configurações.
+                Ao aceitar, você confirma ter 18+ anos ou autorização legal.
               </p>
             </div>
           </CardContent>
         </ScrollArea>
 
-        {/* Footer com botões */}
-        <div className="p-6 pt-0 border-t">
-          <div className="flex flex-col sm:flex-row gap-3 justify-end">
-            <Button
-              variant="outline"
-              onClick={handleDecline}
-              className="flex-1 sm:flex-none"
-            >
-              Não aceito
-            </Button>
+        {/* Footer com botões otimizado para mobile */}
+        <div className="p-4 sm:p-6 pt-0 border-t">
+          {/* Botão principal destacado */}
+          <div className="space-y-3">
             <Button
               onClick={handleAcceptAll}
               disabled={!allTermsAccepted}
-              className="flex-1 sm:flex-none"
+              size="lg"
+              className={`w-full h-12 text-base font-semibold transition-all ${
+                allTermsAccepted 
+                  ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white' 
+                  : 'bg-muted dark:bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+              }`}
             >
-              {allTermsAccepted ? 'Aceitar e continuar' : `Aceite todos os termos (${
-                Object.values(acceptedTerms).filter(Boolean).length
-              }/3)`}
+              {allTermsAccepted ? (
+                <span className="flex items-center gap-2">
+                  ✅ Aceitar e Continuar
+                </span>
+              ) : (
+                `Aceitar Termos (${Object.values(acceptedTerms).filter(Boolean).length}/3)`
+              )}
             </Button>
+            
+            {/* Botão secundário menor */}
+            <div className="flex justify-center">
+              <Button
+                variant="ghost"
+                onClick={handleDecline}
+                size="sm"
+                className="text-muted-foreground hover:text-red-600 text-sm transition-colors"
+              >
+                Não aceito - Sair
+              </Button>
+            </div>
           </div>
           
+          {/* Feedback visual */}
           {!allTermsAccepted && (
-            <p className="text-xs text-muted-foreground text-center mt-3">
-              Você deve aceitar todos os termos para continuar
-            </p>
+            <div className="text-center mt-3">
+              <p className="text-xs text-muted-foreground">
+                📋 Aceite todos os termos acima para continuar
+              </p>
+              <div className="flex justify-center gap-1 mt-2">
+                {termsData.map((term, index) => (
+                  <div
+                    key={term.id}
+                    className={`w-2 h-2 rounded-full transition-colors ${
+                      acceptedTerms[term.key] 
+                        ? 'bg-green-500' 
+                        : 'bg-muted-foreground/30'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
           )}
         </div>
       </DialogContent>

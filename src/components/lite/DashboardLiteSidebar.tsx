@@ -33,7 +33,7 @@ export const DashboardLiteSidebar = ({
   const menuItems = [
     {
       id: 'dashboard',
-      label: 'Dashboard',
+      label: 'Menu',
       icon: Home,
     },
     {

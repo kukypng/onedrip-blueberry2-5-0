@@ -37,7 +37,7 @@ export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
   const { state } = useSidebar();
 
   const navigationItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home, permission: true },
+    { id: 'dashboard', label: 'Menu', icon: Home, permission: true },
     { id: 'budgets', label: 'Orçamentos', icon: FileText, permission: true },
     { id: 'new-budget', label: 'Novo Orçamento', icon: Plus, permission: true },
     { id: 'clients', label: 'Clientes', icon: UserCheck, permission: true },

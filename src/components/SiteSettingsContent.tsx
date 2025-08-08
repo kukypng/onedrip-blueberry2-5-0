@@ -300,7 +300,7 @@ export const SiteSettingsContent = () => {
     console.error('Query error:', queryError);
     return (
       <div className="text-center py-8 space-y-4">
-        <p className="text-destructive">Erro ao carregar configurações: {queryError.message}</p>
+        <p className="text-destructive">Erro ao carregar configurações: {typeof queryError === 'string' ? queryError : queryError?.message || 'Erro desconhecido'}</p>
         <p className="text-sm text-muted-foreground">
           Verifique se você tem permissões de administrador e tente novamente.
         </p>

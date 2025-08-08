@@ -31,7 +31,7 @@ export const UserManagementDebug = ({ debugInfo, error }: Props) => (
       )}
       {error && (
         <div className="mt-3 p-3 bg-red-500/10 rounded border border-red-500/20">
-          <p className="text-red-800 dark:text-red-300 font-semibold"><strong>Erro:</strong> {error.message}</p>
+          <p className="text-red-800 dark:text-red-300 font-semibold"><strong>Erro:</strong> {typeof error === 'string' ? error : error?.message || 'Erro desconhecido'}</p>
         </div>
       )}
     </CardContent>

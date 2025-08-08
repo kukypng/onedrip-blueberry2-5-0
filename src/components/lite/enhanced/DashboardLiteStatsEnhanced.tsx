@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, Clock, Users, CheckCircle } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Clock, Users, CheckCircle, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { GlassCard, AnimatedCounter, BounceBadge } from '@/components/ui/animations/micro-interactions';
@@ -16,6 +16,10 @@ interface StatsData {
   pendingBudgets: number;
   completedBudgets: number;
   averageValue: number;
+  totalServiceOrders: number;
+  pendingServiceOrders: number;
+  completedServiceOrders: number;
+  serviceOrdersRevenue: number;
 }
 export const DashboardLiteStatsEnhanced = ({
   profile,
@@ -27,7 +31,11 @@ export const DashboardLiteStatsEnhanced = ({
     totalRevenue: 0,
     pendingBudgets: 0,
     completedBudgets: 0,
-    averageValue: 0
+    averageValue: 0,
+    totalServiceOrders: 0,
+    pendingServiceOrders: 0,
+    completedServiceOrders: 0,
+    serviceOrdersRevenue: 0
   });
   const [loading, setLoading] = useState(true);
   useEffect(() => {
@@ -50,13 +58,30 @@ export const DashboardLiteStatsEnhanced = ({
         const pendingBudgets = budgets?.filter(b => b.workflow_status === 'pending').length || 0;
         const completedBudgets = budgets?.filter(b => b.workflow_status === 'completed' || b.is_delivered).length || 0;
         const averageValue = budgets?.length ? totalRevenue / budgets.length : 0;
+
+        // Fetch service orders stats
+        const { data: serviceOrders } = await supabase
+          .from('service_orders')
+          .select('*')
+          .eq('owner_id', userId)
+          .is('deleted_at', null);
+
+        const totalServiceOrders = serviceOrders?.length || 0;
+        const pendingServiceOrders = serviceOrders?.filter(so => so.status === 'opened').length || 0;
+        const completedServiceOrders = serviceOrders?.filter(so => so.status === 'completed').length || 0;
+        const serviceOrdersRevenue = serviceOrders?.reduce((sum, so) => sum + (so.total_price || 0), 0) || 0;
+
         setStats({
           totalBudgets: budgets?.length || 0,
           weeklyGrowth: weeklyBudgets.length,
           totalRevenue,
           pendingBudgets,
           completedBudgets,
-          averageValue
+          averageValue,
+          totalServiceOrders,
+          pendingServiceOrders,
+          completedServiceOrders,
+          serviceOrdersRevenue
         });
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -77,18 +102,15 @@ export const DashboardLiteStatsEnhanced = ({
         <AdvancedSkeleton lines={3} avatar />
       </GlassCard>;
   }
-  return <div className="space-y-6 mb-6">
+  return (
+    <div className="space-y-6 mb-6">
       {/* Header com saudação */}
       <GlassCard className="p-6">
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        duration: 0.5
-      }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-2xl font-bold text-foreground">
@@ -96,9 +118,11 @@ export const DashboardLiteStatsEnhanced = ({
               </h2>
               <p className="text-muted-foreground">Seja bem-vindo(a) de volta</p>
             </div>
-            {profile && <BounceBadge variant="default" className="bg-primary/20 text-primary font-semibold">
+            {profile && (
+              <BounceBadge variant="default" className="bg-primary/20 text-primary font-semibold">
                 {profile.role.toUpperCase()}
-              </BounceBadge>}
+              </BounceBadge>
+            )}
           </div>
           
           <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl">
@@ -116,5 +140,108 @@ export const DashboardLiteStatsEnhanced = ({
           </div>
         </motion.div>
       </GlassCard>
-    </div>;
+
+      {/* Stats Cards */}
+      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Budgets Stats */}
+        <motion.div>
+          <GlassCard className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-blue-600" />
+              </div>
+              <span className="text-xs text-muted-foreground">Orçamentos</span>
+            </div>
+            <div className="space-y-1">
+              <AnimatedCounter
+                value={stats.totalBudgets}
+                className="text-2xl font-bold text-foreground"
+              />
+              <p className="text-xs text-muted-foreground">Total</p>
+            </div>
+          </GlassCard>
+        </motion.div>
+
+        <motion.div>
+          <GlassCard className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+              </div>
+              <span className="text-xs text-muted-foreground">Concluídos</span>
+            </div>
+            <div className="space-y-1">
+              <AnimatedCounter
+                value={stats.completedBudgets}
+                className="text-2xl font-bold text-foreground"
+              />
+              <p className="text-xs text-muted-foreground">Orçamentos</p>
+            </div>
+          </GlassCard>
+        </motion.div>
+
+        {/* Service Orders Stats */}
+        <motion.div>
+          <GlassCard className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+                <Wrench className="h-4 w-4 text-amber-600" />
+              </div>
+              <span className="text-xs text-muted-foreground">Ordens</span>
+            </div>
+            <div className="space-y-1">
+              <AnimatedCounter
+                value={stats.totalServiceOrders}
+                className="text-2xl font-bold text-foreground"
+              />
+              <p className="text-xs text-muted-foreground">Serviços</p>
+            </div>
+          </GlassCard>
+        </motion.div>
+
+        <motion.div>
+          <GlassCard className="p-4">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
+                <Clock className="h-4 w-4 text-purple-600" />
+              </div>
+              <span className="text-xs text-muted-foreground">Pendentes</span>
+            </div>
+            <div className="space-y-1">
+              <AnimatedCounter
+                value={stats.pendingServiceOrders}
+                className="text-2xl font-bold text-foreground"
+              />
+              <p className="text-xs text-muted-foreground">Serviços</p>
+            </div>
+          </GlassCard>
+        </motion.div>
+      </StaggerContainer>
+
+      {/* Revenue Summary */}
+      <GlassCard className="p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <h3 className="text-lg font-semibold mb-4">Resumo Financeiro</h3>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Receita Orçamentos</p>
+              <p className="text-xl font-bold text-green-600">
+                R$ {stats.totalRevenue.toFixed(2)}
+              </p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm text-muted-foreground">Receita Serviços</p>
+              <p className="text-xl font-bold text-amber-600">
+                R$ {stats.serviceOrdersRevenue.toFixed(2)}
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </GlassCard>
+    </div>
+  );
 };

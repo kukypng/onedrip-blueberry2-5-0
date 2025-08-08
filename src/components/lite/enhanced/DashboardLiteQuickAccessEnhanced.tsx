@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlusCircle, List, Settings, Shield, Database, Users } from 'lucide-react';
+import { PlusCircle, List, Settings, Shield, Database, Users, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { GlassCard, RippleButton } from '@/components/ui/animations/micro-interactions';
 import { StaggerContainer } from '@/components/ui/animations/page-transitions';
@@ -36,6 +36,14 @@ const quickAccessActions: QuickAccessAction[] = [{
   permission: 'view_own_budgets',
   gradient: 'from-blue-500 to-cyan-500',
   iconColor: 'text-blue-600'
+}, {
+  id: 'service-orders',
+  label: 'Ordens de Serviço',
+  icon: Wrench,
+  tab: 'service-orders',
+  permission: null,
+  gradient: 'from-amber-500 to-yellow-500',
+  iconColor: 'text-amber-600'
 }, {
   id: 'clients',
   label: 'Clientes',

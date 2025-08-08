@@ -3,9 +3,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Import responsive utilities */
-@import './styles/responsive.css';
-
 /* OneDrip Design System - Global Styles */
 
 @layer base {

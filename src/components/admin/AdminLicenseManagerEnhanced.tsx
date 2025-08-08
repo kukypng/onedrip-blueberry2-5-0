@@ -256,7 +256,7 @@ export const AdminLicenseManagerEnhanced = () => {
             </div> : queryError ? <div className="text-center py-8">
               <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
               <p className="text-destructive font-medium">Erro ao carregar licenças</p>
-              <p className="text-sm text-muted-foreground mt-1">{queryError.message}</p>
+              <p className="text-sm text-muted-foreground mt-1">{typeof queryError === 'string' ? queryError : queryError?.message || 'Erro desconhecido'}</p>
               <Button variant="outline" onClick={() => queryClient.invalidateQueries({
                 queryKey: ['admin-licenses']
               })} className="mt-4">

@@ -262,7 +262,7 @@ export const EnhancedUserManagement = () => {
         <CardContent className="p-6 text-center">
           <UserX className="h-12 w-12 mx-auto mb-4 text-red-500" />
           <h3 className="text-lg font-semibold mb-2">Erro ao carregar usuários</h3>
-          <p className="text-muted-foreground mb-4">{(error as Error).message}</p>
+          <p className="text-muted-foreground mb-4">{typeof error === 'string' ? error : (error as Error)?.message || 'Erro ao carregar usuários'}</p>
           <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['admin-users'] })}>
             Tentar novamente
           </Button>

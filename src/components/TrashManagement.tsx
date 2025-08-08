@@ -364,7 +364,7 @@ export const TrashManagement = () => {
             Lixeira - Erro
           </CardTitle>
           <CardDescription>
-            Erro ao carregar lixeira: {queryError.message}
+            Erro ao carregar lixeira: {typeof queryError === 'string' ? queryError : queryError?.message || 'Erro desconhecido'}
           </CardDescription>
         </CardHeader>
         <CardContent>

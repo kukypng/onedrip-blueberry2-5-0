@@ -7,6 +7,7 @@ import { DataManagementLite } from './DataManagementLite';
 import { SettingsLite } from './SettingsLite';
 import { AdminLiteEnhanced } from './AdminLiteEnhanced';
 import { ClientsLite } from './ClientsLite';
+import { ServiceOrdersLite } from './ServiceOrdersLite';
 
 interface DashboardLiteContentProps {
   budgets: any[];
@@ -67,6 +68,14 @@ export const DashboardLiteContent = ({
     case 'clients':
       return (
         <ClientsLite
+          userId={userId || ''}
+          onBack={onNavigateBack || (() => {})}
+        />
+      );
+      
+    case 'service-orders':
+      return (
+        <ServiceOrdersLite
           userId={userId || ''}
           onBack={onNavigateBack || (() => {})}
         />

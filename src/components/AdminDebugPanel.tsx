@@ -113,7 +113,7 @@ export const AdminDebugPanel = ({
         
         {error && <div className="mt-4 p-3 bg-red-500/10 rounded border border-red-500/20">
             <h4 className="font-semibold text-red-800 dark:text-red-300 mb-2">Erro Detectado:</h4>
-            <p className="text-red-800 dark:text-red-300 text-sm">{error.message}</p>
+            <p className="text-red-800 dark:text-red-300 text-sm">{typeof error === 'string' ? error : error?.message || 'Erro desconhecido'}</p>
             {debugInfo && !debugInfo.is_admin && <div className="mt-2 p-2 bg-red-500/20 rounded">
                 <p className="text-red-800 dark:text-red-300 text-xs">
                   <strong>Possível Causa:</strong> O usuário atual não possui permissões de administrador. 

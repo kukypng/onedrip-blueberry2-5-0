@@ -216,7 +216,7 @@ export const AdminTestPanel = () => {
                     <p><strong>Usuários encontrados:</strong> {usersTest.count}</p>
                   </div> : <div className="space-y-1">
                     <p className="text-red-600 dark:text-red-400 flex items-center"><XCircle className="h-4 w-4 mr-2"/> Acesso negado</p>
-                    <p><strong>Erro:</strong> {usersTest.error}</p>
+                    <p><strong>Erro:</strong> {typeof usersTest.error === 'string' ? usersTest.error : usersTest.error?.message || 'Erro desconhecido'}</p>
                   </div>}
               </div> : <p className="text-sm text-muted-foreground">Teste não executado.</p>}
           </div>

@@ -26,6 +26,9 @@ import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { ResetEmailPage } from "./pages/ResetEmailPage";
 import { VerifyPage } from "./pages/VerifyPage";
 import { BudgetsPage } from "./pages/BudgetsPage";
+import { ServiceOrdersPage } from "./pages/ServiceOrdersPage";
+import { ServiceOrderFormPage } from "./pages/ServiceOrderFormPage";
+import { ServiceOrderDetailsPage } from "./pages/ServiceOrderDetailsPage";
 import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { LicensePage } from "./pages/LicensePage";
 import { PWAProvider } from "./components/PWAProvider";
@@ -148,6 +151,38 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <BudgetsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrdersPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/new" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrderFormPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/:id/edit" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrderFormPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/:id" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrderDetailsPage />
             </ProtectedRoute>
           } 
         />

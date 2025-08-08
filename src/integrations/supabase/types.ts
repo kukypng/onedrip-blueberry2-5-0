@@ -763,6 +763,7 @@ export type Database = {
           id: string
           name: string
           role: string | null
+          service_orders_beta_enabled: boolean
           updated_at: string
           username: string | null
         }
@@ -775,6 +776,7 @@ export type Database = {
           id: string
           name: string
           role?: string | null
+          service_orders_beta_enabled?: boolean
           updated_at?: string
           username?: string | null
         }
@@ -787,10 +789,220 @@ export type Database = {
           id?: string
           name?: string
           role?: string | null
+          service_orders_beta_enabled?: boolean
           updated_at?: string
           username?: string | null
         }
         Relationships: []
+      }
+      service_orders: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          delivery_date: string | null
+          device_model: string
+          device_type: string
+          id: string
+          imei_serial: string | null
+          is_paid: boolean
+          labor_cost: number
+          notes: string | null
+          owner_id: string
+          parts_cost: number
+          priority: string
+          reported_issue: string
+          search_vector: unknown | null
+          status: string
+          total_price: number
+          updated_at: string
+          warranty_months: number | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delivery_date?: string | null
+          device_model: string
+          device_type: string
+          id?: string
+          imei_serial?: string | null
+          is_paid?: boolean
+          labor_cost?: number
+          notes?: string | null
+          owner_id?: string
+          parts_cost?: number
+          priority?: string
+          reported_issue: string
+          search_vector?: unknown | null
+          status?: string
+          total_price?: number
+          updated_at?: string
+          warranty_months?: number | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delivery_date?: string | null
+          device_model?: string
+          device_type?: string
+          id?: string
+          imei_serial?: string | null
+          is_paid?: boolean
+          labor_cost?: number
+          notes?: string | null
+          owner_id?: string
+          parts_cost?: number
+          priority?: string
+          reported_issue?: string
+          search_vector?: unknown | null
+          status?: string
+          total_price?: number
+          updated_at?: string
+          warranty_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_items: {
+        Row: {
+          created_at: string
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          item_type: string
+          name: string
+          notes: string | null
+          quantity: number
+          service_order_id: string
+          unit_price: number
+          warranty_months: number | null
+        }
+        Insert: {
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          item_type: string
+          name: string
+          notes?: string | null
+          quantity?: number
+          service_order_id: string
+          unit_price: number
+          warranty_months?: number | null
+        }
+        Update: {
+          created_at?: string
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          item_type?: string
+          name?: string
+          notes?: string | null
+          quantity?: number
+          service_order_id?: string
+          unit_price?: number
+          warranty_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_items_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_events: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          service_order_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          service_order_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          service_order_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_events_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_attachments: {
+        Row: {
+          created_at: string
+          description: string | null
+          file_name: string
+          file_size: number
+          file_url: string
+          id: string
+          mime_type: string
+          service_order_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          file_name: string
+          file_size: number
+          file_url: string
+          id?: string
+          mime_type: string
+          service_order_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          file_name?: string
+          file_size?: number
+          file_url?: string
+          id?: string
+          mime_type?: string
+          service_order_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_attachments_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       warranty_periods: {
         Row: {
@@ -1301,9 +1513,97 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
+      search_service_orders: {
+        Args: {
+          p_search_query?: string
+          p_status?: string
+          p_priority?: string
+          p_device_type_id?: string
+          p_date_from?: string
+          p_date_to?: string
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          id: string
+          client_id: string
+          device_model: string
+          device_type: string
+          reported_issue: string
+          status: string
+          priority: string
+          total_price: number
+          created_at: string
+          delivery_date: string
+          search_rank: number
+        }[]
+      }
+      get_service_orders_stats: {
+        Args: {
+          p_date_from?: string
+          p_date_to?: string
+        }
+        Returns: {
+          total_orders: number
+          pending_orders: number
+          in_progress_orders: number
+          completed_orders: number
+          cancelled_orders: number
+          total_revenue: number
+          avg_completion_time: number
+        }[]
+      }
+      soft_delete_service_order: {
+        Args: {
+          p_service_order_id: string
+        }
+        Returns: boolean
+      }
+      restore_service_order: {
+        Args: {
+          p_service_order_id: string
+        }
+        Returns: boolean
+      }
+      get_service_order_details: {
+        Args: {
+          p_service_order_id: string
+        }
+        Returns: {
+          id: string
+          client_id: string
+          device_model: string
+          device_type: string
+          imei_serial: string
+          reported_issue: string
+          status: string
+          priority: string
+          total_price: number
+          parts_cost: number
+          labor_cost: number
+          is_paid: boolean
+          created_at: string
+          updated_at: string
+          delivery_date: string
+          warranty_months: number
+          notes: string
+          items_count: number
+          events_count: number
+          attachments_count: number
+        }[]
+      }
+      update_service_order_status: {
+        Args: {
+          p_service_order_id: string
+          p_new_status: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       payment_status: "succeeded" | "failed" | "pending" | "refunded"
+      service_order_status: "opened" | "in_progress" | "completed" | "delivered"
+      service_order_priority: "low" | "medium" | "high" | "urgent"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1432,6 +1732,8 @@ export const Constants = {
   public: {
     Enums: {
       payment_status: ["succeeded", "failed", "pending", "refunded"],
+      service_order_status: ["opened", "in_progress", "completed", "delivered"],
+      service_order_priority: ["low", "medium", "high", "urgent"],
     },
   },
 } as const

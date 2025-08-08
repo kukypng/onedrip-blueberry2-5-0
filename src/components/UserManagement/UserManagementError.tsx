@@ -17,7 +17,7 @@ export const UserManagementError = ({ error, handleRetry, showDebugInfo, setShow
       <div className="text-center py-8">
         <AlertTriangle className="h-12 w-12 text-red-500 mx-auto mb-4" />
         <p className="text-red-600 mb-2 font-semibold">Erro ao carregar usuários</p>
-        <p className="text-sm text-muted-foreground mb-4">{error.message}</p>
+        <p className="text-sm text-muted-foreground mb-4">{typeof error === 'string' ? error : error?.message || 'Erro desconhecido'}</p>
         <div className="space-y-2">
           <Button onClick={handleRetry} className="mr-2">
             <RefreshCw className="h-4 w-4 mr-2" />

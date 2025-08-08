@@ -11,6 +11,7 @@ import { Sparkles, ShoppingBag, CreditCard, MessageCircle, HeartCrack, AlertTria
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLicenseNotifications } from '@/hooks/useLicenseNotifications';
+import { ResponsiveContainer } from '@/components/ui/ResponsiveContainer';
 
 interface ModernDashboardProps {
   onNavigateTo?: (view: string, budgetId?: string) => void;
@@ -56,11 +57,11 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
   }, [profile?.id]);
 
   return (
-    <div className="space-y-6">
+    <ResponsiveContainer className="space-y-6 max-w-7xl">
       {/* Welcome Section */}
-      <div className="flex flex-col lg:flex-row items-start justify-between space-y-4 lg:space-y-0">
+      <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
             Olá, {profile?.name || 'Usuário'}! 👋
           </h1>
           <p className="text-muted-foreground mt-1">
@@ -70,13 +71,10 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
       </div>
 
       {/* License Status Card - New Addition */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* New Enhanced License Card */}
         <LicenseStatusCard />
-        
-        {/* Legacy License Cards - Only show on non-iOS devices */}
         {!isIOS && <UserLicenseCard />}
-        
         <Card className="glass-card shadow-strong animate-slide-up">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl font-bold">Estatísticas</CardTitle>
@@ -133,7 +131,7 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
           {budgetsLoading ? (
             <p>Carregando orçamentos...</p>
           ) : budgets && budgets.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {budgets.map((budget) => (
                 <Card key={budget.id} className="bg-muted/50">
                   <CardHeader>
@@ -160,6 +158,6 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
           )}
         </CardContent>
       </Card>
-    </div>
+    </ResponsiveContainer>
   );
 };

@@ -312,8 +312,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
       const { data, error } = await supabase
         .from('service_orders')
         .update({ 
-          status,
-          completed_at: status === 'completed' ? new Date().toISOString() : null
+          status
         })
         .eq('id', id)
         .eq('owner_id', userId)
@@ -330,8 +329,8 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
         .from('service_order_events')
         .insert({
           service_order_id: id,
-          event_type: 'status_change',
-          description: `Status alterado para: ${status}`,
+          event_type: 'status_changed',
+          payload: { description: `Status alterado para: ${status}`, new_status: status },
           created_by: userId
         });
 
@@ -381,7 +380,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
         .insert({
           service_order_id: serviceOrderId,
           event_type: 'deleted',
-          description: 'Ordem de serviço excluída',
+          payload: { description: 'Ordem de serviço excluída' },
           created_by: userId
         });
 
@@ -527,16 +526,8 @@ export const useServiceOrderStats = (userId: string | undefined, dateRange?: { f
           avg_completion_time: 0 // Calcular se necessário
         };
 
-        // Calcular tempo médio de conclusão para ordens completadas
-        const completedOrders = orders.filter(o => o.status === 'completed' && o.completed_at);
-        if (completedOrders.length > 0) {
-          const totalTime = completedOrders.reduce((sum, order) => {
-            const created = new Date(order.created_at).getTime();
-            const completed = new Date(order.completed_at!).getTime();
-            return sum + (completed - created);
-          }, 0);
-          stats.avg_completion_time = totalTime / completedOrders.length / (1000 * 60 * 60 * 24); // em dias
-        }
+        // Tempo médio de conclusão desabilitado (sem coluna completed_at)
+        stats.avg_completion_time = 0;
 
         return stats;
       } catch (error) {

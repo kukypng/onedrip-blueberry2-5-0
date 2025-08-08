@@ -70,11 +70,11 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
   
   const {
     serviceOrders,
-    loading,
+    isLoading,
     error
-  } = useSecureServiceOrders({
-    search: searchTerm,
-    status: statusFilter === 'all' ? undefined : statusFilter
+  } = useSecureServiceOrders(userId, {
+    search: searchTerm || undefined,
+    status: statusFilter === 'all' ? undefined : (statusFilter as any)
   });
 
   const handleCreateNew = () => {
@@ -85,7 +85,7 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
     navigate(`/service-orders/${id}`);
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <PageTransition type="slideLeft">
         <div className="p-4 space-y-4">
@@ -111,9 +111,7 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
   }
 
   if (error) {
-    const errorMessage = error instanceof Error ? error.message : 
-                        typeof error === 'string' ? error : 
-                        error?.message || 'Erro desconhecido ao carregar ordens';
+    const errorMessage = String((error as any)?.message || error || 'Erro desconhecido ao carregar ordens');
     
     return (
       <PageTransition type="slideLeft">
@@ -137,9 +135,8 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
 
   const filteredOrders = serviceOrders?.filter(order => {
     const matchesSearch = !searchTerm || 
-      order.client_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.device_model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.service_description?.toLowerCase().includes(searchTerm.toLowerCase());
+      order.reported_issue?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
     
@@ -238,10 +235,10 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
                     <div className="flex items-start justify-between">
                       <div className="space-y-1">
                         <CardTitle className="text-lg">
-                          {order.client_name || 'Cliente não informado'}
+                          {order.device_model || 'Dispositivo'}
                         </CardTitle>
                         <p className="text-sm text-muted-foreground">
-                          {order.device_brand} {order.device_model}
+                          {order.device_type}
                         </p>
                       </div>
                       <Badge 
@@ -257,7 +254,7 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
                   <CardContent className="pt-0">
                     <div className="space-y-2">
                       <p className="text-sm text-muted-foreground line-clamp-2">
-                        {order.service_description || 'Sem descrição'}
+                        {order.reported_issue || 'Sem descrição'}
                       </p>
                       
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
@@ -266,7 +263,7 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
                         </span>
                         {order.total_price && (
                           <span className="font-medium text-foreground">
-                            R$ {order.total_price.toFixed(2)}
+                            R$ {Number(order.total_price).toFixed(2)}
                           </span>
                         )}
                       </div>

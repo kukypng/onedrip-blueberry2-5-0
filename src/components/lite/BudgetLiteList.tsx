@@ -188,7 +188,7 @@ export const BudgetLiteList = ({
     return (
       <div className="p-4">
         <div className="text-center space-y-4">
-          <p className="text-red-600">{typeof error === 'string' ? error : error?.message || 'Erro ao carregar orçamentos'}</p>
+          <p className="text-red-600">{typeof error === 'string' ? error : String((error as any)?.message || 'Erro ao carregar orçamentos')}</p>
           <button
             onClick={onRefresh}
             className="bg-primary text-primary-foreground py-2 px-4 rounded-md text-sm font-medium"

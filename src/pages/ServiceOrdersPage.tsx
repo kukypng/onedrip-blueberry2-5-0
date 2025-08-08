@@ -505,13 +505,13 @@ export const ServiceOrdersPage = () => {
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-bold text-lg">
-                          OS #{order.order_number}
+                          OS #{order.id.slice(-8)}
                         </h3>
                         <Badge 
                           variant="outline" 
-                          className={`text-xs ${getPriorityColor(order.priority)}`}
+                          className={`text-xs ${getPriorityColor(order.priority as any)}`}
                         >
-                          {getPriorityText(order.priority)}
+                          {getPriorityText(order.priority as any)}
                         </Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">
@@ -548,13 +548,8 @@ export const ServiceOrdersPage = () => {
                   <div className="mb-4">
                     <p className="text-sm text-muted-foreground mb-1">Cliente:</p>
                     <p className="font-medium text-primary">
-                      {order.client_name || 'Cliente não informado'}
+                      {order.client_id ? `ID: ${order.client_id}` : 'Cliente não informado'}
                     </p>
-                    {order.client_phone && (
-                      <p className="text-sm text-muted-foreground">
-                        {order.client_phone}
-                      </p>
-                    )}
                   </div>
 
                   {/* Device Info */}
@@ -569,9 +564,9 @@ export const ServiceOrdersPage = () => {
                   <div className="mb-4">
                     <p className="text-sm text-muted-foreground mb-1">Problema:</p>
                     <p className="text-sm">
-                      {order.problem_description && order.problem_description.length > 100
-                        ? `${order.problem_description.substring(0, 100)}...`
-                        : order.problem_description || 'Descrição não informada'
+                      {order.reported_issue && order.reported_issue.length > 100
+                        ? `${order.reported_issue.substring(0, 100)}...`
+                        : order.reported_issue || 'Descrição não informada'
                       }
                     </p>
                   </div>
@@ -580,21 +575,21 @@ export const ServiceOrdersPage = () => {
                   <div className="mb-4">
                     <Badge 
                       variant="outline" 
-                      className={`${getStatusColor(order.status)} px-3 py-1 rounded-full flex items-center gap-1 w-fit`}
+                      className={`${getStatusColor(order.status as any)} px-3 py-1 rounded-full flex items-center gap-1 w-fit`}
                     >
-                      {getStatusIcon(order.status)}
-                      {getStatusText(order.status)}
+                      {getStatusIcon(order.status as any)}
+                      {getStatusText(order.status as any)}
                     </Badge>
                   </div>
 
                   {/* Price */}
-                  {order.estimated_cost && (
+                  {order.total_price && (
                     <div className="mb-6">
                       <p className="text-2xl font-bold">
-                        {formatCurrency(order.estimated_cost)}
+                        {formatCurrency(Number(order.total_price))}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        Valor estimado
+                        Valor total
                       </p>
                     </div>
                   )}

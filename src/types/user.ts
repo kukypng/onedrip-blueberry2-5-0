@@ -15,6 +15,7 @@ export interface UserProfile {
   name: string;
   username?: string;
   role: string;
+  service_orders_beta_enabled?: boolean;
   budget_limit: number;
   budget_warning_enabled: boolean;
   budget_warning_days: number;

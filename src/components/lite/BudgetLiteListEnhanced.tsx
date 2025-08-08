@@ -157,10 +157,11 @@ export const BudgetLiteListEnhanced = ({
 
   // Error state
   if (error) {
+    const errorMessage = typeof error === 'string' ? error : String((error as any)?.message || 'Erro ao carregar orçamentos');
     return (
       <div className="flex items-center justify-center h-64 p-4">
         <div className="text-center">
-          <p className="text-destructive mb-4">{typeof error === 'string' ? error : error?.message || 'Erro ao carregar orçamentos'}</p>
+          <p className="text-destructive mb-4">{errorMessage}</p>
           <Button onClick={handleRefreshWithFeedback}>
             Tentar Novamente
           </Button>

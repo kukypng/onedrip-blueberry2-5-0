@@ -84,8 +84,8 @@ export const ServiceOrderDetailsPage = () => {
   const { data: serviceOrder, isLoading: isLoadingOrder } = useServiceOrderDetails(id);
   const { data: events, isLoading: isLoadingEvents } = useServiceOrderEvents(id);
   const { data: attachments, isLoading: isLoadingAttachments } = useServiceOrderAttachments(id);
-  const { data: items, isLoading: isLoadingItems } = useServiceOrderItems(id);
-  const { updateServiceOrderStatus, deleteServiceOrder, isUpdating, isDeleting } = useSecureServiceOrders(user?.id);
+  const { items, isLoading: isLoadingItems } = useServiceOrderItems(id);
+  const { updateStatus: updateServiceOrderStatus, deleteServiceOrder, isUpdating, isDeleting } = useSecureServiceOrders(user?.id);
 
   // Helper functions
   const getStatusIcon = (status: string) => {
@@ -668,9 +668,9 @@ export const ServiceOrderDetailsPage = () => {
                             </Badge>
                           </div>
                           
-                          {event.description && (
+                          {(event as any).payload?.description && (
                             <p className="text-sm text-muted-foreground mb-2">
-                              {event.description}
+                              {(event as any).payload?.description}
                             </p>
                           )}
                           

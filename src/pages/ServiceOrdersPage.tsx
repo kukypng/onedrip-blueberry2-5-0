@@ -643,9 +643,8 @@ export const ServiceOrdersPage = () => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => window.open(`tel:${order.client_phone}`, '_self')}
-                        className="flex flex-col items-center gap-1 p-2 h-auto text-green-600 hover:text-green-700"
-                        disabled={!order.client_phone}
+                        disabled
+                        className="flex flex-col items-center gap-1 p-2 h-auto text-muted-foreground"
                       >
                         <Phone className="h-5 w-5" />
                         <span className="text-xs">Ligar</span>

@@ -164,8 +164,7 @@ export const ServiceOrderDetailsPage = () => {
     try {
       await updateServiceOrderStatus({
         id,
-        status: statusUpdateData.status,
-        notes: statusUpdateData.notes || undefined
+        status: statusUpdateData.status
       });
       
       setShowStatusUpdate(false);
@@ -529,16 +528,14 @@ export const ServiceOrderDetailsPage = () => {
                         <div className="text-xs text-muted-foreground mt-1">{item.notes}</div>
                       )}
                     </div>
-                    {item.price && (
-                      <div className="text-right">
-                        <div className="font-medium">R$ {item.price.toFixed(2)}</div>
-                        {item.warranty_months && (
-                          <div className="text-xs text-muted-foreground">
-                            Garantia: {item.warranty_months} meses
-                          </div>
-                        )}
-                      </div>
-                    )}
+                    <div className="text-right">
+                      <div className="font-medium">R$ {item.unit_price.toFixed(2)}</div>
+                      {item.warranty_months && (
+                        <div className="text-xs text-muted-foreground">
+                          Garantia: {item.warranty_months} meses
+                        </div>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

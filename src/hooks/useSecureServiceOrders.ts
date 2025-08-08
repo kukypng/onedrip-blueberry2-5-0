@@ -494,7 +494,7 @@ export const useServiceOrderStats = (userId: string | undefined, dateRange?: { f
         // Query base para ordens de serviço do usuário
         let baseQuery = supabase
           .from('service_orders')
-          .select('status, total_price, created_at, completed_at')
+          .select('status, total_price, created_at')
           .eq('owner_id', userId)
           .is('deleted_at', null);
 

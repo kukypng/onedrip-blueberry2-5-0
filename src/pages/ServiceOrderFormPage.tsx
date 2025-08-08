@@ -134,7 +134,7 @@ export const ServiceOrderFormPage = () => {
         deviceModel: serviceOrderDetails.device_model || '',
         imeiSerial: serviceOrderDetails.imei_serial || '',
         reportedIssue: serviceOrderDetails.reported_issue || '',
-        priority: serviceOrderDetails.priority || 'medium',
+        priority: (serviceOrderDetails.priority as ServiceOrderPriority) || 'medium',
         laborCost: serviceOrderDetails.labor_cost ? serviceOrderDetails.labor_cost.toString() : '',
         partsCost: serviceOrderDetails.parts_cost ? serviceOrderDetails.parts_cost.toString() : '',
         totalPrice: serviceOrderDetails.total_price ? serviceOrderDetails.total_price.toString() : '',

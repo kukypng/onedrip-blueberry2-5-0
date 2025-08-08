@@ -38,10 +38,10 @@ interface LayoutContextType extends DeviceInfo {
     '2xl': number;
   };
   safeArea: {
-    top: string;
-    bottom: string;
-    left: string;
-    right: string;
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
   };
   // Performance optimizations
   reducedMotion: boolean;
@@ -95,18 +95,17 @@ export const LayoutProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const getSafeArea = () => {
-    // iOS safe area support
-    const safeAreaTop = 'env(safe-area-inset-top, 0px)';
-    const safeAreaBottom = 'env(safe-area-inset-bottom, 0px)';
-    const safeAreaLeft = 'env(safe-area-inset-left, 0px)';
-    const safeAreaRight = 'env(safe-area-inset-right, 0px)';
-
-    return {
-      top: safeAreaTop,
-      bottom: safeAreaBottom,
-      left: safeAreaLeft,
-      right: safeAreaRight
-    };
+    try {
+      const computedStyle = getComputedStyle(document.documentElement);
+      return {
+        top: parseInt(computedStyle.getPropertyValue('env(safe-area-inset-top)') || '0'),
+        bottom: parseInt(computedStyle.getPropertyValue('env(safe-area-inset-bottom)') || '0'),
+        left: parseInt(computedStyle.getPropertyValue('env(safe-area-inset-left)') || '0'),
+        right: parseInt(computedStyle.getPropertyValue('env(safe-area-inset-right)') || '0'),
+      };
+    } catch {
+      return { top: 0, bottom: 0, left: 0, right: 0 };
+    }
   };
   
   const getSpacing = () => {

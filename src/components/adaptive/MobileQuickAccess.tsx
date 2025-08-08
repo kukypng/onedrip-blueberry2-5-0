@@ -1,9 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { useDensity } from '@/contexts/DensityContext';
-import { useAuth } from '@/contexts/AuthContext';
-import { useLayout } from '@/contexts/LayoutContext';
+import { useAuth } from '@/hooks/useAuth';
+import { useResponsive } from '@/hooks/useResponsive';
 import { Button } from '@/components/ui/button';
 import { Plus, BarChart3, Users, CreditCard, Settings, HelpCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,9 +13,11 @@ interface MobileQuickAccessProps {
 }
 
 export const MobileQuickAccess = ({ onTabChange, activeTab }: MobileQuickAccessProps) => {
-  const { density } = useDensity();
   const { hasPermission } = useAuth();
-  const { orientation, screenSize } = useLayout();
+  const { currentBreakpoint, isLandscape, isCompactHeight } = useResponsive();
+  const screenSize = currentBreakpoint;
+  const orientation = isLandscape ? 'landscape' : 'portrait';
+  const density = isCompactHeight ? 'compact' : 'comfortable';
   const [isVisible, setIsVisible] = useState(true);
 
   const quickActions = [

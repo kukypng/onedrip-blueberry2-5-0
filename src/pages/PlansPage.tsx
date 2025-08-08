@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { PlansHero } from '@/components/plans/PlansHero';
@@ -65,6 +65,7 @@ interface SiteSettings {
 
 export const PlansPage = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const navigate = useNavigate();
 
   // Fetch site settings from database
@@ -110,6 +111,7 @@ export const PlansPage = () => {
     }
     loadMercadoPagoScript();
   }, []);
+  useEffect(() => { document.title = "Planos | OneDrip"; }, []);
   const handlePlanSelection = () => {
     setShowConfirmation(true);
   };
@@ -214,7 +216,23 @@ export const PlansPage = () => {
           benefits={config.benefits_data}
           show={config.show_benefits_section}
         />
-        <PlanCard config={config} onPlanSelection={handlePlanSelection} />
+        {/* Billing cycle toggle */}
+        <div className="flex items-center justify-center gap-2 mb-2">
+          <Button variant={billingCycle === 'monthly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('monthly')}>
+            Mensal
+          </Button>
+          <Button variant={billingCycle === 'yearly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('yearly')}>
+            Anual <span className="ml-2 text-xs text-muted-foreground">(2 meses grátis)</span>
+          </Button>
+        </div>
+        <PlanCard 
+          config={{
+            ...config,
+            plan_price: billingCycle === 'yearly' ? Math.round(config.plan_price * 12 * 0.83) : config.plan_price,
+            plan_period: billingCycle === 'yearly' ? '/ano' : config.plan_period,
+          }} 
+          onPlanSelection={handlePlanSelection} 
+        />
         <TestimonialsSection 
           title={config.testimonials_section_title}
           subtitle={config.testimonials_section_subtitle}
@@ -260,8 +278,22 @@ export const PlansPage = () => {
         </div>
       </div>
 
-      {/* Contact Section */}
-      
+      {/* Sticky mobile CTA */}
+      <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/80 backdrop-blur-md p-3 md:hidden">
+        <div className="container mx-auto flex items-center justify-between gap-3">
+          <Button onClick={handlePlanSelection} className="flex-1">
+            {config.cta_button_text}
+          </Button>
+          <a
+            href={`https://wa.me/${config.whatsapp_number}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Dúvidas?
+          </a>
+        </div>
+      </div>
 
       {/* Confirmation Dialog */}
       <ConfirmationDialog open={showConfirmation} onOpenChange={setShowConfirmation} onConfirm={handleConfirmPayment} title="Confirmar Assinatura" description="Você será redirecionado para o MercadoPago para finalizar o pagamento. Após a confirmação do pagamento, envie o comprovante para nosso WhatsApp para ativarmos sua conta imediatamente." confirmButtonText="Ir para Pagamento" cancelButtonText="Cancelar" />

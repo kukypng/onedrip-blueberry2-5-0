@@ -109,10 +109,12 @@ export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
       
       <SidebarContent className={cn(
         "p-2",
-        isDesktop && "desktop-sidebar-content"
+        isDesktop && "px-3 pt-3 overflow-x-hidden"
       )}>
         <SidebarMenu className={cn(
-          isDesktop && "desktop-sidebar-menu"
+          // mobile: coluna; desktop: linha com wrap
+          "flex flex-col gap-1",
+          isDesktop && "flex-row flex-wrap gap-2"
         )}>
           {navigationItems.map((item) => {
             if (!item.permission) return null;
@@ -120,16 +122,16 @@ export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
             return (
               <SidebarMenuItem key={item.id} className={cn(
                 "p-1",
-                isDesktop && "desktop-sidebar-item"
+                isDesktop && "p-0"
               )}>
                 <SidebarMenuButton
                   onClick={() => onTabChange(item.id)}
                   isActive={activeTab === item.id}
                   className={cn(
-                    "w-full h-12 text-base font-medium rounded-lg",
-                    "transition-all duration-200 ease-in-out",
-                    "hover:scale-105 active:scale-95",
-                    isDesktop && "desktop-sidebar-button"
+                    // mobile ocupa largura total, desktop vira "chip" horizontal
+                    "h-12 text-base font-medium rounded-lg transition-all duration-200 ease-in-out hover:scale-105 active:scale-95",
+                    !isDesktop && "w-full",
+                    isDesktop && "w-auto px-3 justify-start gap-3"
                   )}
                   tooltip={item.label}
                 >

@@ -124,17 +124,6 @@ export const AppSidebar = ({
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className={cn("mt-auto sticky bottom-0 p-3 bg-background border-t border-border", isDesktop && "desktop-sidebar-footer")}>
-        <div className={cn("flex flex-col gap-2 items-center", isDesktop && "desktop-flex-col")}>
-            <SidebarMenu className="w-full">
-                <SidebarMenuItem className={cn("p-1", isDesktop && "desktop-sidebar-item")}>
-                    <SidebarMenuButton className={cn("w-full h-12 text-base font-medium rounded-lg text-muted-foreground hover:text-foreground", "transition-all duration-200 ease-in-out", isDesktop && "desktop-sidebar-button")} onClick={signOut} tooltip="Sair">
-                          <LogOut className="h-5 w-5" />
-                        <span className={cn("transition-opacity duration-200", state === "collapsed" && "opacity-0")}>Sair</span>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
-            </SidebarMenu>
-        </div>
-      </SidebarFooter>
+      
     </Sidebar>;
 };

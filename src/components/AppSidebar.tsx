@@ -62,7 +62,7 @@ export const AppSidebar = ({
     permission: true
   }];
   return <Sidebar className={cn("border-r border-border dark:border-white/5", "transition-all duration-300 ease-in-out", isDesktop && "desktop-sidebar")} collapsible="icon">
-      <SidebarRail />
+      
       
       <AnimatePresence>
         {state === "expanded" && <motion.div initial={{

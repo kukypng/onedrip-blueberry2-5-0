@@ -21,7 +21,7 @@ import {
   ChevronRight
 } from 'lucide-react';
 
-type ActiveSection = 'overview' | 'users' | 'licenses' | 'site' | 'tools' | 'settings';
+type ActiveSection = 'overview' | 'users' | 'licenses' | 'site' | 'tools' | 'notifications' | 'settings';
 
 interface AdminNavigationProps {
   activeSection: ActiveSection;
@@ -60,6 +60,14 @@ export const AdminNavigation = ({ activeSection, onSectionChange }: AdminNavigat
       icon: Globe,
       description: 'Configurações gerais',
       color: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
+      count: null
+    },
+    {
+      id: 'notifications' as ActiveSection,
+      label: 'Notificações',
+      icon: Bell,
+      description: 'Enviar mensagens',
+      color: 'bg-yellow-500/10 text-yellow-600 dark:text-yellow-400',
       count: null
     },
     {

@@ -29,6 +29,7 @@ import { BudgetsPage } from "./pages/BudgetsPage";
 import { ServiceOrdersPage } from "./pages/ServiceOrdersPage";
 import { ServiceOrderFormPage } from "./pages/ServiceOrderFormPage";
 import { ServiceOrderDetailsPage } from "./pages/ServiceOrderDetailsPage";
+import { ServiceOrderTrashPage } from "./pages/ServiceOrderTrashPage";
 import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { LicensePage } from "./pages/LicensePage";
 import { PWAProvider } from "./components/PWAProvider";
@@ -183,6 +184,14 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <ServiceOrderDetailsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders-trash" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrderTrashPage />
             </ProtectedRoute>
           } 
         />

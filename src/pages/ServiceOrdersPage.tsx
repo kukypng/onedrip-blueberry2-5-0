@@ -38,7 +38,7 @@ import {
   FileText,
   X
 } from 'lucide-react';
-import { useSecureServiceOrders, useServiceOrderStats } from '@/hooks/useSecureServiceOrders';
+import { useSecureServiceOrders, useServiceOrderStats, useDeletedServiceOrdersCount } from '@/hooks/useSecureServiceOrders';
 import { toast } from 'sonner';
 import type { Enums } from '@/integrations/supabase/types';
 
@@ -92,6 +92,7 @@ export const ServiceOrdersPage = () => {
   } = useSecureServiceOrders(user?.id, hookFilters);
 
   const { data: stats } = useServiceOrderStats(user?.id);
+  const { count: deletedCount } = useDeletedServiceOrdersCount(user?.id);
 
   // Helper functions
   const formatCurrency = (value: number) => {
@@ -257,14 +258,30 @@ export const ServiceOrdersPage = () => {
             </div>
           </div>
           
-          <Button
-            size="sm"
-            onClick={() => navigate('/service-orders/new')}
-            className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
-          >
-            <Plus className="h-4 w-4" />
-            Nova
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/service-orders-trash')}
+              className="gap-2 relative"
+            >
+              <Trash2 className="h-4 w-4" />
+              Lixeira
+              {deletedCount > 0 && (
+                <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 text-xs flex items-center justify-center">
+                  {deletedCount}
+                </Badge>
+              )}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => navigate('/service-orders/new')}
+              className="gap-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              <Plus className="h-4 w-4" />
+              Nova
+            </Button>
+          </div>
         </div>
 
         {/* Search and Filters */}

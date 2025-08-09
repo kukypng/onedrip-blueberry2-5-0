@@ -37,8 +37,9 @@ import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
 import { AdminQuickActions } from '@/components/admin/AdminQuickActions';
+import { AdminNotificationManager } from '@/components/admin/AdminNotificationManager';
 
-type ActiveSection = 'overview' | 'users' | 'licenses' | 'site' | 'tools' | 'settings';
+type ActiveSection = 'overview' | 'users' | 'licenses' | 'site' | 'tools' | 'notifications' | 'settings';
 
 export const AdminPanelModern = () => {
   const [activeSection, setActiveSection] = useState<ActiveSection>('overview');
@@ -253,6 +254,14 @@ export const AdminPanelModern = () => {
         return <AdminLicenseManagerEnhanced />;
       case 'site':
         return <SiteSettingsContent />;
+      case 'notifications':
+        return (
+          <Card>
+            <CardContent className="p-6">
+              <AdminNotificationManager />
+            </CardContent>
+          </Card>
+        );
       case 'tools':
         return renderTools();
       default:

@@ -1,6 +1,7 @@
 import React from 'react';
 import { PlusCircle, List, Settings, Shield, Database, Users, Wrench } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import { GlassCard, RippleButton } from '@/components/ui/animations/micro-interactions';
 import { StaggerContainer } from '@/components/ui/animations/page-transitions';
 import { PWAInstallButton } from '@/components/lite/PWAInstallButton';
@@ -82,8 +83,14 @@ export const DashboardLiteQuickAccessEnhanced = ({
   onTabChange,
   hasPermission
 }: DashboardLiteQuickAccessEnhancedProps) => {
+  const navigate = useNavigate();
+  
   const handleActionClick = (action: QuickAccessAction) => {
-    onTabChange(action.tab);
+    if (action.id === 'service-orders') {
+      navigate('/service-orders');
+    } else {
+      onTabChange(action.tab);
+    }
   };
 
   const availableActions = quickAccessActions.filter(action => 

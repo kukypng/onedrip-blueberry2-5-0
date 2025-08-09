@@ -360,31 +360,22 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
         throw new Error('ID da ordem de serviço inválido');
       }
 
-      // Soft delete direto
+      // Usar a função RPC soft_delete_service_order
       const { data, error } = await supabase
-        .from('service_orders')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', serviceOrderId)
-        .eq('owner_id', userId)
-        .select()
-        .single();
+        .rpc('soft_delete_service_order', {
+          p_service_order_id: serviceOrderId
+        });
 
       if (error) {
         logSecurityEvent('SERVICE_ORDER_DELETE_ERROR', { error: error.message, serviceOrderId });
         throw error;
       }
 
-      // Criar evento de exclusão
-      await supabase
-        .from('service_order_events')
-        .insert({
-          service_order_id: serviceOrderId,
-          event_type: 'deleted',
-          payload: { description: 'Ordem de serviço excluída' },
-          created_by: userId
-        });
+      if (!data) {
+        throw new Error('Falha ao excluir ordem de serviço');
+      }
 
-      return data;
+      return { success: true };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['secure-service-orders'] });
@@ -392,6 +383,118 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     },
     onError: (error) => {
       toast.error(`Erro ao excluir ordem de serviço: ${error.message}`);
+    }
+  });
+
+  // Mutation para restaurar ordem de serviço (desfazer soft delete)
+  const restoreServiceOrderMutation = useMutation({
+    mutationFn: async (serviceOrderId: string) => {
+      // Validar userId
+      if (!userId || !isValidUUID(userId)) {
+        logSecurityEvent('INVALID_USER_ID_RESTORE', { userId: userId?.substring(0, 10) + '...' || 'undefined' });
+        throw new Error('ID do usuário inválido');
+      }
+      
+      // Validar ID da ordem de serviço
+      if (!serviceOrderId || typeof serviceOrderId !== 'string' || !isValidUUID(serviceOrderId)) {
+        logSecurityEvent('INVALID_RESTORE_ID', { serviceOrderId });
+        throw new Error('ID da ordem de serviço inválido');
+      }
+
+      // Usar a função RPC restore_service_order
+      const { data, error } = await supabase
+        .rpc('restore_service_order', {
+          service_order_id: serviceOrderId
+        });
+
+      if (error) {
+        logSecurityEvent('SERVICE_ORDER_RESTORE_ERROR', { error: error.message, serviceOrderId });
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error('Falha ao restaurar ordem de serviço');
+      }
+
+      return { success: true };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['secure-service-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      toast.success('Ordem de serviço restaurada com sucesso');
+    },
+    onError: (error) => {
+      toast.error(`Erro ao restaurar ordem de serviço: ${error.message}`);
+    }
+  });
+
+  // Mutation para excluir permanentemente ordem de serviço (hard delete)
+  const hardDeleteServiceOrderMutation = useMutation({
+    mutationFn: async (serviceOrderId: string) => {
+      // Validar userId
+      if (!userId || !isValidUUID(userId)) {
+        logSecurityEvent('INVALID_USER_ID_HARD_DELETE', { userId: userId?.substring(0, 10) + '...' || 'undefined' });
+        throw new Error('ID do usuário inválido');
+      }
+      
+      // Validar ID da ordem de serviço
+      if (!serviceOrderId || typeof serviceOrderId !== 'string' || !isValidUUID(serviceOrderId)) {
+        logSecurityEvent('INVALID_HARD_DELETE_ID', { serviceOrderId });
+        throw new Error('ID da ordem de serviço inválido');
+      }
+
+      // Usar a função RPC hard_delete_service_order
+      const { data, error } = await supabase
+        .rpc('hard_delete_service_order', {
+          service_order_id: serviceOrderId
+        });
+
+      if (error) {
+        logSecurityEvent('SERVICE_ORDER_HARD_DELETE_ERROR', { error: error.message, serviceOrderId });
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error('Falha ao excluir permanentemente ordem de serviço');
+      }
+
+      return { success: true };
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      toast.success('Ordem de serviço excluída permanentemente');
+    },
+    onError: (error) => {
+      toast.error(`Erro ao excluir permanentemente: ${error.message}`);
+    }
+  });
+
+  // Mutation para esvaziar lixeira (excluir permanentemente todas as ordens soft-deleted)
+  const emptyTrashMutation = useMutation({
+    mutationFn: async () => {
+      // Validar userId
+      if (!userId || !isValidUUID(userId)) {
+        logSecurityEvent('INVALID_USER_ID_EMPTY_TRASH', { userId: userId?.substring(0, 10) + '...' || 'undefined' });
+        throw new Error('ID do usuário inválido');
+      }
+
+      // Usar a função RPC empty_service_orders_trash
+      const { data, error } = await supabase
+        .rpc('empty_service_orders_trash');
+
+      if (error) {
+        logSecurityEvent('SERVICE_ORDER_EMPTY_TRASH_ERROR', { error: error.message });
+        throw error;
+      }
+
+      return data; // Retorna o número de ordens excluídas
+    },
+    onSuccess: (deletedCount: number) => {
+      queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      toast.success(`${deletedCount} ordens de serviço excluídas permanentemente`);
+    },
+    onError: (error) => {
+      toast.error(`Erro ao esvaziar lixeira: ${error.message}`);
     }
   });
 
@@ -414,12 +517,18 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     updateServiceOrder: updateServiceOrderMutation.mutate,
     updateStatus: updateStatusMutation.mutate,
     deleteServiceOrder: deleteServiceOrderMutation.mutate,
+    restoreServiceOrder: restoreServiceOrderMutation.mutate,
+    hardDeleteServiceOrder: hardDeleteServiceOrderMutation.mutate,
+    emptyTrash: emptyTrashMutation.mutate,
     
     // States
     isCreating: createServiceOrderMutation.isPending,
     isUpdating: updateServiceOrderMutation.isPending,
     isUpdatingStatus: updateStatusMutation.isPending,
     isDeleting: deleteServiceOrderMutation.isPending,
+    isRestoring: restoreServiceOrderMutation.isPending,
+    isHardDeleting: hardDeleteServiceOrderMutation.isPending,
+    isEmptyingTrash: emptyTrashMutation.isPending,
     
     // Utils
     refetch: serviceOrdersQuery.refetch,
@@ -734,5 +843,48 @@ export const useServiceOrderAttachments = (serviceOrderId: string | undefined) =
     isLoading: attachmentsQuery.isLoading,
     error: attachmentsQuery.error,
     refetch: attachmentsQuery.refetch
+  };
+};
+
+/**
+ * Hook para buscar o número de ordens de serviço excluídas (lixeira)
+ */
+export const useDeletedServiceOrdersCount = (userId: string | undefined) => {
+  const deletedCountQuery = useQuery({
+    queryKey: ['deleted-service-orders-count', userId],
+    queryFn: async (): Promise<number> => {
+      if (!userId) return 0;
+      
+      // Validar se userId é um UUID válido
+      if (!isValidUUID(userId)) {
+        logSecurityEvent('INVALID_USER_ID_DELETED_COUNT', { userId: userId?.substring(0, 10) + '...' || 'undefined' });
+        return 0;
+      }
+
+      try {
+        const { data, error } = await supabase.rpc('get_deleted_service_orders');
+        
+        if (error) {
+          logSecurityEvent('DELETED_SERVICE_ORDERS_COUNT_ERROR', { error: error.message, userId });
+          throw error;
+        }
+
+        return data ? data.length : 0;
+      } catch (error) {
+        logSecurityEvent('DELETED_SERVICE_ORDERS_COUNT_FETCH_ERROR', { error, userId });
+        return 0;
+      }
+    },
+    enabled: !!userId,
+    staleTime: 1000 * 60 * 2, // 2 minutos
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+
+  return {
+    count: deletedCountQuery.data || 0,
+    isLoading: deletedCountQuery.isLoading,
+    error: deletedCountQuery.error,
+    refetch: deletedCountQuery.refetch
   };
 };

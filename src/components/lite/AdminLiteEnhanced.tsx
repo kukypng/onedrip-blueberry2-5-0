@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe, Menu } from 'lucide-react';
+import { ArrowLeft, Users, Shield, UserPlus, Settings, Search, Calendar, Trash2, Loader2, Gamepad2, Key, BarChart3, Download, Upload, Filter, Grid, List, CheckSquare, MoreHorizontal, Image, Globe, Menu, Bell } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +19,7 @@ import { UserSettings } from '@/components/UserManagement/UserSettings';
 import { BetaFeaturesSettingsLite } from '@/components/lite/BetaFeaturesSettingsLite';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
+import { AdminNotificationManager } from '@/components/admin/AdminNotificationManager';
 import { AdminLogs } from '@/components/AdminLogs';
 import { AdminDebugPanel } from '@/components/AdminDebugPanel';
 import { AdminTestPanel } from '@/components/AdminTestPanel';
@@ -295,6 +296,7 @@ const AdminLiteEnhancedComponent = ({
                 {activeTab === 'analytics' && <><BarChart3 className="h-5 w-5" />Analytics</>}
                 {activeTab === 'settings' && <><Settings className="h-5 w-5" />Configurações</>}
                 {activeTab === 'licenses' && <><Key className="h-5 w-5" />Licenças</>}
+                {activeTab === 'notifications' && <><Bell className="h-5 w-5" />Notificações</>}
                 {activeTab === 'beta' && <><Settings className="h-5 w-5" />Beta</>}
                 {activeTab === 'game' && <><Gamepad2 className="h-5 w-5" />Jogo</>}
                 {activeTab === 'logs' && <><Shield className="h-5 w-5" />Logs</>}
@@ -329,6 +331,10 @@ const AdminLiteEnhancedComponent = ({
                   <DropdownMenuItem onClick={() => setActiveTab('licenses')} className={activeTab === 'licenses' ? 'bg-accent' : ''}>
                     <Key className="h-4 w-4 mr-2" />
                     Licenças
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('notifications')} className={activeTab === 'notifications' ? 'bg-accent' : ''}>
+                    <Bell className="h-4 w-4 mr-2" />
+                    Notificações
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Ferramentas</DropdownMenuLabel>
@@ -582,6 +588,10 @@ const AdminLiteEnhancedComponent = ({
 
           <TabsContent value="licenses" className="p-4">
             <AdminLicenseManagerEnhanced />
+          </TabsContent>
+
+          <TabsContent value="notifications" className="p-4">
+            <AdminNotificationManager />
           </TabsContent>
 
           <TabsContent value="beta" className="p-4">

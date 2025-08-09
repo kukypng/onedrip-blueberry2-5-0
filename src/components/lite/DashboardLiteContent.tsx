@@ -8,6 +8,7 @@ import { SettingsLite } from './SettingsLite';
 import { AdminLiteEnhanced } from './AdminLiteEnhanced';
 import { ClientsLite } from './ClientsLite';
 import { ServiceOrdersLite } from './ServiceOrdersLite';
+import { ServiceOrderTrash } from '@/components/ServiceOrderTrash';
 
 interface DashboardLiteContentProps {
   budgets: any[];
@@ -79,6 +80,13 @@ export const DashboardLiteContent = ({
           userId={userId || ''}
           onBack={onNavigateBack || (() => {})}
         />
+      );
+      
+    case 'service-orders-trash':
+      return (
+        <div className="p-4">
+          <ServiceOrderTrash />
+        </div>
       );
       
     case 'data-management':

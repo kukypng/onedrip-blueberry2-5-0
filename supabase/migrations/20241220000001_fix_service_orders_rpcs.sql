@@ -33,7 +33,6 @@ BEGIN
         SELECT 1 FROM user_profiles 
         WHERE id = auth.uid() 
         AND (service_orders_beta_enabled = true OR role = 'admin')
-        AND is_active = true
     ) THEN
         RAISE EXCEPTION 'Acesso negado: Módulo Service Orders (Beta) não habilitado';
     END IF;
@@ -292,7 +291,6 @@ BEGIN
         SELECT 1 FROM user_profiles 
         WHERE id = auth.uid() 
         AND (service_orders_beta_enabled = true OR role = 'admin')
-        AND is_active = true
     ) THEN
         RAISE EXCEPTION 'Acesso negado: Módulo Service Orders (Beta) não habilitado';
     END IF;

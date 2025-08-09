@@ -115,18 +115,8 @@ export const AppSidebar = ({
           return <SidebarMenuItem key={item.id} className={cn("p-1", isDesktop && "p-0")}>
                 <SidebarMenuButton onClick={() => onTabChange(item.id)} isActive={activeTab === item.id} className={cn(
             // mobile ocupa largura total, desktop vira "chip" horizontal
-            "h-12 text-base font-medium rounded-lg transition-all duration-200 ease-in-out hover:scale-105 active:scale-95", !isDesktop && "w-full", isDesktop && "w-auto px-3 justify-start gap-3")} tooltip={item.label}>
-                  <motion.div whileHover={{
-                scale: 1.1
-              }} whileTap={{
-                scale: 0.9
-              }} transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 17
-              }}>
-                    <Icon className="h-5 w-5" />
-                  </motion.div>
+            "h-12 text-base font-medium rounded-lg transition-all duration-200 ease-in-out", !isDesktop && "w-full", isDesktop && "w-auto px-3 justify-start gap-3")} tooltip={item.label}>
+                  <Icon className="h-5 w-5" />
                   <span className={cn("transition-opacity duration-200", state === "collapsed" && "opacity-0")}>{item.label}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>;
@@ -138,18 +128,8 @@ export const AppSidebar = ({
         <div className={cn("flex flex-col gap-2 items-center", isDesktop && "desktop-flex-col")}>
             <SidebarMenu className="w-full">
                 <SidebarMenuItem className={cn("p-1", isDesktop && "desktop-sidebar-item")}>
-                    <SidebarMenuButton className={cn("w-full h-12 text-base font-medium rounded-lg text-muted-foreground hover:text-foreground", "transition-all duration-200 ease-in-out", "hover:scale-105 active:scale-95", isDesktop && "desktop-sidebar-button")} onClick={signOut} tooltip="Sair">
-                        <motion.div whileHover={{
-                scale: 1.1
-              }} whileTap={{
-                scale: 0.9
-              }} transition={{
-                type: "spring",
-                stiffness: 400,
-                damping: 17
-              }}>
+                    <SidebarMenuButton className={cn("w-full h-12 text-base font-medium rounded-lg text-muted-foreground hover:text-foreground", "transition-all duration-200 ease-in-out", isDesktop && "desktop-sidebar-button")} onClick={signOut} tooltip="Sair">
                           <LogOut className="h-5 w-5" />
-                        </motion.div>
                         <span className={cn("transition-opacity duration-200", state === "collapsed" && "opacity-0")}>Sair</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

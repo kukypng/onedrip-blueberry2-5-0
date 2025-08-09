@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Home, FileText, Plus, Settings, Menu, Shield, Database, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { NotificationIndicator } from '@/components/NotificationIndicator';
 
 interface TabletHeaderNavProps {
   activeTab: string;
@@ -157,6 +158,12 @@ export const TabletHeaderNav = ({
           "flex items-center gap-3",
           isDesktop && "desktop-header-right"
         )}>
+          <NotificationIndicator 
+            variant="popover"
+            size="sm"
+            className="hidden sm:flex"
+          />
+          
           {profile && (
             <div className={cn(
               "hidden md:flex items-center gap-2",

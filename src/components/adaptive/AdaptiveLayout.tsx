@@ -16,6 +16,7 @@ import { TabletHeaderNav } from './TabletHeaderNav';
 import { cn } from '@/lib/utils';
 import { MobileLoading } from '@/components/ui/mobile-loading';
 import { MobileMenuProvider } from '@/components/mobile/MobileMenuProvider';
+import { NotificationIndicator } from '@/components/NotificationIndicator';
 import { MobileHamburgerButton } from '@/components/mobile/MobileHamburgerButton';
 import { MobileHamburgerMenu } from '@/components/mobile/MobileHamburgerMenu';
 import { useMobileMenuContext } from '@/components/mobile/MobileMenuProvider';
@@ -73,25 +74,33 @@ const MobileLayoutContent = ({ children, activeTab, onTabChange }: AdaptiveLayou
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="flex items-center gap-2 sm:gap-3">
-          <MobileHamburgerButton
-            isOpen={isOpen}
-            onClick={toggleMenu}
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <MobileHamburgerButton
+              isOpen={isOpen}
+              onClick={toggleMenu}
+            />
+            <img 
+              src="/lovable-uploads/logoo.png" 
+              alt="OneDrip Logo" 
+              className={cn(
+                "transition-all duration-300",
+                orientation === 'landscape' ? "h-6 w-6" : "h-7 w-7 sm:h-8 sm:w-8"
+              )} 
+            />
+            <h1 className={cn(
+              "font-bold text-foreground transition-all duration-300",
+              orientation === 'landscape' ? "text-lg" : "text-lg sm:text-xl"
+            )}>
+              OneDrip
+            </h1>
+          </div>
+          
+          <NotificationIndicator 
+            variant="simple"
+            size="sm"
+            className="mr-2"
           />
-          <img 
-            src="/lovable-uploads/logoo.png" 
-            alt="OneDrip Logo" 
-            className={cn(
-              "transition-all duration-300",
-              orientation === 'landscape' ? "h-6 w-6" : "h-7 w-7 sm:h-8 sm:w-8"
-            )} 
-          />
-          <h1 className={cn(
-            "font-bold text-foreground transition-all duration-300",
-            orientation === 'landscape' ? "text-lg" : "text-lg sm:text-xl"
-          )}>
-            OneDrip
-          </h1>
         </div>
       </motion.header>
 
@@ -234,13 +243,20 @@ export const AdaptiveLayout = ({ children, activeTab, onTabChange }: AdaptiveLay
                   </motion.div>
                   <div className="flex-1" />
                   <motion.div 
-                    className="text-sm text-muted-foreground flex items-center gap-2"
+                    className="flex items-center gap-4"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.2 }}
                   >
-                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                    Desktop Mode - Layout Horizontal
+                    <NotificationIndicator 
+                      variant="popover"
+                      size="default"
+                      className="mr-2"
+                    />
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      Desktop Mode - Layout Horizontal
+                    </div>
                   </motion.div>
                 </ResponsiveContainer>
               </motion.header>

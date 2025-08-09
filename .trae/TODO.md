@@ -1,7 +1,8 @@
 # TODO:
 
-- [x] 1: Criar tabela de notificações no Supabase (priority: High)
-- [x] 2: Criar componente AdminNotificationManager.tsx (priority: High)
-- [x] 3: Adicionar nova seção 'notifications' no AdminNavigation.tsx (priority: High)
-- [x] 4: Integrar o componente no AdminPanelModern.tsx (priority: High)
-- [x] 5: Testar funcionalidade completa do sistema de notificações (priority: Medium)
+- [x] 5: Criar funções RPC no Supabase para notificações do usuário (priority: High)
+- [x] 1: Criar hook useNotifications.ts para gerenciar notificações do usuário (priority: High)
+- [x] 2: Criar componente UserNotifications.tsx para exibir notificações (priority: High)
+- [x] 3: Criar componente NotificationIndicator.tsx para o header (priority: High)
+- [x] 4: Integrar indicador de notificações no layout principal (priority: Medium)
+- [x] 6: Testar sistema completo de notificações (priority: Medium)

@@ -70,8 +70,8 @@ export const useNotifications = () => {
       return filteredData;
     },
     enabled: isAuthenticated && !!user?.id,
-    refetchInterval: 30000, // Atualizar a cada 30 segundos
-    staleTime: 10000 // Considerar dados obsoletos após 10 segundos
+    refetchInterval: 60000, // Atualizar a cada 60 segundos
+    staleTime: 30000 // Considerar dados obsoletos após 30 segundos
   });
 
   // Contar notificações não lidas
@@ -140,6 +140,70 @@ export const useNotifications = () => {
     }
   });
 
+  // Deletar notificação individual
+  const deleteNotificationMutation = useMutation({
+    mutationFn: async (notificationId: string) => {
+      const { data, error } = await supabase.rpc('delete_user_notification', {
+        p_notification_id: notificationId
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
+      showSuccess({
+        title: 'Sucesso',
+        description: 'Notificação excluída com sucesso.'
+      });
+    },
+    onError: (error) => {
+      console.error('Erro ao excluir notificação:', error);
+      showError({
+        title: 'Erro',
+        description: 'Não foi possível excluir a notificação.'
+      });
+    }
+  });
+
+  // Deletar todas as notificações
+  const deleteAllNotificationsMutation = useMutation({
+    mutationFn: async () => {
+      const promises = notifications.map((notification: Notification) =>
+        supabase.rpc('delete_user_notification', {
+          p_notification_id: notification.id
+        })
+      );
+
+      const results = await Promise.allSettled(promises);
+      
+      // Verificar se houve erros
+      const errors = results.filter(result => result.status === 'rejected');
+      if (errors.length > 0) {
+        throw new Error(`Falha ao excluir ${errors.length} notificações`);
+      }
+
+      return results;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
+      showSuccess({
+        title: 'Sucesso',
+        description: 'Todas as notificações foram excluídas.'
+      });
+    },
+    onError: (error) => {
+      console.error('Erro ao excluir todas as notificações:', error);
+      showError({
+        title: 'Erro',
+        description: 'Não foi possível excluir todas as notificações.'
+      });
+    }
+  });
+
   // Função para marcar notificação como lida
   const markAsRead = useCallback((notificationId: string) => {
     markAsReadMutation.mutate(notificationId);
@@ -149,6 +213,16 @@ export const useNotifications = () => {
   const markAllAsRead = useCallback(() => {
     markAllAsReadMutation.mutate();
   }, [markAllAsReadMutation]);
+
+  // Função para deletar notificação
+  const deleteNotification = useCallback((notificationId: string) => {
+    deleteNotificationMutation.mutate(notificationId);
+  }, [deleteNotificationMutation]);
+
+  // Função para deletar todas as notificações
+  const deleteAllNotifications = useCallback(() => {
+    deleteAllNotificationsMutation.mutate();
+  }, [deleteAllNotificationsMutation]);
 
   // Função para atualizar filtros
   const updateFilters = useCallback((newFilters: Partial<NotificationFilters>) => {
@@ -160,25 +234,8 @@ export const useNotifications = () => {
     refetch();
   }, [refetch]);
 
-  // Configurar polling em tempo real quando há notificações não lidas
-  useEffect(() => {
-    if (!isAuthenticated || !user?.id) return;
-
-    let interval: NodeJS.Timeout;
-
-    if (unreadCount > 0) {
-      // Polling mais frequente quando há notificações não lidas
-      interval = setInterval(() => {
-        refetch();
-      }, 15000); // 15 segundos
-    }
-
-    return () => {
-      if (interval) {
-        clearInterval(interval);
-      }
-    };
-  }, [unreadCount, isAuthenticated, user?.id, refetch]);
+  // Remover polling adicional para evitar re-renders excessivos
+  // O refetchInterval de 30 segundos já é suficiente para atualizações
 
   return {
     // Dados
@@ -191,11 +248,15 @@ export const useNotifications = () => {
     // Ações
     markAsRead,
     markAllAsRead,
+    deleteNotification,
+    deleteAllNotifications,
     updateFilters,
     refreshNotifications,
     
     // Estados de loading
     isMarkingAsRead: markAsReadMutation.isPending,
-    isMarkingAllAsRead: markAllAsReadMutation.isPending
+    isMarkingAllAsRead: markAllAsReadMutation.isPending,
+    isDeletingNotification: deleteNotificationMutation.isPending,
+    isDeletingAllNotifications: deleteAllNotificationsMutation.isPending
   };
 };

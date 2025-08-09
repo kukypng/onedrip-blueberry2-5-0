@@ -1,9 +1,10 @@
 import React from 'react';
-import { X, FileText, Settings, LogOut, Home, List, PlusCircle, Shield, Database, Users } from 'lucide-react';
+import { X, FileText, Settings, LogOut, Home, List, PlusCircle, Shield, Database, Users, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 interface DashboardLiteSidebarProps {
   activeTab: string;
@@ -19,10 +20,20 @@ export const DashboardLiteSidebar = ({
   onClose 
 }: DashboardLiteSidebarProps) => {
   const { profile, hasPermission } = useAuth();
+  const navigate = useNavigate();
 
   const handleTabChange = (tab: string) => {
     onTabChange(tab);
     onClose();
+  };
+
+  const handleItemClick = (item: any) => {
+    if (item.isExternal) {
+      navigate('/notificacoes');
+      onClose();
+    } else {
+      handleTabChange(item.id);
+    }
   };
 
   const handleLogout = async () => {
@@ -52,6 +63,12 @@ export const DashboardLiteSidebar = ({
       id: 'clients',
       label: 'Clientes',
       icon: Users,
+    },
+    {
+      id: 'notifications',
+      label: 'Notificações',
+      icon: Bell,
+      isExternal: true
     },
     {
       id: 'data-management',
@@ -93,7 +110,7 @@ export const DashboardLiteSidebar = ({
                   key={item.id}
                   variant={activeTab === item.id ? "default" : "ghost"}
                   className="w-full justify-start gap-3"
-                  onClick={() => handleTabChange(item.id)}
+                  onClick={() => handleItemClick(item)}
                 >
                   <item.icon className="h-4 w-4" />
                   {item.label}

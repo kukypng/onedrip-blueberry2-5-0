@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/useToast';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -23,7 +24,9 @@ import {
   Trash2,
   Eye,
   RefreshCw,
-  Plus
+  Plus,
+  Filter,
+  BellRing
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -33,12 +36,13 @@ interface Notification {
   title: string;
   message: string;
   type: 'info' | 'warning' | 'success' | 'error';
-  target_type: 'all' | 'specific';
+  target_type: 'all' | 'specific' | 'push_enabled';
   target_user_id?: string;
   target_user_email?: string;
   created_at: string;
   expires_at?: string;
   is_active: boolean;
+  sent_count?: number;
 }
 
 interface User {
@@ -57,9 +61,10 @@ const notificationTypes = [
 ];
 
 export const AdminNotificationManager = () => {
-  const { toast } = useToast();
+  const { showSuccess, showError } = useToast();
   const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [showSentNotifications, setShowSentNotifications] = useState(false);
   
   // Form state
   const [formData, setFormData] = useState({
@@ -95,7 +100,7 @@ export const AdminNotificationManager = () => {
   });
 
   // Buscar notificações existentes
-  const { data: notifications = [], isLoading, refetch } = useQuery({
+  const { data: allNotifications = [], isLoading, refetch } = useQuery({
     queryKey: ['admin-notifications'],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -105,7 +110,8 @@ export const AdminNotificationManager = () => {
           target_user:user_profiles!notifications_target_user_id_fkey(
             full_name,
             users!inner(email)
-          )
+          ),
+          user_notifications(count)
         `)
         .order('created_at', { ascending: false });
       
@@ -113,8 +119,18 @@ export const AdminNotificationManager = () => {
       
       return data.map(notification => ({
         ...notification,
-        target_user_email: notification.target_user?.users?.email
+        target_user_email: notification.target_user?.users?.email,
+        sent_count: notification.user_notifications?.[0]?.count || 0
       }));
+    }
+  });
+
+  // Filtrar notificações baseado no toggle
+  const notifications = allNotifications.filter(notification => {
+    if (showSentNotifications) {
+      return true; // Mostrar todas
+    } else {
+      return notification.sent_count === 0; // Mostrar apenas não enviadas
     }
   });
 
@@ -134,7 +150,7 @@ export const AdminNotificationManager = () => {
       return result;
     },
     onSuccess: () => {
-      toast({
+      showSuccess({
         title: "Notificação criada",
         description: "A notificação foi enviada com sucesso."
       });
@@ -150,10 +166,9 @@ export const AdminNotificationManager = () => {
       queryClient.invalidateQueries({ queryKey: ['admin-notifications'] });
     },
     onError: (error: any) => {
-      toast({
+      showError({
         title: "Erro ao criar notificação",
-        description: error.message || "Ocorreu um erro inesperado.",
-        variant: "destructive"
+        description: error.message || "Ocorreu um erro inesperado."
       });
     }
   });
@@ -169,17 +184,16 @@ export const AdminNotificationManager = () => {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({
+      showSuccess({
         title: "Notificação desativada",
         description: "A notificação foi desativada com sucesso."
       });
       queryClient.invalidateQueries({ queryKey: ['admin-notifications'] });
     },
     onError: (error: any) => {
-      toast({
+      showError({
         title: "Erro ao desativar notificação",
-        description: error.message || "Ocorreu um erro inesperado.",
-        variant: "destructive"
+        description: error.message || "Ocorreu um erro inesperado."
       });
     }
   });
@@ -188,19 +202,17 @@ export const AdminNotificationManager = () => {
     e.preventDefault();
     
     if (!formData.title.trim() || !formData.message.trim()) {
-      toast({
+      showError({
         title: "Campos obrigatórios",
-        description: "Título e mensagem são obrigatórios.",
-        variant: "destructive"
+        description: "Título e mensagem são obrigatórios."
       });
       return;
     }
     
     if (formData.target_type === 'specific' && !formData.target_user_id) {
-      toast({
+      showError({
         title: "Usuário obrigatório",
-        description: "Selecione um usuário para notificação específica.",
-        variant: "destructive"
+        description: "Selecione um usuário para notificação específica."
       });
       return;
     }
@@ -337,6 +349,12 @@ export const AdminNotificationManager = () => {
                           Todos os usuários
                         </div>
                       </SelectItem>
+                      <SelectItem value="push_enabled">
+                        <div className="flex items-center gap-2">
+                          <BellRing className="h-4 w-4" />
+                          Usuários com notificações ativadas
+                        </div>
+                      </SelectItem>
                       <SelectItem value="specific">
                         <div className="flex items-center gap-2">
                           <User className="h-4 w-4" />
@@ -411,10 +429,25 @@ export const AdminNotificationManager = () => {
       {/* Lista de notificações */}
       <Card>
         <CardHeader>
-          <CardTitle>Notificações Enviadas</CardTitle>
-          <CardDescription>
-            Histórico de todas as notificações criadas
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Notificações</CardTitle>
+              <CardDescription>
+                {showSentNotifications ? 'Histórico de todas as notificações criadas' : 'Notificações não enviadas (rascunhos)'}
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4" />
+              <Label htmlFor="show-sent" className="text-sm font-medium">
+                Mostrar enviadas
+              </Label>
+              <Switch
+                id="show-sent"
+                checked={showSentNotifications}
+                onCheckedChange={setShowSentNotifications}
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           {isLoading ? (
@@ -474,6 +507,11 @@ export const AdminNotificationManager = () => {
                                   <Users className="h-3 w-3" />
                                   Todos os usuários
                                 </>
+                              ) : notification.target_type === 'push_enabled' ? (
+                                <>
+                                  <BellRing className="h-3 w-3" />
+                                  Usuários com push ativado
+                                </>
                               ) : (
                                 <>
                                   <User className="h-3 w-3" />
@@ -481,6 +519,13 @@ export const AdminNotificationManager = () => {
                                 </>
                               )}
                             </span>
+                            
+                            {notification.sent_count > 0 && (
+                              <span className="flex items-center gap-1">
+                                <Send className="h-3 w-3" />
+                                Enviada para {notification.sent_count} usuário(s)
+                              </span>
+                            )}
                             
                             {notification.expires_at && (
                               <span className="flex items-center gap-1">

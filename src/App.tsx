@@ -33,6 +33,7 @@ import { ServiceOrderTrashPage } from "./pages/ServiceOrderTrashPage";
 import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { LicensePage } from "./pages/LicensePage";
 import { PWAProvider } from "./components/PWAProvider";
+import NotificationsPage from "./pages/NotificationsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -192,6 +193,22 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <ServiceOrderTrashPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/notifications" 
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/notificacoes" 
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
             </ProtectedRoute>
           } 
         />

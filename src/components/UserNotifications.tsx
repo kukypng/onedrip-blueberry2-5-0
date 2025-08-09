@@ -5,6 +5,12 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { useNotifications } from '@/hooks/useNotifications';
 import { 
   Bell, 
@@ -19,7 +25,9 @@ import {
   AlertTriangle,
   Clock,
   Eye,
-  EyeOff
+  EyeOff,
+  Trash2,
+  MoreVertical
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -89,7 +97,11 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({
     updateFilters,
     refreshNotifications,
     isMarkingAsRead,
-    isMarkingAllAsRead
+    isMarkingAllAsRead,
+    deleteNotification,
+    deleteAllNotifications,
+    isDeletingNotification,
+    isDeletingAllNotifications
   } = useNotifications();
 
   if (error) {
@@ -151,6 +163,26 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({
                 <CheckCheck className="h-4 w-4 mr-2" />
                 Marcar todas como lidas
               </Button>
+            )}
+            
+            {notifications.length > 0 && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    onClick={deleteAllNotifications}
+                    disabled={isDeletingAllNotifications}
+                    className="text-red-600 focus:text-red-600"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Excluir todas
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>
@@ -251,6 +283,44 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({
                             ) : (
                               <EyeOff className="h-3 w-3 text-blue-500" />
                             )}
+                            
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="h-6 w-6 p-0 hover:bg-muted"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <MoreVertical className="h-3 w-3" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                {!notification.is_read && (
+                                  <DropdownMenuItem
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      markAsRead(notification.id);
+                                    }}
+                                    disabled={isMarkingAsRead}
+                                  >
+                                    <Check className="h-4 w-4 mr-2" />
+                                    Marcar como lida
+                                  </DropdownMenuItem>
+                                )}
+                                <DropdownMenuItem
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteNotification(notification.id);
+                                  }}
+                                  disabled={isDeletingNotification}
+                                  className="text-red-600 focus:text-red-600"
+                                >
+                                  <Trash2 className="h-4 w-4 mr-2" />
+                                  Excluir
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
                           </div>
                         </div>
                         
@@ -288,21 +358,37 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({
                           )}
                         </div>
                         
-                        {!notification.is_read && (
+                        <div className="flex items-center gap-2 mt-2">
+                          {!notification.is_read && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 px-2 text-xs"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                markAsRead(notification.id);
+                              }}
+                              disabled={isMarkingAsRead}
+                            >
+                              <Check className="h-3 w-3 mr-1" />
+                              Marcar como lida
+                            </Button>
+                          )}
+                          
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="mt-2 h-6 px-2 text-xs"
+                            className="h-6 px-2 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
                             onClick={(e) => {
                               e.stopPropagation();
-                              markAsRead(notification.id);
+                              deleteNotification(notification.id);
                             }}
-                            disabled={isMarkingAsRead}
+                            disabled={isDeletingNotification}
                           >
-                            <Check className="h-3 w-3 mr-1" />
-                            Marcar como lida
+                            <Trash2 className="h-3 w-3 mr-1" />
+                            Excluir
                           </Button>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -13,15 +13,22 @@ import {
 } from '@/components/ui/popover';
 import { useNotifications } from '@/hooks/useNotifications';
 import { UserNotifications } from '@/components/UserNotifications';
-import { Bell, BellRing } from 'lucide-react';
+import { NotificationPanel } from '@/components/NotificationPanel';
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Bell, BellRing, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NotificationIndicatorProps {
-  variant?: 'dropdown' | 'popover';
+  variant?: 'dropdown' | 'popover' | 'modal';
   className?: string;
   showBadge?: boolean;
   size?: 'sm' | 'default' | 'lg';
   iconOnly?: boolean;
+  useAdvancedPanel?: boolean;
 }
 
 export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
@@ -29,7 +36,8 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
   className,
   showBadge = true,
   size = 'default',
-  iconOnly = true
+  iconOnly = true,
+  useAdvancedPanel = false
 }) => {
   const { unreadCount, isLoading } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
@@ -53,9 +61,9 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
       variant={hasUnread ? 'default' : 'ghost'}
       size={iconOnly ? 'icon' : size}
       className={cn(
-        'relative',
+        'relative transition-all duration-200',
         iconOnly && buttonSizes[size],
-        hasUnread && 'animate-pulse',
+        hasUnread && 'shadow-lg hover:shadow-xl',
         className
       )}
       disabled={isLoading}
@@ -87,6 +95,22 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
     </Button>
   );
 
+  if (variant === 'modal') {
+    return (
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
+        <DialogTrigger asChild>
+          <NotificationButton />
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl h-[80vh] p-0">
+          <NotificationPanel 
+            onClose={() => setIsOpen(false)}
+            className="border-0 h-full"
+          />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   if (variant === 'dropdown') {
     return (
       <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
@@ -95,14 +119,23 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent 
           align="end" 
-          className="w-96 p-0"
+          className={cn(
+            "p-0",
+            useAdvancedPanel ? "w-[500px]" : "w-96"
+          )}
           sideOffset={5}
         >
-          <UserNotifications 
-            showFilters={false}
-            maxHeight="500px"
-            className="border-0 shadow-none"
-          />
+          {useAdvancedPanel ? (
+            <div className="h-[600px]">
+              <NotificationPanel className="border-0 shadow-none h-full" />
+            </div>
+          ) : (
+            <UserNotifications 
+              showFilters={false}
+              maxHeight="500px"
+              className="border-0 shadow-none"
+            />
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -115,16 +148,41 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
       </PopoverTrigger>
       <PopoverContent 
         align="end" 
-        className="w-96 p-0"
+        className={cn(
+          "p-0",
+          useAdvancedPanel ? "w-[500px]" : "w-96"
+        )}
         sideOffset={5}
       >
-        <UserNotifications 
-          showFilters={true}
-          maxHeight="500px"
-          className="border-0 shadow-none"
-        />
+        {useAdvancedPanel ? (
+          <div className="h-[600px]">
+            <NotificationPanel className="border-0 shadow-none h-full" />
+          </div>
+        ) : (
+          <UserNotifications 
+            showFilters={true}
+            maxHeight="500px"
+            className="border-0 shadow-none"
+          />
+        )}
       </PopoverContent>
     </Popover>
+  );
+};
+
+// Componente avançado com painel completo
+export const NotificationIndicatorAdvanced: React.FC<{
+  variant?: 'modal' | 'dropdown' | 'popover';
+  className?: string;
+  size?: 'sm' | 'default' | 'lg';
+}> = ({ variant = 'modal', className, size = 'default' }) => {
+  return (
+    <NotificationIndicator
+      variant={variant}
+      className={className}
+      size={size}
+      useAdvancedPanel={true}
+    />
   );
 };
 
@@ -141,8 +199,8 @@ export const NotificationIndicatorMobile: React.FC<{
       variant={hasUnread ? 'default' : 'ghost'}
       size="icon"
       className={cn(
-        'relative h-9 w-9',
-        hasUnread && 'animate-pulse',
+        'relative h-9 w-9 transition-all duration-200',
+        hasUnread && 'shadow-lg hover:shadow-xl',
         className
       )}
       onClick={onClick}

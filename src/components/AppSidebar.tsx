@@ -61,7 +61,7 @@ export const AppSidebar = ({
     icon: Settings,
     permission: true
   }];
-  return <Sidebar className={cn("border-r border-border dark:border-white/5", "transition-all duration-300 ease-in-out", isDesktop && "desktop-sidebar")} collapsible="icon">
+  return <Sidebar className={cn("border-r border-border dark:border-white/5", "transition-all duration-300 ease-in-out", "h-screen flex flex-col", isDesktop && "desktop-sidebar")} collapsible="icon">
       
       
       <AnimatePresence>
@@ -124,7 +124,7 @@ export const AppSidebar = ({
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className={cn("p-2 mt-auto", isDesktop && "desktop-sidebar-footer")}>
+      <SidebarFooter className={cn("mt-auto sticky bottom-0 p-3 bg-background border-t border-border", isDesktop && "desktop-sidebar-footer")}>
         <div className={cn("flex flex-col gap-2 items-center", isDesktop && "desktop-flex-col")}>
             <SidebarMenu className="w-full">
                 <SidebarMenuItem className={cn("p-1", isDesktop && "desktop-sidebar-item")}>

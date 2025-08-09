@@ -105,10 +105,10 @@ export const AppSidebar = ({
       
       {state === "expanded" && <SidebarSeparator />}
       
-      <SidebarContent className={cn("p-2", isDesktop && "px-3 pt-3 overflow-x-hidden")}>
+      <SidebarContent className={cn("p-3", isDesktop && "px-4 pt-4 overflow-x-hidden")}>
         <SidebarMenu className={cn(
       // mobile: coluna; desktop: linha com wrap
-      "flex flex-col gap-1", isDesktop && "flex-row flex-wrap gap-2")}>
+      "flex flex-col gap-2", isDesktop && "flex-row flex-wrap gap-3")}>
           {navigationItems.map(item => {
           if (!item.permission) return null;
           const Icon = item.icon;

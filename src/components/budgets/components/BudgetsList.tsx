@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { BudgetCard } from '../BudgetCard';
 import { BudgetTableRow } from '../BudgetTableRow';
 import { useLayout } from '@/contexts/LayoutContext';
+import { useResponsive } from '@/hooks/useResponsive';
 import { cn } from '@/lib/utils';
 interface BudgetsListProps {
   budgets: any[];
@@ -39,6 +40,8 @@ export const BudgetsList = ({
     contentPadding,
     spacing
   } = useLayout();
+  
+  const { isDesktop } = useResponsive();
 
   // Definir tamanho do checkbox "selecionar todos" baseado no dispositivo
   const getSelectAllCheckboxSize = () => {
@@ -53,9 +56,19 @@ export const BudgetsList = ({
     if (isTablet) return 'p-1.5 -m-1.5'; // Área de toque média para tablet
     return 'p-0.5'; // Área normal para desktop
   };
-  return <Card className="glass-card border-0 shadow-lg animate-fade-in bg-white/50 dark:bg-black/50 backdrop-blur-xl w-full">
-      <CardHeader className={cn("p-3 lg:p-6", isMobile && "p-3")}>
-        <CardTitle className="flex items-center justify-between text-lg lg:text-xl">
+  return <Card className={cn(
+    "glass-card border-0 shadow-lg animate-fade-in bg-white/50 dark:bg-black/50 backdrop-blur-xl w-full",
+    isDesktop && "desktop-card"
+  )}>
+      <CardHeader className={cn(
+        "p-3 lg:p-6", 
+        isMobile && "p-3",
+        isDesktop && "desktop-section-header"
+      )}>
+        <CardTitle className={cn(
+          "flex items-center justify-between text-lg lg:text-xl",
+          isDesktop && "desktop-section-title"
+        )}>
           <span>Lista de Orçamentos</span>
           {budgets.length > 0 && <div className="flex items-center space-x-2">
               
@@ -65,8 +78,16 @@ export const BudgetsList = ({
             </div>}
         </CardTitle>
       </CardHeader>
-      <CardContent className={cn("p-0 lg:p-6 lg:pt-0", isMobile && "p-0")}>
-        <div className={cn(spacing.sm, isMobile ? "p-3" : isTablet ? "p-4" : "p-0")}>
+      <CardContent className={cn(
+        "p-0 lg:p-6 lg:pt-0", 
+        isMobile && "p-0",
+        isDesktop && "desktop-content"
+      )}>
+        <div className={cn(
+          spacing.sm, 
+          isMobile ? "p-3" : isTablet ? "p-4" : "p-0",
+          isDesktop && "desktop-page-content"
+        )}>
           {/* Mobile Cards View - Otimizado */}
           <div className={cn("block lg:hidden", spacing.xs)}>
             {budgets.map((budget, index) => <div key={budget.id} className="will-change-transform w-full" style={{
@@ -78,8 +99,14 @@ export const BudgetsList = ({
           </div>
 
           {/* Desktop Table View */}
-          <div className="hidden lg:block overflow-x-auto w-full">
-            <Table className="w-full">
+          <div className={cn(
+            "hidden lg:block overflow-x-auto w-full",
+            isDesktop && "desktop-table-container"
+          )}>
+            <Table className={cn(
+              "w-full",
+              isDesktop && "desktop-table"
+            )}>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-white/10">
                   <TableHead className="w-8">

@@ -1,6 +1,9 @@
 
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
+import { useResponsive } from '@/hooks/useResponsive';
+import { cn } from '@/lib/utils';
 import { 
   Sidebar,
   SidebarContent,
@@ -35,6 +38,7 @@ interface AppSidebarProps {
 export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
   const { signOut, user, profile, hasRole } = useAuth();
   const { state } = useSidebar();
+  const { isDesktop } = useResponsive();
 
   const navigationItems = [
     { id: 'dashboard', label: 'Menu', icon: Home, permission: true },
@@ -47,44 +51,99 @@ export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
   ];
 
   return (
-    <Sidebar className="border-r border-border dark:border-white/5" collapsible="icon">
+    <Sidebar className={cn(
+      "border-r border-border dark:border-white/5",
+      "transition-all duration-300 ease-in-out",
+      isDesktop && "desktop-sidebar"
+    )} collapsible="icon">
       <SidebarRail />
       
-      {state === "expanded" && (
-        <SidebarHeader className="p-4 h-20 flex items-center">
-          <div className="flex items-center space-x-4 w-full">
-            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0">
-              <User className="h-6 w-6 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-base font-semibold text-foreground truncate">
-                {profile?.name || 'Usuário'}
-              </p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user?.email}
-              </p>
-            </div>
-          </div>
-        </SidebarHeader>
-      )}
+      <AnimatePresence>
+        {state === "expanded" && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <SidebarHeader className={cn(
+              "p-4 h-20 flex items-center",
+              isDesktop && "desktop-sidebar-header"
+            )}>
+              <div className={cn(
+                "flex items-center space-x-4 w-full",
+                isDesktop && "desktop-flex-row"
+              )}>
+                <div className={cn(
+                  "w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/20 shrink-0",
+                  isDesktop && "desktop-avatar"
+                )}>
+                  <User className="h-6 w-6 text-primary" />
+                </div>
+                <motion.div 
+                  className="flex-1 min-w-0"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.1, duration: 0.2 }}
+                >
+                  <p className={cn(
+                    "text-base font-semibold text-foreground truncate",
+                    isDesktop && "desktop-user-name"
+                  )}>
+                    {profile?.name || 'Usuário'}
+                  </p>
+                  <p className={cn(
+                    "text-xs text-muted-foreground truncate",
+                    isDesktop && "desktop-user-email"
+                  )}>
+                    {user?.email}
+                  </p>
+                </motion.div>
+              </div>
+            </SidebarHeader>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {state === "expanded" && <SidebarSeparator />}
       
-      <SidebarContent className="p-2">
-        <SidebarMenu>
+      <SidebarContent className={cn(
+        "p-2",
+        isDesktop && "desktop-sidebar-content"
+      )}>
+        <SidebarMenu className={cn(
+          isDesktop && "desktop-sidebar-menu"
+        )}>
           {navigationItems.map((item) => {
             if (!item.permission) return null;
             const Icon = item.icon;
             return (
-              <SidebarMenuItem key={item.id} className="p-1">
+              <SidebarMenuItem key={item.id} className={cn(
+                "p-1",
+                isDesktop && "desktop-sidebar-item"
+              )}>
                 <SidebarMenuButton
                   onClick={() => onTabChange(item.id)}
                   isActive={activeTab === item.id}
-                  className="w-full h-12 text-base font-medium rounded-lg"
+                  className={cn(
+                    "w-full h-12 text-base font-medium rounded-lg",
+                    "transition-all duration-200 ease-in-out",
+                    "hover:scale-105 active:scale-95",
+                    isDesktop && "desktop-sidebar-button"
+                  )}
                   tooltip={item.label}
                 >
-                  <Icon className="h-5 w-5" />
-                  <span>{item.label}</span>
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </motion.div>
+                  <span className={cn(
+                    "transition-opacity duration-200",
+                    state === "collapsed" && "opacity-0"
+                  )}>{item.label}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             );
@@ -92,17 +151,40 @@ export const AppSidebar = ({ activeTab, onTabChange }: AppSidebarProps) => {
         </SidebarMenu>
       </SidebarContent>
 
-      <SidebarFooter className="p-2 mt-auto">
-        <div className="flex flex-col gap-2 items-center">
+      <SidebarFooter className={cn(
+        "p-2 mt-auto",
+        isDesktop && "desktop-sidebar-footer"
+      )}>
+        <div className={cn(
+          "flex flex-col gap-2 items-center",
+          isDesktop && "desktop-flex-col"
+        )}>
             <SidebarMenu className="w-full">
-                <SidebarMenuItem className="p-1">
+                <SidebarMenuItem className={cn(
+                  "p-1",
+                  isDesktop && "desktop-sidebar-item"
+                )}>
                     <SidebarMenuButton
-                        className="w-full h-12 text-base font-medium rounded-lg text-muted-foreground hover:text-foreground"
+                        className={cn(
+                          "w-full h-12 text-base font-medium rounded-lg text-muted-foreground hover:text-foreground",
+                          "transition-all duration-200 ease-in-out",
+                          "hover:scale-105 active:scale-95",
+                          isDesktop && "desktop-sidebar-button"
+                        )}
                         onClick={signOut}
                         tooltip="Sair"
                     >
-                        <LogOut className="h-5 w-5" />
-                        <span>Sair</span>
+                        <motion.div
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.9 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                        >
+                          <LogOut className="h-5 w-5" />
+                        </motion.div>
+                        <span className={cn(
+                          "transition-opacity duration-200",
+                          state === "collapsed" && "opacity-0"
+                        )}>Sair</span>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
             </SidebarMenu>

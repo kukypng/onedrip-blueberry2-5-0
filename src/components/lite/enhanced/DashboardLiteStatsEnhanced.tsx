@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { GlassCard, AnimatedCounter, BounceBadge } from '@/components/ui/animations/micro-interactions';
 import { AdvancedSkeleton } from '@/components/ui/animations/loading-states';
 import { StaggerContainer } from '@/components/ui/animations/page-transitions';
+import { useResponsive } from '@/hooks/useResponsive';
 interface DashboardLiteStatsEnhancedProps {
   profile: any;
   userId?: string;
@@ -25,6 +26,7 @@ export const DashboardLiteStatsEnhanced = ({
   profile,
   userId
 }: DashboardLiteStatsEnhancedProps) => {
+  const { isDesktop } = useResponsive();
   const [stats, setStats] = useState<StatsData>({
     totalBudgets: 0,
     weeklyGrowth: 0,
@@ -103,9 +105,9 @@ export const DashboardLiteStatsEnhanced = ({
       </GlassCard>;
   }
   return (
-    <div className="space-y-6 mb-6">
+    <div className={`mb-6 ${isDesktop ? 'desktop-page-content' : 'space-y-6'}`}>
       {/* Header com saudação */}
-      <GlassCard className="p-6">
+      <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-6'}`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -142,10 +144,10 @@ export const DashboardLiteStatsEnhanced = ({
       </GlassCard>
 
       {/* Stats Cards */}
-      <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <StaggerContainer className={`${isDesktop ? 'desktop-stats-grid' : 'grid grid-cols-2 lg:grid-cols-4 gap-4'}`}>
         {/* Budgets Stats */}
         <motion.div>
-          <GlassCard className="p-4">
+          <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-4'}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
                 <DollarSign className="h-4 w-4 text-blue-600" />
@@ -163,7 +165,7 @@ export const DashboardLiteStatsEnhanced = ({
         </motion.div>
 
         <motion.div>
-          <GlassCard className="p-4">
+          <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-4'}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="w-8 h-8 rounded-lg bg-green-100 flex items-center justify-center">
                 <CheckCircle className="h-4 w-4 text-green-600" />
@@ -182,7 +184,7 @@ export const DashboardLiteStatsEnhanced = ({
 
         {/* Service Orders Stats */}
         <motion.div>
-          <GlassCard className="p-4">
+          <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-4'}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
                 <Wrench className="h-4 w-4 text-amber-600" />
@@ -200,7 +202,7 @@ export const DashboardLiteStatsEnhanced = ({
         </motion.div>
 
         <motion.div>
-          <GlassCard className="p-4">
+          <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-4'}`}>
             <div className="flex items-center justify-between mb-2">
               <div className="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center">
                 <Clock className="h-4 w-4 text-purple-600" />
@@ -219,24 +221,38 @@ export const DashboardLiteStatsEnhanced = ({
       </StaggerContainer>
 
       {/* Revenue Summary */}
-      <GlassCard className="p-6">
+      <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-6'}`}>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h3 className="text-lg font-semibold mb-4">Resumo Financeiro</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
+          <div className={`${isDesktop ? 'desktop-section-header' : 'mb-4'}`}>
+            <h3 className={`${isDesktop ? 'desktop-section-title' : 'text-lg font-semibold'}`}>Resumo Financeiro</h3>
+          </div>
+          <div className={`${isDesktop ? 'desktop-flex-row' : 'grid gap-4 grid-cols-1'}`}>
+            <div className={`space-y-2 ${
+              isDesktop 
+                ? 'p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 rounded-xl border border-green-200 dark:border-green-800' 
+                : ''
+            }`}>
               <p className="text-sm text-muted-foreground">Receita Orçamentos</p>
-              <p className="text-xl font-bold text-green-600">
-                R$ {stats.totalRevenue.toFixed(2)}
+              <p className={`font-bold text-green-600 ${
+                isDesktop ? 'text-2xl' : 'text-xl'
+              }`}>
+                R$ {stats.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
-            <div className="space-y-2">
+            <div className={`space-y-2 ${
+              isDesktop 
+                ? 'p-4 bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800' 
+                : ''
+            }`}>
               <p className="text-sm text-muted-foreground">Receita Serviços</p>
-              <p className="text-xl font-bold text-amber-600">
-                R$ {stats.serviceOrdersRevenue.toFixed(2)}
+              <p className={`font-bold text-amber-600 ${
+                isDesktop ? 'text-2xl' : 'text-xl'
+              }`}>
+                R$ {stats.serviceOrdersRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </p>
             </div>
           </div>

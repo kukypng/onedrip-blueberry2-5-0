@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
+import { useResponsive } from '@/hooks/useResponsive';
+import { cn } from '@/lib/utils';
 import { FileText, MessageCircle, Edit, X } from 'lucide-react';
 interface BudgetViewModalProps {
   open: boolean;
@@ -23,6 +25,8 @@ export const BudgetViewModal = ({
   onWhatsApp,
   isGenerating = false
 }: BudgetViewModalProps) => {
+  const { isDesktop } = useResponsive();
+  
   if (!budget) return null;
   const formatPrice = (price: number | null) => {
     if (!price) return 'R$ 0,00';
@@ -50,9 +54,17 @@ export const BudgetViewModal = ({
     }
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center justify-between">
+      <DialogContent className={cn(
+        "max-w-2xl max-h-[80vh] overflow-y-auto",
+        isDesktop && "max-w-6xl desktop-modal desktop-view-layout"
+      )}>
+        <DialogHeader className={cn(
+          isDesktop && "desktop-section-header"
+        )}>
+          <DialogTitle className={cn(
+            "flex items-center justify-between",
+            isDesktop && "desktop-section-title"
+          )}>
             <span>Visualizar Orçamento #{budget.id?.toString().slice(-4)}</span>
             <Badge className={`${getStatusColor(budget.workflow_status || 'pendente')} border`} variant="secondary">
               {budget.workflow_status || 'Pendente'}
@@ -60,9 +72,14 @@ export const BudgetViewModal = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className={cn(
+          "space-y-6",
+          isDesktop && "desktop-grid-2-col gap-8 space-y-0"
+        )}>
           {/* Informações do Cliente */}
-          <Card>
+          <Card className={cn(
+            isDesktop && "desktop-card"
+          )}>
             <CardHeader>
               <CardTitle className="text-lg">Cliente</CardTitle>
             </CardHeader>
@@ -81,7 +98,9 @@ export const BudgetViewModal = ({
           </Card>
 
           {/* Informações do Dispositivo */}
-          <Card>
+          <Card className={cn(
+            isDesktop && "desktop-card"
+          )}>
             <CardHeader>
               <CardTitle className="text-lg">Dispositivo</CardTitle>
             </CardHeader>
@@ -104,7 +123,9 @@ export const BudgetViewModal = ({
           </Card>
 
           {/* Informações do Serviço */}
-          <Card>
+          <Card className={cn(
+            isDesktop && "desktop-card"
+          )}>
             <CardHeader>
               <CardTitle className="text-lg">Qualidade de peça</CardTitle>
             </CardHeader>
@@ -123,7 +144,9 @@ export const BudgetViewModal = ({
           </Card>
 
           {/* Informações de Preços */}
-          <Card>
+          <Card className={cn(
+            isDesktop && "desktop-card"
+          )}>
             <CardHeader>
               <CardTitle className="text-lg">Valores</CardTitle>
             </CardHeader>
@@ -195,7 +218,10 @@ export const BudgetViewModal = ({
           <Separator />
 
           {/* Ações */}
-          <div className="flex gap-2 flex-wrap">
+          <div className={cn(
+            "flex gap-2 flex-wrap",
+            isDesktop && "desktop-flex-row desktop-card-actions col-span-2"
+          )}>
             <Button variant="outline" onClick={() => onEdit?.(budget)} className="flex-1">
               <Edit className="w-4 h-4 mr-2" />
               Editar

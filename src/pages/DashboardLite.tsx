@@ -8,6 +8,7 @@ import { DashboardLiteStatsEnhanced } from '@/components/lite/enhanced/Dashboard
 import { DashboardLiteQuickAccessEnhanced } from '@/components/lite/enhanced/DashboardLiteQuickAccessEnhanced';
 import { DashboardLiteLicenseStatus } from '@/components/lite/DashboardLiteLicenseStatus';
 import { DashboardLiteHelpSupport } from '@/components/lite/DashboardLiteHelpSupport';
+import { useResponsive } from '@/hooks/useResponsive';
 
 import { BudgetErrorBoundary, AuthErrorBoundary } from '@/components/ErrorBoundaries';
 import { LayoutProvider } from '@/contexts/LayoutContext';
@@ -18,6 +19,7 @@ import { IOSSpinner } from '@/components/ui/animations/loading-states';
 export const DashboardLite = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const { profile, user, hasPermission } = useAuth();
+  const { isDesktop } = useResponsive();
   
   // Memoização da verificação de iOS para evitar recálculos
   const isiOSDevice = useMemo(() => {
@@ -95,14 +97,26 @@ export const DashboardLite = () => {
   // Memoização do conteúdo principal para evitar re-renders desnecessários
   const dashboardContent = useMemo(() => (
     <PageTransition type="fadeScale">
-      <div className="p-4 space-y-6">
-        <DashboardLiteStatsEnhanced profile={profile} userId={user?.id} />
-        <DashboardLiteQuickAccessEnhanced onTabChange={setActiveTab} hasPermission={hasPermission} />
-        <DashboardLiteLicenseStatus profile={profile} />
-        <DashboardLiteHelpSupport />
+      <div className={`${isDesktop ? 'desktop-dashboard-layout' : 'p-4 space-y-6'}`}>
+        <div className={`${isDesktop ? 'desktop-dashboard-main' : ''}`}>
+          <DashboardLiteStatsEnhanced profile={profile} userId={user?.id} />
+          <DashboardLiteQuickAccessEnhanced onTabChange={setActiveTab} hasPermission={hasPermission} />
+        </div>
+        {isDesktop && (
+          <div className="desktop-dashboard-sidebar">
+            <DashboardLiteLicenseStatus profile={profile} />
+            <DashboardLiteHelpSupport />
+          </div>
+        )}
+        {!isDesktop && (
+          <>
+            <DashboardLiteLicenseStatus profile={profile} />
+            <DashboardLiteHelpSupport />
+          </>
+        )}
       </div>
     </PageTransition>
-  ), [profile, user?.id, hasPermission]);
+  ), [profile, user?.id, hasPermission, isDesktop])
 
   const renderContent = useCallback(() => {
     

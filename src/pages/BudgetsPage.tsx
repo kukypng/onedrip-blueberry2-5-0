@@ -28,12 +28,15 @@ import { BudgetStatusBadge } from '@/components/budgets/BudgetStatusBadge';
 import { EditBudgetModal } from '@/components/EditBudgetModal';
 import { DeleteBudgetDialog } from '@/components/budgets/DeleteBudgetDialog';
 import { ConfirmationDialog } from '@/components/ConfirmationDialog';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export const BudgetsPage = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { isDesktop } = useResponsive();
 
   // Data fetching
   const { data: budgets = [], isLoading, error, refetch } = useQuery({
@@ -123,9 +126,15 @@ export const BudgetsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn(
+      "min-h-screen bg-background",
+      isDesktop && "desktop-page-content"
+    )}>
       {/* Mobile Header */}
-      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50">
+      <div className={cn(
+        "sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border/50",
+        isDesktop && "desktop-section-header"
+      )}>
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center gap-3">
             <Button
@@ -137,7 +146,10 @@ export const BudgetsPage = () => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-xl font-bold">Meus Orçamentos</h1>
+              <h1 className={cn(
+                "text-xl font-bold",
+                isDesktop && "desktop-section-title"
+              )}>Meus Orçamentos</h1>
               <p className="text-sm text-muted-foreground">
                 Gerencie todos os seus orçamentos 
                 <span className="ml-2 inline-flex items-center justify-center w-6 h-6 bg-primary/20 text-primary rounded-full text-xs font-semibold">
@@ -177,12 +189,18 @@ export const BudgetsPage = () => {
       </div>
 
       {/* Content */}
-      <div className="px-4 pb-24">
+      <div className={cn(
+        "px-4 pb-24",
+        isDesktop && "desktop-grid-container desktop-grid-auto-fit"
+      )}>
         {isLoading ? (
           <div className="space-y-4">
             {[...Array(5)].map((_, i) => (
               <Card key={i} className="animate-pulse border-border/50">
-                <CardContent className="p-6">
+                <CardContent className={cn(
+                  "p-6",
+                  isDesktop && "desktop-content desktop-card-content"
+                )}>
                   <div className="space-y-4">
                     <div className="flex justify-between items-start">
                       <div className="space-y-2">
@@ -220,9 +238,15 @@ export const BudgetsPage = () => {
             )}
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className={cn(
+            "space-y-4",
+            isDesktop && "desktop-grid-3-col gap-6 space-y-0"
+          )}>
             {filteredBudgets.map((budget) => (
-              <Card key={budget.id} className="border-border/50 transition-all duration-200 hover:shadow-lg active:scale-[0.98]">
+              <Card key={budget.id} className={cn(
+                "border-border/50 transition-all duration-200 hover:shadow-lg active:scale-[0.98]",
+                isDesktop && "desktop-card"
+              )}>
                 <CardContent className="p-6">
                   {/* Header with device name and date */}
                   <div className="flex items-start justify-between mb-4">

@@ -8,21 +8,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { useResponsive } from '@/hooks/useResponsive';
 import { supabase } from '@/integrations/supabase/client';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
 interface EditBudgetModalProps {
   budget: any;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-export const EditBudgetModal = ({
-  budget,
-  open,
-  onOpenChange
-}: EditBudgetModalProps) => {
-  const {
-    toast
-  } = useToast();
+export const EditBudgetModal = ({ budget, open, onOpenChange }: EditBudgetModalProps) => {
+  const { toast } = useToast();
+  const { isDesktop } = useResponsive();
   const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     device_type: '',
@@ -189,15 +186,31 @@ export const EditBudgetModal = ({
     }));
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Editar Orçamento</DialogTitle>
+      <DialogContent className={cn(
+        "max-w-2xl max-h-[90vh] overflow-y-auto",
+        isDesktop && "max-w-6xl desktop-modal desktop-form-layout"
+      )}>
+        <DialogHeader className={cn(
+          isDesktop && "desktop-section-header"
+        )}>
+          <DialogTitle className={cn(
+            isDesktop && "desktop-section-title"
+          )}>Editar Orçamento</DialogTitle>
         </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className={cn(
+          "space-y-6",
+          isDesktop && "desktop-form-grid desktop-grid-2-col gap-8"
+        )}>
           {/* Informações do Dispositivo */}
-          <div className="space-y-4">
+          <div className={cn(
+            "space-y-4",
+            isDesktop && "desktop-form-section"
+          )}>
             <h3 className="font-semibold text-lg">Informações do Dispositivo</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={cn(
+              "grid grid-cols-1 md:grid-cols-2 gap-4",
+              isDesktop && "desktop-grid-2-col"
+            )}>
               
             </div>
             
@@ -237,7 +250,10 @@ export const EditBudgetModal = ({
           </div>
 
           {/* Cliente */}
-          <div className="space-y-4">
+          <div className={cn(
+            "space-y-4",
+            isDesktop && "desktop-form-section"
+          )}>
             <h3 className="font-semibold text-lg">Cliente</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -252,7 +268,10 @@ export const EditBudgetModal = ({
           </div>
 
           {/* Preços e Condições */}
-          <div className="space-y-4">
+          <div className={cn(
+            "space-y-4",
+            isDesktop && "desktop-form-section"
+          )}>
             <h3 className="font-semibold text-lg">Preços e Condições</h3>
             <div className="space-y-2">
               <Label htmlFor="cash_price">Valor à Vista (R$)</Label>

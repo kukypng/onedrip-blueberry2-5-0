@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { MessageCircle, FileText, Edit, Clock, Trash2 } from '@/components/ui/icons';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLayout } from '@/contexts/LayoutContext';
+import { useResponsive } from '@/hooks/useResponsive';
 import { cn } from '@/lib/utils';
 import { BudgetStatusBadge } from './BudgetStatusBadge';
 import { BudgetWorkflowActions } from './BudgetWorkflowActions';
@@ -46,6 +47,7 @@ export const BudgetCard = ({
   onDelete
 }: BudgetCardProps) => {
   const { isMobile } = useLayout();
+  const { isDesktop } = useResponsive();
   const { isAdvancedMode } = useAdvancedBudgets();
 
   // Verificação de segurança: não renderizar se o orçamento foi excluído
@@ -57,11 +59,18 @@ export const BudgetCard = ({
   return (
     <Card className={cn(
       "glass-card border-0 shadow-md bg-white/50 dark:bg-black/50 backdrop-blur-xl transition-all duration-200 hover:shadow-lg",
-      budget.deleted_at && "opacity-50 pointer-events-none"
+      budget.deleted_at && "opacity-50 pointer-events-none",
+      isDesktop && "desktop-card"
     )}>
-      <CardContent className="p-4 space-y-4">
+      <CardContent className={cn(
+        "p-4 space-y-4",
+        isDesktop && "desktop-content desktop-flex-row desktop-card-content"
+      )}>
         {/* Header com checkbox e data */}
-        <div className="flex items-start justify-between">
+        <div className={cn(
+          "flex items-start justify-between",
+          isDesktop && "desktop-card-header"
+        )}>
           <div className="flex items-center gap-3">
             <div>
               <h3 className="font-bold text-lg text-foreground">
@@ -157,7 +166,10 @@ export const BudgetCard = ({
         <Separator />
 
         {/* Botões de ação principais */}
-        <div className="flex items-center justify-center gap-2 flex-wrap">
+        <div className={cn(
+          "flex items-center justify-center gap-2 flex-wrap",
+          isDesktop && "desktop-flex-row desktop-card-actions"
+        )}>
           <Button 
             variant="ghost" 
             size="sm" 

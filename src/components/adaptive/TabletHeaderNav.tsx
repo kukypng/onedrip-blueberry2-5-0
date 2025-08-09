@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
 import { useAppInfo } from '@/hooks/useAppConfig';
+import { useResponsive } from '@/hooks/useResponsive';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Home, FileText, Plus, Settings, Menu, Shield, Database, X } from 'lucide-react';
@@ -25,6 +26,7 @@ export const TabletHeaderNav = ({
   } = useAuth();
   
   const { name, logo } = useAppInfo();
+  const { isDesktop } = useResponsive();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -76,30 +78,46 @@ export const TabletHeaderNav = ({
           "border-b px-3 sm:px-4 lg:px-6 h-16",
           isScrolled 
             ? "bg-card/98 backdrop-blur-xl shadow-sm" 
-            : "bg-card/95 backdrop-blur-xl"
+            : "bg-card/95 backdrop-blur-xl",
+          isDesktop && "desktop-header-nav"
         )}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <motion.div 
-          className="flex items-center gap-3 sm:gap-6"
+          className={cn(
+            "flex items-center gap-3 sm:gap-6",
+            isDesktop && "desktop-header-left"
+          )}
           initial={{ opacity: 0, x: -20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <div className="flex items-center gap-3">
+          <div className={cn(
+            "flex items-center gap-3",
+            isDesktop && "desktop-logo-section"
+          )}>
             <img 
               alt={`${name} Logo`} 
-              className="h-8 w-8 transition-all duration-300" 
+              className={cn(
+                "h-8 w-8 transition-all duration-300",
+                isDesktop && "desktop-logo"
+              )} 
               src={logo} 
             />
-            <h1 className="text-xl font-bold text-foreground">{name}</h1>
+            <h1 className={cn(
+              "text-xl font-bold text-foreground",
+              isDesktop && "desktop-app-title"
+            )}>{name}</h1>
           </div>
           
           {/* Desktop Navigation */}
           <motion.nav 
-            className="hidden lg:flex items-center gap-2"
+            className={cn(
+              "hidden lg:flex items-center gap-2",
+              isDesktop && "desktop-nav-menu"
+            )}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 }}
@@ -122,7 +140,8 @@ export const TabletHeaderNav = ({
                     className={cn(
                       "gap-2 transition-all duration-300 hover:scale-105",
                       "px-3 py-2",
-                      isActive && "bg-primary text-primary-foreground shadow-lg scale-105"
+                      isActive && "bg-primary text-primary-foreground shadow-lg scale-105",
+                      isDesktop && "desktop-nav-button"
                     )}
                   >
                     <Icon className="h-4 w-4" />
@@ -134,10 +153,19 @@ export const TabletHeaderNav = ({
           </motion.nav>
         </motion.div>
 
-        <div className="flex items-center gap-3">
+        <div className={cn(
+          "flex items-center gap-3",
+          isDesktop && "desktop-header-right"
+        )}>
           {profile && (
-            <div className="hidden md:flex items-center gap-2">
-              <Badge variant="secondary" className="text-xs">
+            <div className={cn(
+              "hidden md:flex items-center gap-2",
+              isDesktop && "desktop-user-badge"
+            )}>
+              <Badge variant="secondary" className={cn(
+                "text-xs",
+                isDesktop && "desktop-badge"
+              )}>
                 {profile.role.toUpperCase()}
               </Badge>
             </div>
@@ -146,7 +174,10 @@ export const TabletHeaderNav = ({
           <Button 
             onClick={() => handleTabChange('new-budget')} 
             size="sm" 
-            className="gap-2 bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105"
+            className={cn(
+              "gap-2 bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105",
+              isDesktop && "desktop-primary-button"
+            )}
           >
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">Novo Orçamento</span>

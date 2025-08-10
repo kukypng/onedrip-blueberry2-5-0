@@ -73,7 +73,7 @@ export const ServiceOrderDetailsPage = () => {
   // State
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [statusUpdateData, setStatusUpdateData] = useState<StatusUpdateData>({
-    status: 'opened',
+    status: 'pending',
     notes: ''
   });
   const [showStatusUpdate, setShowStatusUpdate] = useState(false);
@@ -168,7 +168,7 @@ export const ServiceOrderDetailsPage = () => {
       });
       
       setShowStatusUpdate(false);
-      setStatusUpdateData({ status: 'opened', notes: '' });
+      setStatusUpdateData({ status: 'pending', notes: '' });
       toast.success('Status atualizado com sucesso!');
     } catch (error) {
       console.error('Error updating status:', error);

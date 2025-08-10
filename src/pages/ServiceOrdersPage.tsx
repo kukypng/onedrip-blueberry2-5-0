@@ -113,30 +113,30 @@ export const ServiceOrdersPage = () => {
 
   const getStatusIcon = (status: ServiceOrderStatus) => {
     switch (status) {
-      case 'opened': return <Clock className="h-4 w-4" />;
+      case 'pending': return <Clock className="h-4 w-4" />;
       case 'in_progress': return <Wrench className="h-4 w-4" />;
       case 'completed': return <CheckCircle className="h-4 w-4" />;
-      case 'delivered': return <CheckCircle className="h-4 w-4" />;
+      case 'completed': return <CheckCircle className="h-4 w-4" />;
       default: return <AlertCircle className="h-4 w-4" />;
     }
   };
 
   const getStatusColor = (status: ServiceOrderStatus) => {
     switch (status) {
-      case 'opened': return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/20';
+      case 'pending': return 'bg-yellow-500/20 text-yellow-700 border-yellow-500/20';
       case 'in_progress': return 'bg-blue-500/20 text-blue-700 border-blue-500/20';
       case 'completed': return 'bg-green-500/20 text-green-700 border-green-500/20';
-      case 'delivered': return 'bg-emerald-500/20 text-emerald-700 border-emerald-500/20';
+      case 'completed': return 'bg-emerald-500/20 text-emerald-700 border-emerald-500/20';
       default: return 'bg-gray-500/20 text-gray-700 border-gray-500/20';
     }
   };
 
   const getStatusText = (status: ServiceOrderStatus) => {
     switch (status) {
-      case 'opened': return 'Aberta';
+      case 'pending': return 'Pendente';
       case 'in_progress': return 'Em Andamento';
       case 'completed': return 'Concluída';
-      case 'delivered': return 'Entregue';
+      case 'completed': return 'Concluído';
       default: return 'Desconhecido';
     }
   };

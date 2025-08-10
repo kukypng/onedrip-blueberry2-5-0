@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -51,10 +51,10 @@ export function usePushNotifications() {
 
   // Registrar service worker quando o usuário fizer login
   useEffect(() => {
-    if (user && permissionState.supported) {
+    if (user && permissionState.isSupported) {
       registerServiceWorker();
     }
-  }, [user, permissionState.supported]);
+  }, [user, permissionState.isSupported]);
 
   // Carregar subscriptions do usuário
   const loadUserSubscriptions = useCallback(async () => {
@@ -179,7 +179,7 @@ export function usePushNotifications() {
   }, [user, loadUserSubscriptions]);
 
   const requestPermission = async (): Promise<boolean> => {
-    if (!permissionState.supported) {
+    if (!permissionState.isSupported) {
       toast.error('Notificações push não são suportadas neste navegador');
       return false;
     }

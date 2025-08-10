@@ -37,7 +37,7 @@ const AdminLiteEnhancedComponent = ({
 }: AdminLiteEnhancedProps & {
   profile: any;
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'notifications' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');

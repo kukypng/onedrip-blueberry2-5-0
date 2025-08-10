@@ -61,7 +61,7 @@ const ServiceOrderTrash: React.FC = () => {
   const restoreOrderMutation = useMutation({
     mutationFn: async (orderId: string) => {
       const { error } = await supabase.rpc('restore_service_order', {
-        service_order_id: orderId
+        p_service_order_id: orderId
       });
       if (error) throw error;
     },

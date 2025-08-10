@@ -404,7 +404,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
       // Usar a função RPC restore_service_order
       const { data, error } = await supabase
         .rpc('restore_service_order', {
-          service_order_id: serviceOrderId
+          p_service_order_id: serviceOrderId
         });
 
       if (error) {

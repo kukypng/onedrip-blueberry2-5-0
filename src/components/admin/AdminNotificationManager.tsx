@@ -110,18 +110,29 @@ export const AdminNotificationManager = () => {
           target_user:user_profiles!notifications_target_user_id_fkey(
             full_name,
             users!inner(email)
-          ),
-          user_notifications(count)
+          )
         `)
         .order('created_at', { ascending: false });
       
       if (error) throw error;
       
-      return data.map(notification => ({
-        ...notification,
-        target_user_email: notification.target_user?.users?.email,
-        sent_count: notification.user_notifications?.[0]?.count || 0
-      }));
+      // Buscar contagem de user_notifications para cada notificação
+      const notificationsWithCount = await Promise.all(
+        data.map(async (notification) => {
+          const { count } = await supabase
+            .from('user_notifications')
+            .select('*', { count: 'exact', head: true })
+            .eq('notification_id', notification.id);
+          
+          return {
+            ...notification,
+            target_user_email: notification.target_user?.users?.email,
+            sent_count: count || 0
+          };
+        })
+      );
+      
+      return notificationsWithCount;
     }
   });
 

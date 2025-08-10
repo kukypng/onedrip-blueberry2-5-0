@@ -45,7 +45,10 @@ export const useNotifications = () => {
     queryFn: async () => {
       if (!user?.id) return [];
 
-      const { data, error } = await supabase.rpc('get_user_notifications');
+      const { data, error } = await supabase.rpc('get_user_notifications', {
+        p_limit: 50,
+        p_offset: 0
+      });
       
       if (error) {
         console.error('Erro ao buscar notificações:', error);

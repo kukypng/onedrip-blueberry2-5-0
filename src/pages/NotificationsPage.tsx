@@ -98,7 +98,8 @@ export const NotificationsPage: React.FC = () => {
     refreshNotifications();
   };
 
-  const filteredNotifications = notifications.filter((notification: Notification) => {
+  const notificationsArray = Array.isArray(notifications) ? notifications : [];
+  const filteredNotifications = notificationsArray.filter((notification: any) => {
     if (filters.type && filters.type !== 'all' && notification.type !== filters.type) {
       return false;
     }
@@ -227,7 +228,7 @@ export const NotificationsPage: React.FC = () => {
             ) : (
               <ScrollArea className="h-[600px]">
                 <div className="space-y-0">
-                  {filteredNotifications.map((notification: Notification, index: number) => {
+                  {filteredNotifications.map((notification: any, index: number) => {
                     const TypeIcon = getTypeIcon(notification.type);
                     const isExpired = notification.expires_at && new Date(notification.expires_at) < new Date();
                     

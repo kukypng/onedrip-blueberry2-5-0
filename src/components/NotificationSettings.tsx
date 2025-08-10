@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Bell, BellOff, Volume2, VolumeX, Smartphone, Clock, Settings, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { cn } from '@/lib/utils';
 
 interface NotificationPermission {
   granted: boolean;

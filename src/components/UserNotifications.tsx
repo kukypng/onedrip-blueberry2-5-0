@@ -247,7 +247,7 @@ export const UserNotifications: React.FC<UserNotificationsProps> = ({
             </div>
           ) : (
             <div className="space-y-1">
-              {notifications.map((notification: Notification, index: number) => (
+              {notifications.map((notification: any, index: number) => (
                 <div key={notification.id}>
                   <div
                     className={cn(

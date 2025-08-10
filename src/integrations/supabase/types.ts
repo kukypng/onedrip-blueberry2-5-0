@@ -419,6 +419,7 @@ export type Database = {
           created_at: string
           expires_at: string | null
           id: string
+          is_active: boolean
           last_validation: string | null
           user_id: string | null
         }
@@ -428,6 +429,7 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
+          is_active?: boolean
           last_validation?: string | null
           user_id?: string | null
         }
@@ -437,6 +439,7 @@ export type Database = {
           created_at?: string
           expires_at?: string | null
           id?: string
+          is_active?: boolean
           last_validation?: string | null
           user_id?: string | null
         }
@@ -469,6 +472,48 @@ export type Database = {
           ip_address?: string | null
           success?: boolean | null
           user_agent?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          message: string
+          target_type: string
+          target_user_id: string | null
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message: string
+          target_type: string
+          target_user_id?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          message?: string
+          target_type?: string
+          target_user_id?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -572,6 +617,215 @@ export type Database = {
           window_start?: string | null
         }
         Relationships: []
+      }
+      service_order_attachments: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_name: string
+          file_size: number | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          service_order_id: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_name: string
+          file_size?: number | null
+          file_url: string
+          id?: string
+          mime_type?: string | null
+          service_order_id?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          mime_type?: string | null
+          service_order_id?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_attachments_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          service_order_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          service_order_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          service_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_events_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_order_items: {
+        Row: {
+          created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          id: string
+          item_type: string | null
+          name: string
+          notes: string | null
+          quantity: number | null
+          service_order_id: string | null
+          unit_price: number
+          warranty_months: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          item_type?: string | null
+          name: string
+          notes?: string | null
+          quantity?: number | null
+          service_order_id?: string | null
+          unit_price: number
+          warranty_months?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          id?: string
+          item_type?: string | null
+          name?: string
+          notes?: string | null
+          quantity?: number | null
+          service_order_id?: string | null
+          unit_price?: number
+          warranty_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_items_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_orders: {
+        Row: {
+          client_id: string | null
+          created_at: string | null
+          deleted_at: string | null
+          deleted_by: string | null
+          delivery_date: string | null
+          device_model: string
+          device_type: string
+          id: string
+          imei_serial: string | null
+          is_paid: boolean | null
+          labor_cost: number | null
+          notes: string | null
+          owner_id: string
+          parts_cost: number | null
+          priority: string | null
+          reported_issue: string
+          search_vector: unknown | null
+          status: string | null
+          total_price: number | null
+          updated_at: string | null
+          warranty_months: number | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delivery_date?: string | null
+          device_model: string
+          device_type: string
+          id?: string
+          imei_serial?: string | null
+          is_paid?: boolean | null
+          labor_cost?: number | null
+          notes?: string | null
+          owner_id?: string
+          parts_cost?: number | null
+          priority?: string | null
+          reported_issue: string
+          search_vector?: unknown | null
+          status?: string | null
+          total_price?: number | null
+          updated_at?: string | null
+          warranty_months?: number | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string | null
+          deleted_at?: string | null
+          deleted_by?: string | null
+          delivery_date?: string | null
+          device_model?: string
+          device_type?: string
+          id?: string
+          imei_serial?: string | null
+          is_paid?: boolean | null
+          labor_cost?: number | null
+          notes?: string | null
+          owner_id?: string
+          parts_cost?: number | null
+          priority?: string | null
+          reported_issue?: string
+          search_vector?: unknown | null
+          status?: string | null
+          total_price?: number | null
+          updated_at?: string | null
+          warranty_months?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_orders_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shop_profiles: {
         Row: {
@@ -753,6 +1007,76 @@ export type Database = {
         }
         Relationships: []
       }
+      user_notifications: {
+        Row: {
+          created_at: string | null
+          delivery_status: string | null
+          id: string
+          notification_id: string
+          read_at: string | null
+          sent_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          delivery_status?: string | null
+          id?: string
+          notification_id: string
+          read_at?: string | null
+          sent_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          delivery_status?: string | null
+          id?: string
+          notification_id?: string
+          read_at?: string | null
+          sent_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_notifications_read: {
+        Row: {
+          id: string
+          is_deleted: boolean | null
+          notification_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          is_deleted?: boolean | null
+          notification_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          id?: string
+          is_deleted?: boolean | null
+          notification_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_read_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_profiles: {
         Row: {
           advanced_features_enabled: boolean
@@ -763,7 +1087,7 @@ export type Database = {
           id: string
           name: string
           role: string | null
-          service_orders_beta_enabled: boolean
+          service_orders_beta_enabled: boolean | null
           updated_at: string
           username: string | null
         }
@@ -776,7 +1100,7 @@ export type Database = {
           id: string
           name: string
           role?: string | null
-          service_orders_beta_enabled?: boolean
+          service_orders_beta_enabled?: boolean | null
           updated_at?: string
           username?: string | null
         }
@@ -789,220 +1113,47 @@ export type Database = {
           id?: string
           name?: string
           role?: string | null
-          service_orders_beta_enabled?: boolean
+          service_orders_beta_enabled?: boolean | null
           updated_at?: string
           username?: string | null
         }
         Relationships: []
       }
-      service_orders: {
+      user_push_subscriptions: {
         Row: {
-          client_id: string | null
-          created_at: string
-          deleted_at: string | null
-          deleted_by: string | null
-          delivery_date: string | null
-          device_model: string
-          device_type: string
+          auth_key: string
+          created_at: string | null
+          endpoint: string
           id: string
-          imei_serial: string | null
-          is_paid: boolean
-          labor_cost: number
-          notes: string | null
-          owner_id: string
-          parts_cost: number
-          priority: string
-          reported_issue: string
-          search_vector: unknown | null
-          status: string
-          total_price: number
-          updated_at: string
-          warranty_months: number | null
+          is_active: boolean | null
+          p256dh_key: string
+          updated_at: string | null
+          user_agent: string | null
+          user_id: string
         }
         Insert: {
-          client_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          deleted_by?: string | null
-          delivery_date?: string | null
-          device_model: string
-          device_type: string
+          auth_key: string
+          created_at?: string | null
+          endpoint: string
           id?: string
-          imei_serial?: string | null
-          is_paid?: boolean
-          labor_cost?: number
-          notes?: string | null
-          owner_id?: string
-          parts_cost?: number
-          priority?: string
-          reported_issue: string
-          search_vector?: unknown | null
-          status?: string
-          total_price?: number
-          updated_at?: string
-          warranty_months?: number | null
+          is_active?: boolean | null
+          p256dh_key: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id: string
         }
         Update: {
-          client_id?: string | null
-          created_at?: string
-          deleted_at?: string | null
-          deleted_by?: string | null
-          delivery_date?: string | null
-          device_model?: string
-          device_type?: string
+          auth_key?: string
+          created_at?: string | null
+          endpoint?: string
           id?: string
-          imei_serial?: string | null
-          is_paid?: boolean
-          labor_cost?: number
-          notes?: string | null
-          owner_id?: string
-          parts_cost?: number
-          priority?: string
-          reported_issue?: string
-          search_vector?: unknown | null
-          status?: string
-          total_price?: number
-          updated_at?: string
-          warranty_months?: number | null
+          is_active?: boolean | null
+          p256dh_key?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "service_orders_client_id_fkey"
-            columns: ["client_id"]
-            isOneToOne: false
-            referencedRelation: "clients"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      service_order_items: {
-        Row: {
-          created_at: string
-          deleted_at: string | null
-          deleted_by: string | null
-          id: string
-          item_type: string
-          name: string
-          notes: string | null
-          quantity: number
-          service_order_id: string
-          unit_price: number
-          warranty_months: number | null
-        }
-        Insert: {
-          created_at?: string
-          deleted_at?: string | null
-          deleted_by?: string | null
-          id?: string
-          item_type: string
-          name: string
-          notes?: string | null
-          quantity?: number
-          service_order_id: string
-          unit_price: number
-          warranty_months?: number | null
-        }
-        Update: {
-          created_at?: string
-          deleted_at?: string | null
-          deleted_by?: string | null
-          id?: string
-          item_type?: string
-          name?: string
-          notes?: string | null
-          quantity?: number
-          service_order_id?: string
-          unit_price?: number
-          warranty_months?: number | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "service_order_items_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "service_orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      service_order_events: {
-        Row: {
-          created_at: string
-          created_by: string | null
-          event_type: string
-          id: string
-          payload: Json | null
-          service_order_id: string
-        }
-        Insert: {
-          created_at?: string
-          created_by?: string | null
-          event_type: string
-          id?: string
-          payload?: Json | null
-          service_order_id: string
-        }
-        Update: {
-          created_at?: string
-          created_by?: string | null
-          event_type?: string
-          id?: string
-          payload?: Json | null
-          service_order_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "service_order_events_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "service_orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      service_order_attachments: {
-        Row: {
-          created_at: string
-          description: string | null
-          file_name: string
-          file_size: number
-          file_url: string
-          id: string
-          mime_type: string
-          service_order_id: string
-          uploaded_by: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          file_name: string
-          file_size: number
-          file_url: string
-          id?: string
-          mime_type: string
-          service_order_id: string
-          uploaded_by: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          file_name?: string
-          file_size?: number
-          file_url?: string
-          id?: string
-          mime_type?: string
-          service_order_id?: string
-          uploaded_by?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "service_order_attachments_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "service_orders"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       warranty_periods: {
         Row: {
@@ -1050,6 +1201,17 @@ export type Database = {
         Args: { p_expires_at?: string }
         Returns: Json
       }
+      admin_create_notification: {
+        Args: {
+          p_title: string
+          p_message: string
+          p_type: string
+          p_target_type: string
+          p_target_user_id?: string
+          p_expires_at?: string
+        }
+        Returns: string
+      }
       admin_deactivate_user_license: {
         Args: { p_user_id: string }
         Returns: Json
@@ -1061,11 +1223,13 @@ export type Database = {
       admin_get_all_users: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          user_email: string
-          user_name: string
-          expires_at: string
+          id: string
+          name: string
+          email: string
+          role: string
           created_at: string
+          last_sign_in_at: string
+          budget_count: number
         }[]
       }
       admin_get_dashboard_stats: {
@@ -1086,6 +1250,7 @@ export type Database = {
           user_name: string
           expires_at: string
           created_at: string
+          is_active: boolean
         }[]
       }
       admin_get_logs: {
@@ -1129,6 +1294,41 @@ export type Database = {
         }
         Returns: Json
       }
+      admin_list_notifications: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          title: string
+          message: string
+          type: string
+          target_type: string
+          target_user_id: string
+          created_by: string
+          expires_at: string
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      admin_list_user_notifications: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_notification_id?: string
+          p_user_id?: string
+        }
+        Returns: {
+          id: string
+          user_id: string
+          user_email: string
+          notification_id: string
+          notification_title: string
+          notification_type: string
+          delivery_status: string
+          sent_at: string
+          created_at: string
+        }[]
+      }
       admin_renew_license: {
         Args: { license_id: string; additional_days?: number }
         Returns: Json
@@ -1138,12 +1338,15 @@ export type Database = {
         Returns: boolean
       }
       admin_update_user: {
-        Args: {
-          p_user_id: string
-          p_name?: string
-          p_role?: string
-          p_expiration_date?: string
-        }
+        Args:
+          | { p_user_id: string; p_name?: string; p_role?: string }
+          | {
+              p_user_id: string
+              p_name?: string
+              p_role?: string
+              p_is_active?: boolean
+              p_expiration_date?: string
+            }
         Returns: boolean
       }
       audit_rls_policies: {
@@ -1163,6 +1366,10 @@ export type Database = {
           orphaned_budgets: number
           valid_budgets: number
         }[]
+      }
+      check_if_user_is_admin: {
+        Args: { user_id: string }
+        Returns: boolean
       }
       check_rate_limit: {
         Args: {
@@ -1186,6 +1393,10 @@ export type Database = {
         Returns: Json
       }
       cleanup_expired_sessions: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      cleanup_inactive_push_subscriptions: {
         Args: Record<PropertyKey, never>
         Returns: number
       }
@@ -1213,12 +1424,24 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: number
       }
+      create_notification: {
+        Args: {
+          p_title: string
+          p_message: string
+          p_type: string
+          p_target_type: string
+          p_target_user_id?: string
+          p_expires_at?: string
+        }
+        Returns: string
+      }
       debug_current_user: {
         Args: Record<PropertyKey, never>
         Returns: {
           user_id: string
           user_email: string
           user_role: string
+          is_active: boolean
           is_admin: boolean
         }[]
       }
@@ -1226,9 +1449,17 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      delete_user_notification: {
+        Args: { p_notification_id: string } | { p_notification_id: string }
+        Returns: boolean
+      }
       detect_sql_injection: {
         Args: { input_text: string }
         Returns: boolean
+      }
+      empty_service_orders_trash: {
+        Args: Record<PropertyKey, never>
+        Returns: number
       }
       fix_orphaned_budgets: {
         Args: Record<PropertyKey, never>
@@ -1278,6 +1509,31 @@ export type Database = {
         Args: { client_id: string }
         Returns: number
       }
+      get_deleted_service_orders: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          owner_id: string
+          client_id: string
+          device_type: string
+          device_model: string
+          imei_serial: string
+          reported_issue: string
+          status: string
+          priority: string
+          total_price: number
+          labor_cost: number
+          parts_cost: number
+          is_paid: boolean
+          delivery_date: string
+          warranty_months: number
+          notes: string
+          created_at: string
+          updated_at: string
+          deleted_at: string
+          deleted_by: string
+        }[]
+      }
       get_expiring_budgets: {
         Args: { p_user_id: string }
         Returns: {
@@ -1325,8 +1581,49 @@ export type Database = {
         }[]
       }
       get_secure_user_data: {
-        Args: { p_user_id?: string }
+        Args: { p_user_id: string }
         Returns: Json
+      }
+      get_service_order_details: {
+        Args: { p_service_order_id: string }
+        Returns: {
+          id: string
+          client_id: string
+          client_name: string
+          client_phone: string
+          client_address: string
+          device_type: string
+          device_model: string
+          imei_serial: string
+          reported_issue: string
+          status: string
+          priority: string
+          parts_cost: number
+          labor_cost: number
+          total_price: number
+          is_paid: boolean
+          delivery_date: string
+          warranty_months: number
+          notes: string
+          created_at: string
+          updated_at: string
+          items_count: number
+          events_count: number
+          attachments_count: number
+        }[]
+      }
+      get_service_orders_stats: {
+        Args: { p_date_from?: string; p_date_to?: string }
+        Returns: {
+          total_orders: number
+          pending_orders: number
+          in_progress_orders: number
+          completed_orders: number
+          cancelled_orders: number
+          total_revenue: number
+          avg_completion_time: unknown
+          high_priority_orders: number
+        }[]
       }
       get_shop_profile: {
         Args: { p_user_id: string }
@@ -1335,10 +1632,30 @@ export type Database = {
       get_top_rankings: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
+          user_id: string
           user_name: string
-          score: number
+          total_budgets: number
+          total_value: number
+          avg_budget_value: number
+          rank_position: number
+        }[]
+      }
+      get_user_notifications: {
+        Args: { p_limit?: number; p_offset?: number }
+        Returns: {
+          id: string
+          title: string
+          message: string
+          type: string
+          target_type: string
+          target_user_id: string
+          created_by: string
+          expires_at: string
+          is_active: boolean
           created_at: string
+          updated_at: string
+          is_read: boolean
+          read_at: string
         }[]
       }
       get_user_role: {
@@ -1348,6 +1665,10 @@ export type Database = {
       get_username_from_email: {
         Args: { email: string }
         Returns: string
+      }
+      hard_delete_service_order: {
+        Args: { service_order_id: string }
+        Returns: boolean
       }
       has_reached_budget_limit: {
         Args: { p_user_id: string }
@@ -1383,7 +1704,7 @@ export type Database = {
         Returns: boolean
       }
       is_user_license_active: {
-        Args: { p_user_id?: string }
+        Args: { p_user_id: string }
         Returns: boolean
       }
       log_admin_access: {
@@ -1422,9 +1743,41 @@ export type Database = {
         }
         Returns: Json
       }
+      mark_notification_as_read: {
+        Args: { p_notification_id: string }
+        Returns: boolean
+      }
       restore_deleted_budget: {
         Args: { p_budget_id: string }
         Returns: Json
+      }
+      restore_service_order: {
+        Args: { p_service_order_id: string }
+        Returns: boolean
+      }
+      search_service_orders: {
+        Args: {
+          p_search_query?: string
+          p_status?: string
+          p_priority?: string
+          p_device_type?: string
+          p_date_from?: string
+          p_date_to?: string
+          p_limit?: number
+          p_offset?: number
+        }
+        Returns: {
+          id: string
+          client_name: string
+          client_phone: string
+          device_model: string
+          status: string
+          priority: string
+          total_price: number
+          created_at: string
+          delivery_date: string
+          search_rank: number
+        }[]
       }
       security_health_check: {
         Args: Record<PropertyKey, never>
@@ -1434,6 +1787,25 @@ export type Database = {
           policy_count: number
           security_status: string
         }[]
+      }
+      send_push_notification: {
+        Args: {
+          p_user_id: string
+          p_title: string
+          p_message: string
+          p_type?: string
+          p_data?: Json
+        }
+        Returns: boolean
+      }
+      send_push_to_subscribed_users: {
+        Args: {
+          p_notification_id: string
+          p_title: string
+          p_message: string
+          p_type?: string
+        }
+        Returns: number
       }
       set_user_budget_limit: {
         Args: { p_user_id: string; p_budget_limit: number }
@@ -1451,6 +1823,14 @@ export type Database = {
         Args: { p_budget_id: string; p_deletion_reason?: string }
         Returns: Json
       }
+      soft_delete_service_order: {
+        Args: { p_service_order_id: string }
+        Returns: boolean
+      }
+      test_admin_access: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
+      }
       test_admin_permissions: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -1458,6 +1838,10 @@ export type Database = {
           result: boolean
           details: string
         }[]
+      }
+      test_admin_with_user: {
+        Args: { test_user_id: string }
+        Returns: Json
       }
       test_user_permissions: {
         Args: Record<PropertyKey, never>
@@ -1471,6 +1855,14 @@ export type Database = {
         Args: { p_device_fingerprint: string }
         Returns: Json
       }
+      update_service_order_status: {
+        Args: {
+          p_service_order_id: string
+          p_new_status: string
+          p_notes?: string
+        }
+        Returns: boolean
+      }
       update_shop_profile: {
         Args: {
           p_user_id: string
@@ -1481,16 +1873,8 @@ export type Database = {
         Returns: boolean
       }
       user_permissions_check: {
-        Args: { target_user_id?: string }
-        Returns: {
-          user_id: string
-          user_name: string
-          user_role: string
-          is_admin: boolean
-          can_manage_users: boolean
-          can_manage_settings: boolean
-          budget_count: number
-        }[]
+        Args: { p_user_id: string }
+        Returns: Json
       }
       validate_admin_email_change: {
         Args: { p_user_id: string; p_new_email: string }
@@ -1513,97 +1897,21 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: Json
       }
-      search_service_orders: {
-        Args: {
-          p_search_query?: string
-          p_status?: string
-          p_priority?: string
-          p_device_type_id?: string
-          p_date_from?: string
-          p_date_to?: string
-          p_limit?: number
-          p_offset?: number
-        }
-        Returns: {
-          id: string
-          client_id: string
-          device_model: string
-          device_type: string
-          reported_issue: string
-          status: string
-          priority: string
-          total_price: number
-          created_at: string
-          delivery_date: string
-          search_rank: number
-        }[]
-      }
-      get_service_orders_stats: {
-        Args: {
-          p_date_from?: string
-          p_date_to?: string
-        }
-        Returns: {
-          total_orders: number
-          pending_orders: number
-          in_progress_orders: number
-          completed_orders: number
-          cancelled_orders: number
-          total_revenue: number
-          avg_completion_time: number
-        }[]
-      }
-      soft_delete_service_order: {
-        Args: {
-          p_service_order_id: string
-        }
-        Returns: boolean
-      }
-      restore_service_order: {
-        Args: {
-          p_service_order_id: string
-        }
-        Returns: boolean
-      }
-      get_service_order_details: {
-        Args: {
-          p_service_order_id: string
-        }
-        Returns: {
-          id: string
-          client_id: string
-          device_model: string
-          device_type: string
-          imei_serial: string
-          reported_issue: string
-          status: string
-          priority: string
-          total_price: number
-          parts_cost: number
-          labor_cost: number
-          is_paid: boolean
-          created_at: string
-          updated_at: string
-          delivery_date: string
-          warranty_months: number
-          notes: string
-          items_count: number
-          events_count: number
-          attachments_count: number
-        }[]
-      }
-      update_service_order_status: {
-        Args: {
-          p_service_order_id: string
-          p_new_status: string
-        }
-        Returns: boolean
+      verify_admin_system: {
+        Args: Record<PropertyKey, never>
+        Returns: Json
       }
     }
     Enums: {
       payment_status: "succeeded" | "failed" | "pending" | "refunded"
-      service_order_status: "opened" | "in_progress" | "completed" | "delivered"
       service_order_priority: "low" | "medium" | "high" | "urgent"
+      service_order_status:
+        | "pending"
+        | "in_progress"
+        | "waiting_parts"
+        | "waiting_client"
+        | "completed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1732,8 +2040,15 @@ export const Constants = {
   public: {
     Enums: {
       payment_status: ["succeeded", "failed", "pending", "refunded"],
-      service_order_status: ["opened", "in_progress", "completed", "delivered"],
       service_order_priority: ["low", "medium", "high", "urgent"],
+      service_order_status: [
+        "pending",
+        "in_progress",
+        "waiting_parts",
+        "waiting_client",
+        "completed",
+        "cancelled",
+      ],
     },
   },
 } as const

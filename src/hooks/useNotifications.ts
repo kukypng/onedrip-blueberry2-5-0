@@ -26,7 +26,7 @@ interface NotificationFilters {
 }
 
 export const useNotifications = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { showError, showSuccess } = useToast();
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState<NotificationFilters>({
@@ -59,26 +59,27 @@ export const useNotifications = () => {
 
       // Aplicar filtros
       if (filters.type && filters.type !== 'all') {
-        filteredData = filteredData.filter((n: Notification) => n.type === filters.type);
+        filteredData = filteredData.filter((n: any) => n.type === filters.type);
       }
 
       if (filters.read_status && filters.read_status !== 'all') {
         if (filters.read_status === 'read') {
-          filteredData = filteredData.filter((n: Notification) => n.is_read);
+          filteredData = filteredData.filter((n: any) => n.is_read);
         } else {
-          filteredData = filteredData.filter((n: Notification) => !n.is_read);
+          filteredData = filteredData.filter((n: any) => !n.is_read);
         }
       }
 
       return filteredData;
     },
-    enabled: isAuthenticated && !!user?.id,
+    enabled: !authLoading && !!user?.id,
     refetchInterval: 60000, // Atualizar a cada 60 segundos
     staleTime: 30000 // Considerar dados obsoletos após 30 segundos
   });
 
   // Contar notificações não lidas
-  const unreadCount = notifications.filter((n: Notification) => !n.is_read).length;
+  const notificationsArray = Array.isArray(notifications) ? notifications : [];
+  const unreadCount = notificationsArray.filter((n: any) => !n.is_read).length;
 
   // Marcar notificação como lida
   const markAsReadMutation = useMutation({
@@ -109,9 +110,9 @@ export const useNotifications = () => {
   // Marcar todas as notificações como lidas
   const markAllAsReadMutation = useMutation({
     mutationFn: async () => {
-      const unreadNotifications = notifications.filter((n: Notification) => !n.is_read);
+      const unreadNotifications = notificationsArray.filter((n: any) => !n.is_read);
       
-      const promises = unreadNotifications.map((notification: Notification) =>
+      const promises = unreadNotifications.map((notification: any) =>
         supabase.rpc('mark_notification_as_read', {
           p_notification_id: notification.id
         })
@@ -175,7 +176,7 @@ export const useNotifications = () => {
   // Deletar todas as notificações
   const deleteAllNotificationsMutation = useMutation({
     mutationFn: async () => {
-      const promises = notifications.map((notification: Notification) =>
+      const promises = notificationsArray.map((notification: any) =>
         supabase.rpc('delete_user_notification', {
           p_notification_id: notification.id
         })
@@ -242,7 +243,7 @@ export const useNotifications = () => {
 
   return {
     // Dados
-    notifications,
+    notifications: notificationsArray,
     unreadCount,
     isLoading,
     error,

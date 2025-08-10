@@ -396,7 +396,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 ))}
               </div>
             </div>
-          ) : filteredNotifications.length === 0 ? (
+            ) : filteredNotifications.length === 0 ? (
             <div className="p-8 text-center">
               <Bell className="h-16 w-16 mx-auto mb-4 opacity-50" />
               <h3 className="text-lg font-medium mb-2">
@@ -413,7 +413,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             </div>
           ) : (
             <div className="divide-y">
-              {filteredNotifications.map((notification: Notification) => (
+              {filteredNotifications.map((notification: any) => (
                 <div
                   key={notification.id}
                   className={cn(

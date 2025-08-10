@@ -97,7 +97,6 @@ const MobileLayoutContent = ({ children, activeTab, onTabChange }: AdaptiveLayou
           </div>
           
           <NotificationIndicator 
-            variant="simple"
             size="sm"
             className="mr-2"
           />

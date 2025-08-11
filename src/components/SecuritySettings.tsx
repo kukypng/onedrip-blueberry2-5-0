@@ -58,7 +58,7 @@ export const SecuritySettings = () => {
             <div className="flex items-center space-x-3">
               <MessageCircle className="h-5 w-5 text-green-600" />
               <div>
-                <p className="font-medium">Suporte WhatsApp</p>
+                <p className="font-medium">WhatsApp</p>
                 <p className="text-sm text-muted-foreground">
                   Entre em contato com nosso suporte
                 </p>

@@ -285,7 +285,7 @@ export const IOSHelpSystem = ({
                               touchAction: 'manipulation'
                             }}>
                                   <MessageCircle className="h-4 w-4" />
-                                  Suporte WhatsApp
+                                  WhatsApp
                                 </Button>
                                 <Button variant="outline" className="w-full justify-start gap-3" onClick={handleShowFeedback} style={{
                               touchAction: 'manipulation'

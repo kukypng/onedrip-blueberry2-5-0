@@ -23,7 +23,7 @@ export const HelpAndSupport = () => {
             className="w-full sm:w-auto gap-2"
           >
             <LifeBuoy className="h-4 w-4" />
-            Abrir Central de Ajuda
+           Ajuda
           </Button>
           
           <Button 
@@ -37,7 +37,7 @@ export const HelpAndSupport = () => {
             {/* Icon and text */}
             <MessageCircle className="h-4 w-4 mr-2 relative z-10" />
             <span className="relative z-10 font-semibold bg-gradient-to-r from-green-600 to-emerald-600 dark:from-green-400 dark:to-emerald-400 bg-clip-text text-transparent group-hover:from-green-700 group-hover:to-emerald-700 dark:group-hover:from-green-300 dark:group-hover:to-emerald-300 transition-all duration-300">
-              Suporte WhatsApp
+              WhatsApp
             </span>
             
             {/* Subtle shine effect */}

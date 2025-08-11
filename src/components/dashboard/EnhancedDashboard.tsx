@@ -7,11 +7,13 @@ import { UserLicenseCardIOS } from '@/components/dashboard/UserLicenseCardIOS';
 import { useIOSDetection } from '@/hooks/useIOSDetection';
 import { LicenseStatus } from '@/components/dashboard/LicenseStatus';
 import { LicenseStatusCard } from '@/components/license/LicenseStatusCard';
-import { Sparkles, ShoppingBag, CreditCard, MessageCircle, HeartCrack, AlertTriangle, Shield } from 'lucide-react';
+import { Sparkles, ShoppingBag, CreditCard, MessageCircle, HeartCrack, AlertTriangle, Shield, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLicenseNotifications } from '@/hooks/useLicenseNotifications';
 import { ResponsiveContainer } from '@/components/ui/ResponsiveContainer';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { CommandPalette } from '@/components/dashboard/CommandPalette';
 
 interface ModernDashboardProps {
   onNavigateTo?: (view: string, budgetId?: string) => void;
@@ -23,8 +25,20 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
   const isIOS = useIOSDetection();
   useLicenseNotifications();
 
-  const [budgets, setBudgets] = useState<any[]>([]);
+  const [budgets, setBudgets] = useState<Array<{
+    id: string;
+    client_name: string;
+    created_at: string;
+    total_price: number;
+  }>>([]);
   const [budgetsLoading, setBudgetsLoading] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+
+  // Configurar atalhos de teclado
+  useKeyboardShortcuts({
+    onOpenCommandPalette: () => setIsCommandPaletteOpen(true),
+    onNavigateTo
+  });
 
   useEffect(() => {
     const fetchBudgets = async () => {
@@ -57,6 +71,7 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
   }, [profile?.id]);
 
   return (
+    <>
     <ResponsiveContainer className="space-y-6 max-w-7xl">
       {/* Welcome Section */}
       <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
@@ -67,6 +82,21 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
           <p className="text-muted-foreground mt-1">
             Bem-vindo ao seu painel de controle
           </p>
+        </div>
+        
+        {/* Botão de busca rápida */}
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            onClick={() => setIsCommandPaletteOpen(true)}
+            className="glass-card border-border/50 hover:bg-accent/50 transition-all duration-200 group"
+          >
+            <Search className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+            <span className="hidden sm:inline">Busca rápida</span>
+            <div className="ml-2 px-1.5 py-0.5 bg-muted/50 rounded text-xs font-mono text-muted-foreground">
+              Ctrl+K
+            </div>
+          </Button>
         </div>
       </div>
 
@@ -159,5 +189,12 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
         </CardContent>
       </Card>
     </ResponsiveContainer>
+
+    {/* Command Palette */}
+    <CommandPalette 
+      isOpen={isCommandPaletteOpen}
+      onClose={() => setIsCommandPaletteOpen(false)}
+    />
+  </>
   );
 };

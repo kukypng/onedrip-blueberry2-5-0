@@ -220,44 +220,7 @@ export const DashboardLiteStatsEnhanced = ({
         </motion.div>
       </StaggerContainer>
 
-      {/* Revenue Summary */}
-      <GlassCard className={`${isDesktop ? 'desktop-card' : 'p-6'}`}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-        >
-          <div className={`${isDesktop ? 'desktop-section-header' : 'mb-4'}`}>
-            <h3 className={`${isDesktop ? 'desktop-section-title' : 'text-lg font-semibold'}`}>Resumo Financeiro</h3>
-          </div>
-          <div className={`${isDesktop ? 'desktop-flex-row' : 'grid gap-4 grid-cols-1'}`}>
-            <div className={`space-y-2 ${
-              isDesktop 
-                ? 'p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/20 rounded-xl border border-green-200 dark:border-green-800' 
-                : ''
-            }`}>
-              <p className="text-sm text-muted-foreground">Receita Orçamentos</p>
-              <p className={`font-bold text-green-600 ${
-                isDesktop ? 'text-2xl' : 'text-xl'
-              }`}>
-                R$ {stats.totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-            <div className={`space-y-2 ${
-              isDesktop 
-                ? 'p-4 bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-950/20 dark:to-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800' 
-                : ''
-            }`}>
-              <p className="text-sm text-muted-foreground">Receita Serviços</p>
-              <p className={`font-bold text-amber-600 ${
-                isDesktop ? 'text-2xl' : 'text-xl'
-              }`}>
-                R$ {stats.serviceOrdersRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      </GlassCard>
+
     </div>
   );
 };

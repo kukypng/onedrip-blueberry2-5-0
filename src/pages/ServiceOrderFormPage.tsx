@@ -104,14 +104,14 @@ export const ServiceOrderFormPage = () => {
   });
 
   // Form validation
-  const validation = useServiceOrderValidation(formData);
+  const validation = useServiceOrderValidation(formData as unknown as Record<string, unknown>);
 
   // Auto-save functionality
   const autoSaveKey = isEditMode ? `service-order-edit-${id}` : 'service-order-new';
   const autoSave = useFormAutoSave(formData, autoSaveKey, {
     enabled: !isEditMode, // Only auto-save for new orders
     onRestore: (savedData) => {
-      setFormData(savedData);
+      setFormData(savedData as FormData);
       validation.setFormValues(savedData);
       if (savedData.clientId) {
         setSelectedClientId(savedData.clientId);

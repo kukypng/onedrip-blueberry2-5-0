@@ -146,7 +146,7 @@ export const AdminNotificationManager: React.FC = () => {
 
   const deleteNotification = useMutation({
     mutationFn: async (notificationId: string) => {
-      const { error } = await supabase.rpc('admin_delete_notification', {
+      const { error } = await supabase.rpc('delete_user_notification', {
         p_notification_id: notificationId
       });
 

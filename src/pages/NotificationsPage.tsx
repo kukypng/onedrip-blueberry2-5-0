@@ -95,12 +95,12 @@ const NotificationsPage: React.FC = () => {
     filters,
     markAsRead,
     markAllAsRead,
-    softDeleteNotification,
+    deleteNotification,
     updateFilters,
     refreshNotifications,
     isMarkingAsRead,
     isMarkingAllAsRead,
-    isSoftDeletingNotification
+    isDeletingNotification
   } = useNotifications();
 
   // Flag para controlar se já marcou as mensagens como lidas
@@ -140,7 +140,7 @@ const NotificationsPage: React.FC = () => {
 
   const handleSoftDeleteNotification = (notificationId: string) => {
     console.log('🔍 Tentando deletar notificação:', { notificationId });
-    softDeleteNotification(notificationId);
+    deleteNotification(notificationId);
   };
 
 
@@ -294,8 +294,8 @@ const NotificationsPage: React.FC = () => {
                     </Select>
                     
                     <Select
-                      value={filters.readStatus || 'all'}
-                      onValueChange={(value) => updateFilters({ readStatus: value as any })}
+                       value={filters.read_status || 'all'}
+                      onValueChange={(value) => updateFilters({ read_status: value as any })}
                     >
                       <SelectTrigger className="w-[140px] bg-card border-border/50 rounded-xl">
                         <SelectValue placeholder="Status" />
@@ -351,24 +351,24 @@ const NotificationsPage: React.FC = () => {
               <MessageSquare className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-medium mb-2">
-              {searchTerm || filters.type !== 'all' || filters.readStatus !== 'all' 
+              {searchTerm || filters.type !== 'all' || filters.read_status !== 'all' 
                 ? 'Nenhuma mensagem encontrada' 
                 : 'Nenhuma mensagem ainda'
               }
             </h3>
             <p className="text-muted-foreground mb-6">
-              {searchTerm || filters.type !== 'all' || filters.readStatus !== 'all'
+              {searchTerm || filters.type !== 'all' || filters.read_status !== 'all'
                 ? 'Tente ajustar sua busca ou limpar os filtros.'
                 : 'Você receberá suas mensagens aqui quando elas chegarem.'
               }
             </p>
-            {(searchTerm || filters.type !== 'all' || filters.readStatus !== 'all') && (
+            {(searchTerm || filters.type !== 'all' || filters.read_status !== 'all') && (
               <Button 
                 onClick={() => {
                   setSearchTerm('');
                   updateFilters({ 
                     type: 'all', 
-                    readStatus: 'all'
+                    read_status: 'all'
                   });
                 }}
                 className="btn-apple"
@@ -383,7 +383,7 @@ const NotificationsPage: React.FC = () => {
             isDesktop && "desktop-grid-3-col gap-6 space-y-0"
           )}>
             <AnimatePresence>
-              {filteredNotifications.map((notification: Notification, index) => {
+              {filteredNotifications.map((notification: any, index) => {
                 const IconComponent = getTypeIcon(notification.type);
                 const isExpired = notification.expires_at && new Date(notification.expires_at) < new Date();
                 
@@ -455,7 +455,7 @@ const NotificationsPage: React.FC = () => {
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleSoftDeleteNotification(notification.id)}
-                                  disabled={isSoftDeletingNotification}
+                                  disabled={isDeletingNotification}
                                   className="h-8 w-8 p-0 hover:bg-destructive/10 text-destructive rounded-full"
                                   title="Mover para lixeira"
                                 >

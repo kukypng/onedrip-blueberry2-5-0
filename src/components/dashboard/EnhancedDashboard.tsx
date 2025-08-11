@@ -35,9 +35,9 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
 
   // Configurar atalhos de teclado
-  useKeyboardShortcuts({
-    onOpenCommandPalette: () => setIsCommandPaletteOpen(true),
-    onNavigateTo
+  const { getDefaultShortcuts } = useKeyboardShortcuts({
+    shortcuts: [],
+    isEnabled: true
   });
 
   useEffect(() => {

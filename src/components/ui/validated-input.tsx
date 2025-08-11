@@ -23,7 +23,7 @@ interface BaseValidatedFieldProps {
 }
 
 interface ValidatedInputProps extends BaseValidatedFieldProps {
-  type?: 'text' | 'email' | 'tel' | 'number' | 'password';
+  type?: 'text' | 'email' | 'tel' | 'number' | 'password' | 'date';
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
@@ -35,6 +35,8 @@ interface ValidatedInputProps extends BaseValidatedFieldProps {
   min?: number;
   max?: number;
   step?: number;
+  autoFocus?: boolean;
+  maxLength?: number;
 }
 
 interface ValidatedTextareaProps extends BaseValidatedFieldProps {
@@ -72,6 +74,8 @@ export const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
     min,
     max,
     step,
+    autoFocus,
+    maxLength,
     ...props
   }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false);
@@ -102,6 +106,8 @@ export const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
             min={min}
             max={max}
             step={step}
+            autoFocus={autoFocus}
+            maxLength={maxLength}
             className={cn(
               'pr-10',
               hasError && 'border-red-300 focus:border-red-500 focus:ring-red-500',

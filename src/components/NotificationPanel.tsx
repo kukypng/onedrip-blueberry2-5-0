@@ -353,7 +353,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={markAllAsRead}
+              onClick={() => markAllAsRead()}
               disabled={isMarkingAllAsRead}
             >
               <CheckCheck className="h-4 w-4 mr-2" />

@@ -198,47 +198,47 @@ export const useFormValidation = <T extends Record<string, unknown>>(
 
       // MinLength
       if (rules.minLength && !error) {
-        error = validators.minLength(value, rules.minLength);
+        error = validators.minLength(String(value || ''), rules.minLength);
       }
 
       // MaxLength
       if (rules.maxLength && !error) {
-        error = validators.maxLength(value, rules.maxLength);
+        error = validators.maxLength(String(value || ''), rules.maxLength);
       }
 
       // Pattern
       if (rules.pattern && !error) {
-        error = validators.pattern(value, rules.pattern);
+        error = validators.pattern(String(value || ''), rules.pattern);
       }
 
       // Email
       if (rules.email && !error) {
-        error = validators.email(value);
+        error = validators.email(String(value || ''));
       }
 
       // Phone
       if (rules.phone && !error) {
-        error = validators.phone(value);
+        error = validators.phone(String(value || ''));
       }
 
       // IMEI
       if (rules.imei && !error) {
-        error = validators.imei(value);
+        error = validators.imei(String(value || ''));
       }
 
       // Numeric
       if (rules.numeric && !error) {
-        error = validators.numeric(value);
+        error = validators.numeric(String(value || ''));
       }
 
       // Min
       if (rules.min !== undefined && !error) {
-        error = validators.min(value, rules.min);
+        error = validators.min(String(value || ''), rules.min);
       }
 
       // Max
       if (rules.max !== undefined && !error) {
-        error = validators.max(value, rules.max);
+        error = validators.max(String(value || ''), rules.max);
       }
 
       // Custom validation

@@ -59,7 +59,7 @@ export function InlineClientForm({ onClientCreated, trigger, className }: Inline
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useAuth();
 
-  const validation = useFormValidation(formData, clientValidationRules);
+  const validation = useFormValidation(formData as unknown as Record<string, unknown>, clientValidationRules);
 
   const updateFormData = (field: keyof ClientFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -241,7 +241,7 @@ export function InlineClientForm({ onClientCreated, trigger, className }: Inline
             
             <Button
               type="submit"
-              disabled={isSubmitting || !validation.isFormValid()}
+              disabled={isSubmitting || !validation.formState.isValid}
               className="flex-1"
             >
               {isSubmitting ? (

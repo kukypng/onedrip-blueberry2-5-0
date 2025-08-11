@@ -187,10 +187,7 @@ const NotificationsPage: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isLoading} className="gap-2">
-              <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
-              {!isMobile && "Atualizar"}
-            </Button>
+            
             {unreadCount > 0 && <Button size="sm" onClick={handleMarkAllAsRead} disabled={isMarkingAllAsRead} className="gap-2 btn-apple">
                 <Check className="h-4 w-4" />
                 {!isMobile && "Marcar Todas"}

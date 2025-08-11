@@ -76,7 +76,7 @@ export const SecuritySettingsLite = () => {
           <div className="flex items-center space-x-3">
             <MessageCircle className="h-5 w-5 text-green-600" />
             <div>
-              <p className="text-sm font-medium text-foreground">WhatsApp</p>
+              <p className="text-sm font-medium text-foreground">Suporte WhatsApp</p>
               <p className="text-xs text-muted-foreground">
                 Entre em contato pelo WhatsApp
               </p>
@@ -88,7 +88,7 @@ export const SecuritySettingsLite = () => {
             onClick={handleSupportContact}
             className="text-green-600 border-green-600 hover:bg-green-50"
           >
-            Gerenciar
+            WhatsApp
           </Button>
         </div>
 

@@ -1087,7 +1087,7 @@ export type Database = {
           id: string
           name: string
           role: string | null
-          service_orders_beta_enabled: boolean | null
+          service_orders_vip_enabled: boolean | null
           updated_at: string
           username: string | null
         }
@@ -1100,7 +1100,7 @@ export type Database = {
           id: string
           name: string
           role?: string | null
-          service_orders_beta_enabled?: boolean | null
+          service_orders_vip_enabled?: boolean | null
           updated_at?: string
           username?: string | null
         }
@@ -1113,7 +1113,7 @@ export type Database = {
           id?: string
           name?: string
           role?: string | null
-          service_orders_beta_enabled?: boolean | null
+          service_orders_vip_enabled?: boolean | null
           updated_at?: string
           username?: string | null
         }

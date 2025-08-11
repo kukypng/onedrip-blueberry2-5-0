@@ -17,6 +17,7 @@ import { UserRenewalDialog } from '@/components/UserManagement/UserRenewalDialog
 import { UserAnalytics } from '@/components/UserManagement/UserAnalytics';
 import { UserSettings } from '@/components/UserManagement/UserSettings';
 import { BetaFeaturesSettingsLite } from '@/components/lite/BetaFeaturesSettingsLite';
+import { VipUserManagement } from '@/components/admin/VipUserManagement';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
 import { AdminNotificationManager } from '@/components/admin/AdminNotificationManager';
@@ -37,7 +38,7 @@ const AdminLiteEnhancedComponent = ({
 }: AdminLiteEnhancedProps & {
   profile: any;
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'notifications' | 'beta' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'analytics' | 'settings' | 'licenses' | 'notifications' | 'vip' | 'game' | 'logs' | 'debug' | 'tests' | 'images' | 'site'>('users');
   const [viewMode, setViewMode] = useState<'table' | 'cards'>('cards');
   const [filterRole, setFilterRole] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
@@ -297,7 +298,7 @@ const AdminLiteEnhancedComponent = ({
                 {activeTab === 'settings' && <><Settings className="h-5 w-5" />Configurações</>}
                 {activeTab === 'licenses' && <><Key className="h-5 w-5" />Licenças</>}
                 {activeTab === 'notifications' && <><Bell className="h-5 w-5" />Notificações</>}
-                {activeTab === 'beta' && <><Settings className="h-5 w-5" />Beta</>}
+                {activeTab === 'vip' && <><Settings className="h-5 w-5" />VIP</>}
                 {activeTab === 'game' && <><Gamepad2 className="h-5 w-5" />Jogo</>}
                 {activeTab === 'logs' && <><Shield className="h-5 w-5" />Logs</>}
                 {activeTab === 'debug' && <><Shield className="h-5 w-5" />Debug</>}
@@ -335,6 +336,10 @@ const AdminLiteEnhancedComponent = ({
                   <DropdownMenuItem onClick={() => setActiveTab('notifications')} className={activeTab === 'notifications' ? 'bg-accent' : ''}>
                     <Bell className="h-4 w-4 mr-2" />
                     Notificações
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setActiveTab('vip')} className={activeTab === 'vip' ? 'bg-accent' : ''}>
+                    <Settings className="h-4 w-4 mr-2" />
+                    VIP
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel>Ferramentas</DropdownMenuLabel>
@@ -594,8 +599,8 @@ const AdminLiteEnhancedComponent = ({
             <AdminNotificationManager />
           </TabsContent>
 
-          <TabsContent value="beta" className="p-4">
-            <BetaFeaturesSettingsLite userId={userId} profile={profile} />
+          <TabsContent value="vip" className="p-4">
+            <VipUserManagement userId={userId} profile={profile} />
           </TabsContent>
 
           <TabsContent value="game" className="p-4">

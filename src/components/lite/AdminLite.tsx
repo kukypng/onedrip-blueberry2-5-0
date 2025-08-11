@@ -11,6 +11,7 @@ import { UserEditModal } from '@/components/UserEditModal';
 import { UserDeletionDialog } from '@/components/UserManagement/UserDeletionDialog';
 import { UserRenewalDialog } from '@/components/UserManagement/UserRenewalDialog';
 import { BetaFeaturesSettingsLite } from '@/components/lite/BetaFeaturesSettingsLite';
+import { VipUserManagement } from '@/components/admin/VipUserManagement';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
 interface AdminLiteProps {
@@ -24,7 +25,7 @@ const AdminLiteComponent = ({
 }: AdminLiteProps & {
   profile: any;
 }) => {
-  const [activeTab, setActiveTab] = useState<'users' | 'licenses' | 'beta' | 'game'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'licenses' | 'vip' | 'game'>('users');
   const navigate = useNavigate();
   const {
     searchTerm,
@@ -160,7 +161,12 @@ const AdminLiteComponent = ({
             <Key className="h-4 w-4" />
             Licenças
           </Button>
-          
+          <Button variant={activeTab === 'vip' ? 'default' : 'outline'} onClick={() => setActiveTab('vip')} className="flex items-center gap-2 whitespace-nowrap" style={{
+          WebkitTapHighlightColor: 'transparent'
+        }}>
+            <Settings className="h-4 w-4" />
+            VIP
+          </Button>
           <Button variant={activeTab === 'game' ? 'default' : 'outline'} onClick={() => setActiveTab('game')} className="flex items-center gap-2 whitespace-nowrap" style={{
           WebkitTapHighlightColor: 'transparent'
         }}>
@@ -169,7 +175,7 @@ const AdminLiteComponent = ({
           </Button>
         </div>
 
-        {activeTab === 'licenses' ? <AdminLicenseManagerEnhanced /> : activeTab === 'beta' ? <BetaFeaturesSettingsLite userId={userId} profile={profile} /> : activeTab === 'game' ? <GameSettingsPanel /> : <>
+        {activeTab === 'licenses' ? <AdminLicenseManagerEnhanced /> : activeTab === 'vip' ? <VipUserManagement userId={userId} profile={profile} /> : activeTab === 'game' ? <GameSettingsPanel /> : <>
             {/* Create User Button */}
             <div className="flex justify-end">
               <Button onClick={handleCreateUser} className="flex items-center gap-2">

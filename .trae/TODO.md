@@ -1,7 +1,8 @@
 # TODO:
 
-- [x] check-admin-users: Verificar se existem usuários com role 'admin' na tabela user_profiles (priority: High)
-- [x] test-admin-function: Testar se a função is_current_user_admin() está funcionando corretamente (priority: High)
-- [x] check-admin-permissions: Verificar se as permissões admin estão sendo verificadas corretamente no frontend (priority: High)
-- [x] check-admin-routes: Verificar se existe rota /admin no App.tsx ou como acessar área admin (priority: High)
-- [x] fix-admin-access: Corrigir problemas encontrados no acesso admin - Função is_current_user_admin corrigida e usuário admin garantido (priority: High)
+- [x] 1: Modificar o componente Switch base em /src/components/ui/switch.tsx para usar cores vermelho (desativado) e verde (ativado) (priority: High)
+- [x] 2: Aplicar as novas cores no VipUserManagement.tsx (botão de acesso VIP) (priority: High)
+- [x] 3: Atualizar switches em NotificationSettings.tsx (priority: Medium)
+- [x] 4: Atualizar switches em UserSettings.tsx (priority: Medium)
+- [x] 5: Atualizar switches em outros componentes identificados (BudgetWarningSettings, SiteSettingsContent, etc.) (priority: Medium)
+- [x] 6: Testar as mudanças visuais no preview (priority: Medium)

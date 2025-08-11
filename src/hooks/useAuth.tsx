@@ -15,7 +15,7 @@ export interface UserProfile {
   budget_warning_enabled: boolean;
   budget_warning_days: number;
   advanced_features_enabled: boolean;
-  service_orders_beta_enabled?: boolean;
+  service_orders_vip_enabled?: boolean;
 }
 
 interface AuthContextType {

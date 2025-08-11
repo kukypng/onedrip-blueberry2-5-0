@@ -1,5 +1,5 @@
 /**
- * Página de Listagem de Ordens de Serviço (Beta)
+ * Página de Listagem de Ordens de Serviço (VIP)
  * Sistema Oliver Blueberry - Mobile First Design
  */
 
@@ -66,7 +66,7 @@ export const ServiceOrdersPage = () => {
   const [showFilters, setShowFilters] = useState(false);
 
   // Check if user has beta access
-  const hasBetaAccess = profile?.service_orders_beta_enabled || false;
+  const hasVipAccess = profile?.service_orders_vip_enabled || false;
 
   // Prepare filters for the hook
   const hookFilters = {
@@ -203,14 +203,14 @@ export const ServiceOrdersPage = () => {
   }
 
   // Check beta access
-  if (!hasBetaAccess) {
+  if (!hasVipAccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
             <Wrench className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold mb-4">Ordens de Serviço (Beta)</h1>
+          <h1 className="text-2xl font-bold mb-4">Ordens de Serviço (VIP)</h1>
           <p className="text-muted-foreground mb-6">
             Esta funcionalidade está em fase beta. Entre em contato com o suporte para solicitar acesso.
           </p>

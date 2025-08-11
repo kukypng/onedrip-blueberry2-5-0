@@ -65,7 +65,8 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
       className={cn(
         'relative transition-all duration-200',
         iconOnly && buttonSizes[size],
-        hasUnread && 'shadow-lg hover:shadow-xl',
+        hasUnread && 'shadow-lg hover:shadow-xl animate-pulse',
+        hasUnread && 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background',
         className
       )}
       disabled={isLoading}
@@ -88,6 +89,7 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
           variant="destructive" 
           className={cn(
             'absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold',
+            'animate-bounce',
             size === 'sm' && 'h-4 w-4 text-[10px]',
             size === 'lg' && 'h-6 w-6 text-sm'
           )}
@@ -212,7 +214,8 @@ export const NotificationIndicatorMobile: React.FC<{
       size="icon"
       className={cn(
         'relative h-9 w-9 transition-all duration-200',
-        hasUnread && 'shadow-lg hover:shadow-xl',
+        hasUnread && 'shadow-lg hover:shadow-xl animate-pulse',
+        hasUnread && 'ring-2 ring-primary/50 ring-offset-2 ring-offset-background',
         className
       )}
       onClick={handleClick}
@@ -227,7 +230,7 @@ export const NotificationIndicatorMobile: React.FC<{
       {hasUnread && (
         <Badge 
           variant="destructive" 
-          className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold"
+          className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs font-bold animate-bounce"
         >
           {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>

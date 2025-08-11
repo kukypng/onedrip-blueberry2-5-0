@@ -1,5 +1,5 @@
 /**
- * Página de Formulário de Ordem de Serviço (Beta)
+ * Página de Formulário de Ordem de Serviço (VIP)
  * Sistema Oliver Blueberry - Mobile First Design
  */
 
@@ -25,7 +25,10 @@ import {
   AlertCircle,
   Phone,
   Calendar,
-  FileText
+  FileText,
+  Search,
+  X,
+  Plus
 } from 'lucide-react';
 import { useSecureServiceOrders, useServiceOrderDetails } from '@/hooks/useSecureServiceOrders';
 import { useFormAutoSave } from '@/hooks/useAutoSave';
@@ -67,13 +70,23 @@ export const ServiceOrderFormPage = () => {
   const isEditMode = !!id;
   
   // Check if user has beta access
-  const hasBetaAccess = profile?.service_orders_beta_enabled || false;
+  const hasVipAccess = profile?.service_orders_vip_enabled || false;
   
   // State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [deviceTypes, setDeviceTypes] = useState<any[]>([]);
   const [existingClients, setExistingClients] = useState<any[]>([]);
+  const [filteredClients, setFilteredClients] = useState<any[]>([]);
+  const [clientSearchTerm, setClientSearchTerm] = useState('');
   const [selectedClientId, setSelectedClientId] = useState<string>('');
+  const [showNewClientForm, setShowNewClientForm] = useState(false);
+  const [isCreatingClient, setIsCreatingClient] = useState(false);
+  const [newClientData, setNewClientData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    address: ''
+  });
   const [formData, setFormData] = useState<FormData>({
     clientId: '',
     deviceType: '',
@@ -139,6 +152,26 @@ export const ServiceOrderFormPage = () => {
           toast.error('Erro ao carregar clientes');
         } else if (clientsResult.data) {
           setExistingClients(clientsResult.data);
+          setFilteredClients(clientsResult.data);
+          
+          // Set default client (first in list) if not in edit mode
+          if (!isEditMode && clientsResult.data.length > 0) {
+            const defaultClient = clientsResult.data[0];
+            setSelectedClientId(defaultClient.id);
+            setFormData(prev => ({ ...prev, clientId: defaultClient.id }));
+          }
+        }
+        
+        // Set default device type to 'Smartphone' if available
+        if (typesResult.data && !isEditMode) {
+          const smartphoneType = typesResult.data.find(type => 
+            type.name.toLowerCase().includes('smartphone') ||
+            type.name.toLowerCase().includes('celular') ||
+            type.name.toLowerCase().includes('telefone')
+          );
+          if (smartphoneType) {
+            setFormData(prev => ({ ...prev, deviceType: smartphoneType.id }));
+          }
         }
       } catch (error) {
         console.error('Error loading data:', error);
@@ -182,11 +215,101 @@ export const ServiceOrderFormPage = () => {
   const handleSelectClient = (clientId: string) => {
     setSelectedClientId(clientId);
     if (clientId === 'new') {
-      // Clear fields for new client
+      // Show new client form
+      setShowNewClientForm(true);
       updateFormData('clientId', '');
     } else if (clientId) {
       // Set selected client ID
+      setShowNewClientForm(false);
       updateFormData('clientId', clientId);
+    }
+  };
+
+  const handleNewClientDataChange = (field: string, value: string) => {
+    setNewClientData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const validateNewClientData = (): boolean => {
+    if (!newClientData.name.trim()) {
+      toast.error('Nome do cliente é obrigatório');
+      return false;
+    }
+    if (!newClientData.phone.trim()) {
+      toast.error('Telefone do cliente é obrigatório');
+      return false;
+    }
+    return true;
+  };
+
+  const handleCreateNewClient = async () => {
+    if (!validateNewClientData()) {
+      return;
+    }
+
+    setIsCreatingClient(true);
+
+    try {
+      const { data: newClient, error } = await supabase
+        .from('clients')
+        .insert({
+          name: newClientData.name.trim(),
+          phone: newClientData.phone.trim(),
+          email: newClientData.email.trim() || null,
+          address: newClientData.address.trim() || null,
+          user_id: user?.id
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating client:', error);
+        toast.error('Erro ao criar cliente');
+        return;
+      }
+
+      // Update clients list
+      const updatedClients = [newClient, ...existingClients];
+      setExistingClients(updatedClients);
+      setFilteredClients(updatedClients);
+
+      // Select the new client
+      setSelectedClientId(newClient.id);
+      updateFormData('clientId', newClient.id);
+
+      // Reset form
+      setNewClientData({ name: '', phone: '', email: '', address: '' });
+      setShowNewClientForm(false);
+
+      toast.success('Cliente criado com sucesso!');
+    } catch (error) {
+      console.error('Error creating client:', error);
+      toast.error('Erro ao criar cliente');
+    } finally {
+      setIsCreatingClient(false);
+    }
+  };
+
+  const handleCancelNewClient = () => {
+    setNewClientData({ name: '', phone: '', email: '', address: '' });
+    setShowNewClientForm(false);
+    setSelectedClientId('');
+  };
+
+  // Filter clients based on search term
+  const handleClientSearch = (searchTerm: string) => {
+    setClientSearchTerm(searchTerm);
+    if (!searchTerm.trim()) {
+      setFilteredClients(existingClients);
+    } else {
+      const filtered = existingClients.filter(client => 
+        client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (client.phone && client.phone.includes(searchTerm)) ||
+        (client.email && client.email.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredClients(filtered);
     }
   };
 
@@ -333,14 +456,14 @@ export const ServiceOrderFormPage = () => {
   }
 
   // Check beta access
-  if (!hasBetaAccess) {
+  if (!hasVipAccess) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center max-w-md">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/20 flex items-center justify-center">
             <Wrench className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold mb-4">Ordens de Serviço (Beta)</h1>
+          <h1 className="text-2xl font-bold mb-4">Ordens de Serviço (VIP)</h1>
           <p className="text-muted-foreground mb-6">
             Esta funcionalidade está em fase beta. Entre em contato com o suporte para solicitar acesso.
           </p>
@@ -369,17 +492,27 @@ export const ServiceOrderFormPage = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Back button clicked', { hasUnsavedChanges: autoSave.hasUnsavedChanges });
+                
                 if (autoSave.hasUnsavedChanges) {
                   const confirmLeave = window.confirm(
                     'Você tem alterações não salvas. Deseja realmente sair?'
                   );
-                  if (!confirmLeave) return;
+                  if (!confirmLeave) {
+                    console.log('User cancelled navigation');
+                    return;
+                  }
                   autoSave.clearSavedData();
                 }
+                
+                console.log('Navigating to /service-orders');
                 navigate('/service-orders');
               }}
               className="p-2 -ml-2"
+              type="button"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
@@ -415,23 +548,125 @@ export const ServiceOrderFormPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* Existing Client Selection */}
+              {/* Client Search and Selection */}
               <div className="space-y-2">
                 <Label>Cliente *</Label>
                 {existingClients.length > 0 ? (
-                  <Select value={selectedClientId} onValueChange={handleSelectClient}>
-                    <SelectTrigger className={!formData.clientId ? "border-red-300" : ""}>
-                      <SelectValue placeholder="Selecionar cliente" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="new">+ Criar Novo Cliente</SelectItem>
-                      {existingClients.map((client) => (
-                        <SelectItem key={client.id} value={client.id}>
-                          {client.name} {client.phone && `- ${client.phone}`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    {/* Search Input */}
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                      <Input
+                        placeholder="Buscar cliente por nome, telefone ou email..."
+                        value={clientSearchTerm}
+                        onChange={(e) => handleClientSearch(e.target.value)}
+                        className="pl-10"
+                      />
+                    </div>
+                    
+                    {/* Client Selection */}
+                    <Select value={selectedClientId} onValueChange={handleSelectClient}>
+                      <SelectTrigger className={!formData.clientId ? "border-red-300" : ""}>
+                        <SelectValue placeholder="Selecionar cliente" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="new">+ Criar Novo Cliente</SelectItem>
+                        {filteredClients.map((client) => (
+                          <SelectItem key={client.id} value={client.id}>
+                            {client.name} {client.phone && `- ${client.phone}`}
+                          </SelectItem>
+                        ))}
+                        {filteredClients.length === 0 && clientSearchTerm && (
+                          <SelectItem value="no-results" disabled>
+                            Nenhum cliente encontrado
+                          </SelectItem>
+                        )}
+                      </SelectContent>
+                    </Select>
+
+                    {/* Inline New Client Form */}
+                    {showNewClientForm && (
+                      <div className="mt-4 p-4 border border-border/50 rounded-lg bg-muted/30 backdrop-blur-sm">
+                        <h4 className="text-lg font-medium mb-4 text-foreground">Criar Novo Cliente</h4>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <Label htmlFor="newClientName">Nome *</Label>
+                            <Input
+                              id="newClientName"
+                              type="text"
+                              value={newClientData.name}
+                              onChange={(e) => handleNewClientDataChange('name', e.target.value)}
+                              placeholder="Nome completo do cliente"
+                              className="mt-1 bg-background border-border/50 text-foreground placeholder:text-muted-foreground"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="newClientPhone">Telefone *</Label>
+                            <Input
+                              id="newClientPhone"
+                              type="tel"
+                              value={newClientData.phone}
+                              onChange={(e) => handleNewClientDataChange('phone', e.target.value)}
+                              placeholder="(11) 99999-9999"
+                              className="mt-1 bg-background border-border/50 text-foreground placeholder:text-muted-foreground"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="newClientEmail">Email</Label>
+                            <Input
+                              id="newClientEmail"
+                              type="email"
+                              value={newClientData.email}
+                              onChange={(e) => handleNewClientDataChange('email', e.target.value)}
+                              placeholder="cliente@email.com"
+                              className="mt-1 bg-background border-border/50 text-foreground placeholder:text-muted-foreground"
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="newClientAddress">Endereço</Label>
+                            <Input
+                              id="newClientAddress"
+                              type="text"
+                              value={newClientData.address}
+                              onChange={(e) => handleNewClientDataChange('address', e.target.value)}
+                              placeholder="Endereço completo"
+                              className="mt-1 bg-background border-border/50 text-foreground placeholder:text-muted-foreground"
+                            />
+                          </div>
+                        </div>
+                        <div className="flex gap-2 mt-4">
+                          <Button
+                            type="button"
+                            onClick={handleCreateNewClient}
+                            disabled={isCreatingClient}
+                            className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-soft hover:shadow-medium transition-all duration-300"
+                          >
+                            {isCreatingClient ? (
+                              <>
+                                <div className="w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+                                Salvando...
+                              </>
+                            ) : (
+                              <>
+                                <Save className="w-4 h-4 mr-2" />
+                                Salvar Cliente
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancelNewClient}
+                            disabled={isCreatingClient}
+                            className="border-border/50 bg-background hover:bg-muted/50 text-foreground"
+                          >
+                            <X className="w-4 h-4 mr-2" />
+                            Cancelar
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 ) : (
                   <div className="p-4 bg-muted/50 rounded-lg border border-border/50">
                     <p className="text-sm text-muted-foreground mb-2">

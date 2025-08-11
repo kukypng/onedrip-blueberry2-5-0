@@ -67,13 +67,9 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
         iconOnly && buttonSizes[size],
         hasUnread && [
           'shadow-lg hover:shadow-xl',
-          'ring-2 ring-primary/30 ring-offset-2 ring-offset-background',
-          'animate-pulse hover:animate-none',
+          'ring-2 ring-primary/20 ring-offset-2 ring-offset-background',
           'bg-gradient-to-r from-primary to-primary/90',
           'hover:from-primary/90 hover:to-primary',
-          'before:absolute before:inset-0 before:rounded-md',
-          'before:bg-gradient-to-r before:from-primary/20 before:to-transparent',
-          'before:animate-pulse before:opacity-50'
         ],
         !hasUnread && [
           'hover:bg-muted/50',
@@ -85,17 +81,16 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
       disabled={isLoading}
       onClick={() => navigate('/msg')}
     >
-      {/* Glow effect for unread notifications */}
+      {/* Subtle glow effect - only on hover */}
       {hasUnread && (
-        <div className="absolute inset-0 rounded-md bg-primary/20 animate-ping opacity-75 pointer-events-none" />
+        <div className="absolute inset-0 rounded-md bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
       )}
       
       {hasUnread ? (
         <BellRing className={cn(
           iconSizes[size], 
           'text-white relative z-10',
-          'drop-shadow-sm',
-          'animate-none group-hover:animate-bounce'
+          'drop-shadow-sm'
         )} />
       ) : (
         <Bell className={cn(
@@ -117,8 +112,8 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
           className={cn(
             'absolute -top-1 -right-1 flex items-center justify-center p-0 text-xs font-bold z-20',
             'bg-red-500 text-white border-2 border-background',
-            'shadow-lg animate-bounce hover:animate-pulse',
-            'transition-all duration-200',
+            'shadow-lg transition-all duration-200',
+            'animate-[pulse_3s_ease-in-out_infinite]', // Slower, gentler pulse
             size === 'sm' && 'h-4 w-4 text-[10px] min-w-4',
             size === 'default' && 'h-5 w-5 min-w-5',
             size === 'lg' && 'h-6 w-6 text-sm min-w-6'
@@ -130,9 +125,9 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
         </Badge>
       )}
       
-      {/* Subtle sparkle effect */}
+      {/* Very subtle indicator */}
       {hasUnread && (
-        <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-yellow-400 rounded-full animate-ping opacity-60 pointer-events-none" />
+        <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-40 pointer-events-none" />
       )}
     </Button>
   );

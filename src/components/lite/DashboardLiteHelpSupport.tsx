@@ -54,7 +54,7 @@ export const DashboardLiteHelpSupport = () => {
               touchAction: 'manipulation'
             }}>
                 <LifeBuoy className="h-4 w-4" />
-                Abrir Central de Ajuda
+                Ajuda
               </Button>
               
               <Button onClick={handleWhatsAppSupport} variant="outline" className="w-full bg-green-50 hover:bg-green-100 active:bg-green-200 dark:bg-green-950/20 dark:hover:bg-green-950/30 dark:active:bg-green-950/40 border-green-200 dark:border-green-800 text-green-700 dark:text-green-300 py-3 px-4 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors" style={{

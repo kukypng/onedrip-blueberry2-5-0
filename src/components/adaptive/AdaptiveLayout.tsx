@@ -252,15 +252,9 @@ export const AdaptiveLayout = ({ children, activeTab, onTabChange }: AdaptiveLay
                       size="default"
                       className="mr-2"
                     />
-                    <div className="flex items-center gap-3 px-4 py-2 bg-gradient-to-r from-primary/5 to-emerald-500/5 border border-primary/10 rounded-full backdrop-blur-sm">
-                      <div className="relative">
-                        <div className="w-2 h-2 bg-gradient-to-r from-primary to-emerald-500 rounded-full" />
-                        <div className="absolute inset-0 w-2 h-2 bg-gradient-to-r from-primary to-emerald-500 rounded-full animate-ping opacity-75" />
-                      </div>
-                      <span className="text-xs font-medium text-foreground/80 tracking-wide">
-                        Desktop Mode - Layout Horizontal
-                      </span>
-                      <div className="w-1 h-4 bg-gradient-to-b from-primary/40 to-emerald-500/40 rounded-full" />
+                    <div className="text-sm text-muted-foreground flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                      Desktop Mode - Layout Horizontal
                     </div>
                   </motion.div>
                 </ResponsiveContainer>

@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/dialog';
 import { Bell, BellRing, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface NotificationIndicatorProps {
   variant?: 'dropdown' | 'popover' | 'modal';
@@ -41,6 +42,7 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
 }) => {
   const { unreadCount, isLoading } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const hasUnread = unreadCount > 0;
 
@@ -67,6 +69,7 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
         className
       )}
       disabled={isLoading}
+      onClick={() => navigate('/msg')}
     >
       {hasUnread ? (
         <BellRing className={cn(iconSizes[size], 'text-white')} />
@@ -192,7 +195,16 @@ export const NotificationIndicatorMobile: React.FC<{
   className?: string;
 }> = ({ onClick, className }) => {
   const { unreadCount, isLoading } = useNotifications();
+  const navigate = useNavigate();
   const hasUnread = unreadCount > 0;
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick();
+    } else {
+      navigate('/msg');
+    }
+  };
 
   return (
     <Button
@@ -203,7 +215,7 @@ export const NotificationIndicatorMobile: React.FC<{
         hasUnread && 'shadow-lg hover:shadow-xl',
         className
       )}
-      onClick={onClick}
+      onClick={handleClick}
       disabled={isLoading}
     >
       {hasUnread ? (

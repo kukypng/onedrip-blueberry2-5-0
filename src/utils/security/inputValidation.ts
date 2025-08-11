@@ -67,7 +67,7 @@ export const detectXSS = (input: string): boolean => {
 /**
  * Validação completa de entrada
  */
-export const validateInput = (input: string, context: 'form' | 'search' | 'admin' = 'form') => {
+export const validateInput = (input: string, context: 'form' | 'search' | 'admin' = 'form'): { isValid: boolean; sanitized: string; threats: string[]; riskLevel: 'low' | 'medium' | 'high' } => {
   const results = {
     isValid: true,
     sanitized: '',
@@ -128,7 +128,7 @@ export const validateEmail = (email: string) => {
  * Validação de telefone com segurança
  */
 export const validatePhone = (phone: string) => {
-  const phoneRegex = /^[\d\s\-\(\)\+]+$/;
+  const phoneRegex = /^[\d\s-()]+$/;
   const validation = validateInput(phone, 'form');
   
   return {

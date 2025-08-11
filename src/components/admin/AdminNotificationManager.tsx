@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Bell, Plus, Eye, EyeOff, Send, Users, MessageSquare, AlertCircle, Info, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Bell, Plus, Eye, EyeOff, Send, Users, MessageSquare, AlertCircle, Info, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -140,6 +140,29 @@ export const AdminNotificationManager: React.FC = () => {
       showError({
         title: 'Erro',
         description: 'Erro ao criar notificação: ' + error.message
+      });
+    }
+  });
+
+  const deleteNotification = useMutation({
+    mutationFn: async (notificationId: string) => {
+      const { error } = await supabase.rpc('admin_delete_notification', {
+        p_notification_id: notificationId
+      });
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      refetch();
+      showSuccess({
+        title: 'Sucesso',
+        description: 'Notificação deletada com sucesso!'
+      });
+    },
+    onError: (error) => {
+      showError({
+        title: 'Erro',
+        description: 'Erro ao deletar notificação: ' + error.message
       });
     }
   });
@@ -351,6 +374,16 @@ export const AdminNotificationManager: React.FC = () => {
                               {isExpired && (
                                 <Badge variant="destructive">Expirada</Badge>
                               )}
+                              
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => deleteNotification.mutate(notification.id)}
+                                disabled={deleteNotification.isPending}
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
                             </div>
                           </div>
                           

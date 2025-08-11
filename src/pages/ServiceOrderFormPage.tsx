@@ -11,8 +11,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { ValidatedInput, ValidatedTextarea, PhoneInput, IMEIInput, CurrencyInput } from '@/components/ui/validated-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { AutoSaveIndicatorCompact } from '@/components/ui/auto-save-indicator';
 import {
   ArrowLeft,
   Save,
@@ -26,6 +28,8 @@ import {
   FileText
 } from 'lucide-react';
 import { useSecureServiceOrders, useServiceOrderDetails } from '@/hooks/useSecureServiceOrders';
+import { useFormAutoSave } from '@/hooks/useAutoSave';
+import { useServiceOrderValidation } from '@/hooks/useFormValidation';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import type { Enums, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
@@ -84,6 +88,26 @@ export const ServiceOrderFormPage = () => {
     notes: '',
     isPaid: false,
     deliveryDate: ''
+  });
+
+  // Form validation
+  const validation = useServiceOrderValidation(formData);
+
+  // Auto-save functionality
+  const autoSaveKey = isEditMode ? `service-order-edit-${id}` : 'service-order-new';
+  const autoSave = useFormAutoSave(formData, autoSaveKey, {
+    enabled: !isEditMode, // Only auto-save for new orders
+    onRestore: (savedData) => {
+      setFormData(savedData);
+      validation.setFormValues(savedData);
+      if (savedData.clientId) {
+        setSelectedClientId(savedData.clientId);
+      }
+      toast.success('Dados restaurados do rascunho salvo');
+    },
+    onError: (error) => {
+      console.error('Auto-save error:', error);
+    }
   });
 
   // Hooks
@@ -152,6 +176,7 @@ export const ServiceOrderFormPage = () => {
       ...prev,
       [field]: value
     }));
+    validation.updateField(field, value);
   };
 
   const handleSelectClient = (clientId: string) => {
@@ -166,6 +191,7 @@ export const ServiceOrderFormPage = () => {
   };
 
   const validateForm = (): boolean => {
+    // Validate required fields first
     if (!formData.clientId) {
       toast.error('Cliente é obrigatório. Selecione um cliente existente.');
       return false;
@@ -174,14 +200,22 @@ export const ServiceOrderFormPage = () => {
       toast.error('Tipo de dispositivo é obrigatório');
       return false;
     }
-    if (!formData.deviceModel.trim()) {
-      toast.error('Modelo do dispositivo é obrigatório');
+    
+    // Run form validation
+    const isValid = validation.validateAll();
+    
+    if (!isValid) {
+      const firstError = Object.entries(validation.validationState)
+        .find(([_, state]) => !state.isValid)?.[1]?.error;
+      
+      if (firstError) {
+        toast.error(firstError);
+      } else {
+        toast.error('Por favor, corrija os erros no formulário');
+      }
       return false;
     }
-    if (!formData.reportedIssue.trim()) {
-      toast.error('Descrição do problema é obrigatória');
-      return false;
-    }
+    
     return true;
   };
 
@@ -247,10 +281,15 @@ export const ServiceOrderFormPage = () => {
         createServiceOrder(createData);
       }
 
-      // Navigate back to list after successful submission
-      setTimeout(() => {
-        navigate('/service-orders');
-      }, 1000);
+      // Clear auto-saved data on successful submission
+        if (!isEditMode) {
+          autoSave.clearSavedData();
+        }
+        
+        // Navigate back to list after successful submission
+        setTimeout(() => {
+          navigate('/service-orders');
+        }, 1000);
 
     } catch (error: any) {
       console.error('Error submitting form:', error);
@@ -330,12 +369,21 @@ export const ServiceOrderFormPage = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/service-orders')}
+              onClick={() => {
+                if (autoSave.hasUnsavedChanges) {
+                  const confirmLeave = window.confirm(
+                    'Você tem alterações não salvas. Deseja realmente sair?'
+                  );
+                  if (!confirmLeave) return;
+                  autoSave.clearSavedData();
+                }
+                navigate('/service-orders');
+              }}
               className="p-2 -ml-2"
             >
               <ArrowLeft className="h-5 w-5" />
             </Button>
-            <div>
+            <div className="flex-1">
               <h1 className="text-xl font-bold">
                 {isEditMode ? 'Editar Ordem de Serviço' : 'Nova Ordem de Serviço'}
               </h1>
@@ -343,6 +391,14 @@ export const ServiceOrderFormPage = () => {
                 {isEditMode ? 'Atualize as informações da ordem' : 'Preencha os dados para criar uma nova ordem'}
               </p>
             </div>
+            {!isEditMode && (
+              <AutoSaveIndicatorCompact
+                isSaving={autoSave.isSaving}
+                lastSaved={autoSave.lastSaved}
+                hasUnsavedChanges={autoSave.hasUnsavedChanges}
+                error={autoSave.error}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -434,26 +490,29 @@ export const ServiceOrderFormPage = () => {
                 )}
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="deviceModel">Modelo do Dispositivo *</Label>
-                <Input
-                  id="deviceModel"
-                  value={formData.deviceModel}
-                  onChange={(e) => updateFormData('deviceModel', e.target.value)}
-                  placeholder="Ex: iPhone 14 Pro, Samsung Galaxy S23"
-                  required
-                />
-              </div>
+              <ValidatedInput
+                label="Modelo do Dispositivo"
+                value={formData.deviceModel}
+                onChange={(value) => updateFormData('deviceModel', value)}
+                onBlur={() => validation.touchField('deviceModel')}
+                placeholder="Ex: iPhone 14 Pro, Samsung Galaxy S23"
+                required
+                error={validation.getFieldError('deviceModel')}
+                isValid={validation.isFieldValid('deviceModel')}
+                touched={validation.isFieldTouched('deviceModel')}
+                description="Informe o modelo exato do dispositivo"
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="imeiSerial">Número de Série/IMEI</Label>
-                <Input
-                  id="imeiSerial"
-                  value={formData.imeiSerial}
-                  onChange={(e) => updateFormData('imeiSerial', e.target.value)}
-                  placeholder="Número de série ou IMEI do dispositivo"
-                />
-              </div>
+              <IMEIInput
+                label="Número de Série/IMEI"
+                value={formData.imeiSerial}
+                onChange={(value) => updateFormData('imeiSerial', value)}
+                onBlur={() => validation.touchField('imeiSerial')}
+                error={validation.getFieldError('imeiSerial')}
+                isValid={validation.isFieldValid('imeiSerial')}
+                touched={validation.isFieldTouched('imeiSerial')}
+                description="IMEI de 15 dígitos ou número de série"
+              />
             </CardContent>
           </Card>
 
@@ -466,17 +525,20 @@ export const ServiceOrderFormPage = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="reportedIssue">Descrição do Problema *</Label>
-                <Textarea
-                  id="reportedIssue"
-                  value={formData.reportedIssue}
-                  onChange={(e) => updateFormData('reportedIssue', e.target.value)}
-                  placeholder="Descreva detalhadamente o problema relatado pelo cliente"
-                  rows={4}
-                  required
-                />
-              </div>
+              <ValidatedTextarea
+                label="Descrição do Problema"
+                value={formData.reportedIssue}
+                onChange={(value) => updateFormData('reportedIssue', value)}
+                onBlur={() => validation.touchField('reportedIssue')}
+                placeholder="Descreva detalhadamente o problema relatado pelo cliente"
+                rows={4}
+                required
+                error={validation.getFieldError('reportedIssue')}
+                isValid={validation.isFieldValid('reportedIssue')}
+                touched={validation.isFieldTouched('reportedIssue')}
+                description="Mínimo de 10 caracteres para uma descrição adequada"
+                maxLength={1000}
+              />
 
               <div className="space-y-2">
                 <Label htmlFor="priority">Prioridade</Label>
@@ -493,57 +555,50 @@ export const ServiceOrderFormPage = () => {
                 </Select>
               </div>
 
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="laborCost">Custo Mão de Obra (R$)</Label>
-                  <Input
-                    id="laborCost"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.laborCost}
-                    onChange={(e) => updateFormData('laborCost', e.target.value)}
-                    placeholder="0,00"
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <CurrencyInput
+                  label="Custo Mão de Obra (R$)"
+                  value={formData.laborCost}
+                  onChange={(value) => updateFormData('laborCost', value)}
+                  onBlur={() => validation.touchField('laborCost')}
+                  error={validation.getFieldError('laborCost')}
+                  isValid={validation.isFieldValid('laborCost')}
+                  touched={validation.isFieldTouched('laborCost')}
+                  description="Valor da mão de obra"
+                />
 
-                <div className="space-y-2">
-                  <Label htmlFor="partsCost">Custo Peças (R$)</Label>
-                  <Input
-                    id="partsCost"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.partsCost}
-                    onChange={(e) => updateFormData('partsCost', e.target.value)}
-                    placeholder="0,00"
-                  />
-                </div>
+                <CurrencyInput
+                  label="Custo Peças (R$)"
+                  value={formData.partsCost}
+                  onChange={(value) => updateFormData('partsCost', value)}
+                  onBlur={() => validation.touchField('partsCost')}
+                  error={validation.getFieldError('partsCost')}
+                  isValid={validation.isFieldValid('partsCost')}
+                  touched={validation.isFieldTouched('partsCost')}
+                  description="Valor das peças"
+                />
 
-                <div className="space-y-2">
-                  <Label htmlFor="totalPrice">Preço Total (R$)</Label>
-                  <Input
-                    id="totalPrice"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.totalPrice}
-                    onChange={(e) => updateFormData('totalPrice', e.target.value)}
-                    placeholder="0,00"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="notes">Observações Adicionais</Label>
-                <Textarea
-                  id="notes"
-                  value={formData.notes}
-                  onChange={(e) => updateFormData('notes', e.target.value)}
-                  placeholder="Informações adicionais sobre o serviço"
-                  rows={3}
+                <CurrencyInput
+                  label="Preço Total (R$)"
+                  value={formData.totalPrice}
+                  onChange={(value) => updateFormData('totalPrice', value)}
+                  onBlur={() => validation.touchField('totalPrice')}
+                  error={validation.getFieldError('totalPrice')}
+                  isValid={validation.isFieldValid('totalPrice')}
+                  touched={validation.isFieldTouched('totalPrice')}
+                  description="Valor total do serviço"
                 />
               </div>
+
+              <ValidatedTextarea
+                label="Observações Adicionais"
+                value={formData.notes}
+                onChange={(value) => updateFormData('notes', value)}
+                placeholder="Informações adicionais sobre o serviço"
+                rows={3}
+                description="Informações extras que podem ser úteis"
+                maxLength={500}
+              />
             </CardContent>
           </Card>
 
@@ -569,29 +624,29 @@ export const ServiceOrderFormPage = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="deliveryDate">Data de Entrega</Label>
-                  <Input
-                    id="deliveryDate"
-                    type="date"
-                    value={formData.deliveryDate}
-                    onChange={(e) => updateFormData('deliveryDate', e.target.value)}
-                  />
-                </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <ValidatedInput
+                  label="Data de Entrega"
+                  type="date"
+                  value={formData.deliveryDate}
+                  onChange={(value) => updateFormData('deliveryDate', value)}
+                  description="Data prevista para entrega"
+                />
 
-                <div className="space-y-2">
-                  <Label htmlFor="warrantyMonths">Garantia (meses)</Label>
-                  <Input
-                    id="warrantyMonths"
-                    type="number"
-                    min="0"
-                    max="60"
-                    value={formData.warrantyMonths}
-                    onChange={(e) => updateFormData('warrantyMonths', e.target.value)}
-                    placeholder="Ex: 12"
-                  />
-                </div>
+                <ValidatedInput
+                  label="Garantia (meses)"
+                  type="number"
+                  value={formData.warrantyMonths}
+                  onChange={(value) => updateFormData('warrantyMonths', value)}
+                  onBlur={() => validation.touchField('warrantyMonths')}
+                  placeholder="Ex: 12"
+                  min={0}
+                  max={60}
+                  error={validation.getFieldError('warrantyMonths')}
+                  isValid={validation.isFieldValid('warrantyMonths')}
+                  touched={validation.isFieldTouched('warrantyMonths')}
+                  description="Período de garantia em meses (máx: 60)"
+                />
               </div>
             </CardContent>
           </Card>

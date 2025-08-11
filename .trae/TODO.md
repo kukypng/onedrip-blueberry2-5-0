@@ -1,8 +1,7 @@
 # TODO:
 
-- [ ] 1: Verificar dados existentes nas tabelas notifications e user_notifications (**IN PROGRESS**) (priority: High)
-- [ ] 2: Testar função get_user_notifications diretamente no banco (priority: High)
-- [ ] 3: Verificar permissões RLS nas tabelas (priority: High)
-- [ ] 5: Corrigir problemas encontrados (priority: High)
-- [ ] 4: Analisar logs do console no frontend para erros (priority: Medium)
-- [ ] 6: Testar notificações no preview correto (localhost:8081) (priority: Medium)
+- [x] check-admin-users: Verificar se existem usuários com role 'admin' na tabela user_profiles (priority: High)
+- [x] test-admin-function: Testar se a função is_current_user_admin() está funcionando corretamente (priority: High)
+- [x] check-admin-permissions: Verificar se as permissões admin estão sendo verificadas corretamente no frontend (priority: High)
+- [x] check-admin-routes: Verificar se existe rota /admin no App.tsx ou como acessar área admin (priority: High)
+- [x] fix-admin-access: Corrigir problemas encontrados no acesso admin - Função is_current_user_admin corrigida e usuário admin garantido (priority: High)

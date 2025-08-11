@@ -6,6 +6,8 @@ import { useToast } from '@/hooks/useToast';
 
 interface Notification {
   id: string;
+  user_notification_id?: string;
+  notification_id?: string;
   title: string;
   message: string;
   type: 'info' | 'warning' | 'success' | 'error';
@@ -18,11 +20,13 @@ interface Notification {
   updated_at: string;
   is_read?: boolean;
   read_at?: string;
+  user_deleted_at?: string;
 }
 
 interface NotificationFilters {
   type?: 'info' | 'warning' | 'success' | 'error' | 'all';
   read_status?: 'read' | 'unread' | 'all';
+  deletedStatus?: 'active' | 'deleted';
 }
 
 export const useNotifications = () => {
@@ -31,8 +35,18 @@ export const useNotifications = () => {
   const queryClient = useQueryClient();
   const [filters, setFilters] = useState<NotificationFilters>({
     type: 'all',
-    read_status: 'all'
+    read_status: 'all',
+    deletedStatus: 'active'
   });
+
+  // Debug: Log do estado de autenticação
+  useEffect(() => {
+    console.log('🔍 DEBUG useNotifications - Estado de auth:', {
+      user: user ? { id: user.id, email: user.email } : null,
+      authLoading,
+      isAuthenticated: !!user
+    });
+  }, [user, authLoading]);
 
   // Buscar notificações do usuário
   const {
@@ -43,23 +57,38 @@ export const useNotifications = () => {
   } = useQuery({
     queryKey: ['user-notifications', user?.id, filters],
     queryFn: async () => {
-      if (!user?.id) return [];
+      console.log('🔍 DEBUG: Iniciando busca de notificações', {
+        userId: user?.id,
+        authLoading,
+        filters
+      });
 
+      if (!user?.id) {
+        console.log('🔍 DEBUG: Usuário não encontrado, retornando array vazio');
+        return [];
+      }
+
+      console.log('🔍 DEBUG: Chamando get_user_notifications com filtros:', filters);
       const { data, error } = await supabase.rpc('get_user_notifications', {
         p_limit: 50,
-        p_offset: 0
+        p_offset: 0,
+        p_show_deleted: filters.deletedStatus === 'deleted'
       });
       
+      console.log('🔍 DEBUG: Resultado da RPC:', { data, error, dataLength: data?.length });
+      
       if (error) {
-        console.error('Erro ao buscar notificações:', error);
+        console.error('🔍 DEBUG: Erro ao buscar notificações:', error);
         throw error;
       }
 
       let filteredData = data || [];
+      console.log('🔍 DEBUG: Dados antes dos filtros:', filteredData.length);
 
       // Aplicar filtros
       if (filters.type && filters.type !== 'all') {
         filteredData = filteredData.filter((n: any) => n.type === filters.type);
+        console.log('🔍 DEBUG: Após filtro de tipo:', filteredData.length);
       }
 
       if (filters.read_status && filters.read_status !== 'all') {
@@ -68,8 +97,10 @@ export const useNotifications = () => {
         } else {
           filteredData = filteredData.filter((n: any) => !n.is_read);
         }
+        console.log('🔍 DEBUG: Após filtro de leitura:', filteredData.length);
       }
 
+      console.log('🔍 DEBUG: Dados finais retornados:', filteredData.length);
       return filteredData;
     },
     enabled: !authLoading && !!user?.id,
@@ -84,22 +115,32 @@ export const useNotifications = () => {
   // Marcar notificação como lida
   const markAsReadMutation = useMutation({
     mutationFn: async (notificationId: string) => {
+      console.log('📖 DEBUG: Iniciando markAsRead:', { notificationId, userId: user?.id });
+      
       const { data, error } = await supabase.rpc('mark_notification_as_read', {
         p_notification_id: notificationId
       });
 
+      console.log('📖 DEBUG: Resultado markAsRead:', { data, error });
+
       if (error) {
+        console.error('📖 DEBUG: Erro na função mark_notification_as_read:', error);
         throw error;
       }
 
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data, notificationId) => {
+      console.log('📖 DEBUG: markAsRead sucesso:', { data, notificationId });
       // Invalidar cache para atualizar a lista
       queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
+      showSuccess({
+        title: 'Sucesso',
+        description: 'Notificação marcada como lida.'
+      });
     },
     onError: (error) => {
-      console.error('Erro ao marcar notificação como lida:', error);
+      console.error('📖 DEBUG: Erro ao marcar notificação como lida:', error);
       showError({
         title: 'Erro',
         description: 'Não foi possível marcar a notificação como lida.'
@@ -109,7 +150,7 @@ export const useNotifications = () => {
 
   // Marcar todas as notificações como lidas
   const markAllAsReadMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (options?: { silent?: boolean }) => {
       const unreadNotifications = notificationsArray.filter((n: any) => !n.is_read);
       
       const promises = unreadNotifications.map((notification: any) =>
@@ -126,14 +167,17 @@ export const useNotifications = () => {
         throw new Error(`Falha ao marcar ${errors.length} notificações como lidas`);
       }
 
-      return results;
+      return { results, silent: options?.silent };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
-      showSuccess({
-        title: 'Sucesso',
-        description: 'Todas as notificações foram marcadas como lidas.'
-      });
+      // Só mostrar notificação de sucesso se não for silencioso
+      if (!data?.silent) {
+        showSuccess({
+          title: 'Sucesso',
+          description: 'Todas as notificações foram marcadas como lidas.'
+        });
+      }
     },
     onError: (error) => {
       console.error('Erro ao marcar todas as notificações como lidas:', error);
@@ -144,14 +188,54 @@ export const useNotifications = () => {
     }
   });
 
-  // Deletar notificação individual
-  const deleteNotificationMutation = useMutation({
+  // Soft delete de notificação individual
+  const softDeleteNotificationMutation = useMutation({
     mutationFn: async (notificationId: string) => {
+      console.log('🗑️ DEBUG: Iniciando soft delete:', { notificationId, userId: user?.id });
+      
       const { data, error } = await supabase.rpc('delete_user_notification', {
         p_notification_id: notificationId
       });
 
+      console.log('🗑️ DEBUG: Resultado da RPC delete_user_notification:', { data, error });
+
       if (error) {
+        console.error('🗑️ DEBUG: Erro na RPC delete_user_notification:', error);
+        throw error;
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      console.log('🗑️ DEBUG: Soft delete sucesso:', { data });
+      queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
+      showSuccess({
+        title: 'Sucesso',
+        description: 'Mensagem movida para lixeira.'
+      });
+    },
+    onError: (error) => {
+      console.error('🗑️ DEBUG: Erro ao mover mensagem para lixeira:', error);
+      showError({
+        title: 'Erro',
+        description: 'Não foi possível mover a mensagem para lixeira.'
+      });
+    }
+  });
+
+  // Restaurar notificação
+  const restoreNotificationMutation = useMutation({
+    mutationFn: async (notificationId: string) => {
+      console.log('🔄 DEBUG: Iniciando restore:', { notificationId, userId: user?.id });
+      
+      const { data, error } = await supabase.rpc('restore_user_notification', {
+        p_notification_id: notificationId
+      });
+
+      console.log('🔄 DEBUG: Resultado da RPC restore_user_notification:', { data, error });
+
+      if (error) {
+        console.error('🔄 DEBUG: Erro na RPC restore_user_notification:', error);
         throw error;
       }
 
@@ -161,14 +245,14 @@ export const useNotifications = () => {
       queryClient.invalidateQueries({ queryKey: ['user-notifications'] });
       showSuccess({
         title: 'Sucesso',
-        description: 'Notificação excluída com sucesso.'
+        description: 'Mensagem restaurada com sucesso.'
       });
     },
     onError: (error) => {
-      console.error('Erro ao excluir notificação:', error);
+      console.error('Erro ao restaurar mensagem:', error);
       showError({
         title: 'Erro',
-        description: 'Não foi possível excluir a notificação.'
+        description: 'Não foi possível restaurar a mensagem.'
       });
     }
   });
@@ -210,18 +294,25 @@ export const useNotifications = () => {
 
   // Função para marcar notificação como lida
   const markAsRead = useCallback((notificationId: string) => {
+    console.log('📖 DEBUG: markAsRead chamado:', { notificationId });
     markAsReadMutation.mutate(notificationId);
   }, [markAsReadMutation]);
 
   // Função para marcar todas como lidas
-  const markAllAsRead = useCallback(() => {
-    markAllAsReadMutation.mutate();
+  const markAllAsRead = useCallback((silent?: boolean) => {
+    markAllAsReadMutation.mutate({ silent });
   }, [markAllAsReadMutation]);
 
-  // Função para deletar notificação
-  const deleteNotification = useCallback((notificationId: string) => {
-    deleteNotificationMutation.mutate(notificationId);
-  }, [deleteNotificationMutation]);
+  // Função para soft delete de notificação
+  const softDeleteNotification = useCallback((notificationId: string) => {
+    console.log('🗑️ DEBUG: softDeleteNotification chamado:', { notificationId });
+    softDeleteNotificationMutation.mutate(notificationId);
+  }, [softDeleteNotificationMutation]);
+
+  // Função para restaurar notificação
+  const restoreNotification = useCallback((notificationId: string) => {
+    restoreNotificationMutation.mutate(notificationId);
+  }, [restoreNotificationMutation]);
 
   // Função para deletar todas as notificações
   const deleteAllNotifications = useCallback(() => {
@@ -252,7 +343,8 @@ export const useNotifications = () => {
     // Ações
     markAsRead,
     markAllAsRead,
-    deleteNotification,
+    softDeleteNotification,
+    restoreNotification,
     deleteAllNotifications,
     updateFilters,
     refreshNotifications,
@@ -260,7 +352,8 @@ export const useNotifications = () => {
     // Estados de loading
     isMarkingAsRead: markAsReadMutation.isPending,
     isMarkingAllAsRead: markAllAsReadMutation.isPending,
-    isDeletingNotification: deleteNotificationMutation.isPending,
+    isSoftDeletingNotification: softDeleteNotificationMutation.isPending,
+    isRestoringNotification: restoreNotificationMutation.isPending,
     isDeletingAllNotifications: deleteAllNotificationsMutation.isPending
   };
 };

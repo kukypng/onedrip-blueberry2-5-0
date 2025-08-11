@@ -379,6 +379,8 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['secure-service-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['deleted-service-orders-count'] });
       toast.success('Ordem de serviço excluída com sucesso');
     },
     onError: (error) => {
@@ -421,6 +423,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['secure-service-orders'] });
       queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['deleted-service-orders-count'] });
       toast.success('Ordem de serviço restaurada com sucesso');
     },
     onError: (error) => {
@@ -462,6 +465,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['deleted-service-orders-count'] });
       toast.success('Ordem de serviço excluída permanentemente');
     },
     onError: (error) => {
@@ -491,6 +495,7 @@ export const useSecureServiceOrders = (userId: string | undefined, filters: Serv
     },
     onSuccess: (deletedCount: number) => {
       queryClient.invalidateQueries({ queryKey: ['deletedServiceOrders'] });
+      queryClient.invalidateQueries({ queryKey: ['deleted-service-orders-count'] });
       toast.success(`${deletedCount} ordens de serviço excluídas permanentemente`);
     },
     onError: (error) => {

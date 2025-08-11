@@ -34,6 +34,7 @@ import { UnauthorizedPage } from "./pages/UnauthorizedPage";
 import { LicensePage } from "./pages/LicensePage";
 import { PWAProvider } from "./components/PWAProvider";
 import NotificationsPage from "./pages/NotificationsPage";
+import { SettingsPage } from "./pages/SettingsPage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -197,7 +198,7 @@ const AppContent = () => {
           } 
         />
         <Route 
-          path="/notifications" 
+          path="/msg" 
           element={
             <ProtectedRoute>
               <NotificationsPage />
@@ -209,6 +210,22 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <NotificationsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/settings" 
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/configuracoes" 
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
             </ProtectedRoute>
           } 
         />

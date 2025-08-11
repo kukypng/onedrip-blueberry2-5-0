@@ -94,6 +94,8 @@ CREATE OR REPLACE FUNCTION get_user_notifications(
 )
 RETURNS TABLE (
   id TEXT,
+  user_notification_id UUID,
+  notification_id UUID,
   title TEXT,
   message TEXT,
   type TEXT,
@@ -105,7 +107,8 @@ RETURNS TABLE (
   created_at TIMESTAMPTZ,
   updated_at TIMESTAMPTZ,
   is_read BOOLEAN,
-  read_at TIMESTAMPTZ
+  read_at TIMESTAMPTZ,
+  user_deleted_at TIMESTAMPTZ
 )
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -124,6 +127,8 @@ BEGIN
   RETURN QUERY
   SELECT 
     n.id::TEXT,
+    un.id as user_notification_id,
+    n.id as notification_id,
     n.title,
     n.message,
     n.type,
@@ -135,7 +140,8 @@ BEGIN
     n.created_at,
     n.updated_at,
     COALESCE(un.read_at IS NOT NULL, unr.read_at IS NOT NULL, false) as is_read,
-    COALESCE(un.read_at, unr.read_at) as read_at
+    COALESCE(un.read_at, unr.read_at) as read_at,
+    un.user_deleted_at
   FROM public.notifications n
   LEFT JOIN public.user_notifications un ON n.id = un.notification_id AND un.user_id = v_user_id
   LEFT JOIN public.user_notifications_read unr ON n.id = unr.notification_id AND unr.user_id = v_user_id

@@ -7,13 +7,35 @@ import { UserLicenseCardIOS } from '@/components/dashboard/UserLicenseCardIOS';
 import { useIOSDetection } from '@/hooks/useIOSDetection';
 import { LicenseStatus } from '@/components/dashboard/LicenseStatus';
 import { LicenseStatusCard } from '@/components/license/LicenseStatusCard';
-import { Sparkles, ShoppingBag, CreditCard, MessageCircle, HeartCrack, AlertTriangle, Shield, Search } from 'lucide-react';
+import { 
+  Sparkles, 
+  ShoppingBag, 
+  CreditCard, 
+  MessageCircle, 
+  HeartCrack, 
+  AlertTriangle, 
+  Shield, 
+  Search,
+  TrendingUp,
+  Users,
+  FileText,
+  Calendar,
+  DollarSign,
+  Activity,
+  ChevronRight,
+  Plus,
+  BarChart3,
+  PieChart,
+  Target
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useLicenseNotifications } from '@/hooks/useLicenseNotifications';
 import { ResponsiveContainer } from '@/components/ui/ResponsiveContainer';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { CommandPalette } from '@/components/dashboard/CommandPalette';
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 
 interface ModernDashboardProps {
   onNavigateTo?: (view: string, budgetId?: string) => void;
@@ -70,131 +92,374 @@ export const EnhancedDashboard = ({ onNavigateTo, activeView }: ModernDashboardP
     fetchBudgets();
   }, [profile?.id]);
 
+  // Animation variants for desktop
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
   return (
     <>
-    <ResponsiveContainer className="space-y-6 max-w-7xl">
-      {/* Welcome Section */}
-      <div className="flex flex-col lg:flex-row items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl lg:text-4xl font-bold text-foreground">
-            Olá, {profile?.name || 'Usuário'}! 👋
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Bem-vindo ao seu painel de controle
-          </p>
-        </div>
-        
-        {/* Botão de busca rápida */}
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            onClick={() => setIsCommandPaletteOpen(true)}
-            className="glass-card border-border/50 hover:bg-accent/50 transition-all duration-200 group"
+      <div className="desktop-horizontal-layout">
+        <div className="desktop-content-wrapper">
+          <motion.div 
+            className="desktop-page-content"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
           >
-            <Search className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
-            <span className="hidden sm:inline">Busca rápida</span>
-            <div className="ml-2 px-1.5 py-0.5 bg-muted/50 rounded text-xs font-mono text-muted-foreground">
-              Ctrl+K
-            </div>
-          </Button>
+            {/* Enhanced Desktop Header */}
+            <motion.div 
+              className="desktop-section-header"
+              variants={itemVariants}
+            >
+              <div className="desktop-dashboard-layout">
+                <div className="desktop-dashboard-main">
+                  <h1 className="desktop-section-title text-4xl font-bold">
+                    Olá, {profile?.name || 'Usuário'}! 👋
+                  </h1>
+                  <p className="text-muted-foreground text-lg mt-2">
+                    Painel de controle horizontal - Desktop Mode
+                  </p>
+                </div>
+                <div className="desktop-dashboard-sidebar">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCommandPaletteOpen(true)}
+                    className="desktop-primary-button group"
+                  >
+                    <Search className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
+                    Busca Rápida
+                    <div className="ml-2 px-2 py-1 bg-muted rounded text-xs font-mono">
+                      Ctrl+K
+                    </div>
+                  </Button>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Enhanced Stats Dashboard */}
+            <motion.div 
+              className="desktop-stats-grid"
+              variants={itemVariants}
+            >
+              {/* Revenue Card */}
+              <motion.div 
+                className="desktop-card group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="desktop-card-header">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500/20 to-green-600/20 flex items-center justify-center">
+                      <TrendingUp className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">Receita Total</h3>
+                      <p className="text-3xl font-bold text-foreground">R$ 24.567,00</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-green-600 flex items-center gap-1">
+                    <TrendingUp className="h-4 w-4" />
+                    +12.5%
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  Últimos 30 dias
+                </div>
+              </motion.div>
+
+              {/* Clients Card */}
+              <motion.div 
+                className="desktop-card group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="desktop-card-header">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-blue-600/20 flex items-center justify-center">
+                      <Users className="h-6 w-6 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">Clientes Ativos</h3>
+                      <p className="text-3xl font-bold text-foreground">147</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-blue-600 flex items-center gap-1">
+                    <Users className="h-4 w-4" />
+                    +8 novos
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  Este mês
+                </div>
+              </motion.div>
+
+              {/* Orders Card */}
+              <motion.div 
+                className="desktop-card group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="desktop-card-header">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500/20 to-purple-600/20 flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">Orçamentos</h3>
+                      <p className="text-3xl font-bold text-foreground">89</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-purple-600 flex items-center gap-1">
+                    <FileText className="h-4 w-4" />
+                    23 pendentes
+                  </div>
+                </div>
+                <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  Últimos 7 dias
+                </div>
+              </motion.div>
+
+              {/* Performance Card */}
+              <motion.div 
+                className="desktop-card group"
+                whileHover={{ scale: 1.02 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <div className="desktop-card-header">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center">
+                      <Target className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium text-muted-foreground">Meta Mensal</h3>
+                      <p className="text-3xl font-bold text-foreground">78%</p>
+                    </div>
+                  </div>
+                  <div className="text-sm text-orange-600 flex items-center gap-1">
+                    <Target className="h-4 w-4" />
+                    R$ 7.433 restantes
+                  </div>
+                </div>
+                <div className="mt-4 w-full bg-muted rounded-full h-2">
+                  <div className="bg-gradient-to-r from-orange-500 to-orange-600 h-2 rounded-full" style={{ width: '78%' }}></div>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Main Dashboard Grid */}
+            <motion.div 
+              className="desktop-dashboard-layout"
+              variants={itemVariants}
+            >
+              {/* Main Content Area */}
+              <div className="desktop-dashboard-main space-y-6">
+                {/* Recent Budgets Section */}
+                <motion.div 
+                  className="desktop-card"
+                  variants={itemVariants}
+                >
+                  <div className="desktop-card-header">
+                    <div>
+                      <h3 className="text-xl font-semibold">Orçamentos Recentes</h3>
+                      <p className="text-sm text-muted-foreground">Seus últimos orçamentos criados</p>
+                    </div>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => onNavigateTo?.('budgets')}
+                      className="desktop-primary-button"
+                    >
+                      Ver Todos
+                      <ChevronRight className="h-4 w-4 ml-1" />
+                    </Button>
+                  </div>
+                  
+                  <div className="desktop-card-content">
+                    {budgetsLoading ? (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      </div>
+                    ) : budgets && budgets.length > 0 ? (
+                      <div className="desktop-grid-3 gap-4">
+                        {budgets.map((budget) => (
+                          <motion.div 
+                            key={budget.id}
+                            className="desktop-card bg-muted/30 group cursor-pointer"
+                            whileHover={{ scale: 1.02 }}
+                            onClick={() => onNavigateTo?.('budget-details', budget.id)}
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div>
+                                <h4 className="font-medium text-sm">{budget.client_name}</h4>
+                                <p className="text-xs text-muted-foreground">
+                                  {new Date(budget.created_at).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                            </div>
+                            <div className="text-lg font-bold text-primary">
+                              R$ {budget.total_price?.toLocaleString('pt-BR') || '0,00'}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                        <p className="text-muted-foreground">Nenhum orçamento recente encontrado</p>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="mt-3"
+                          onClick={() => onNavigateTo?.('new-budget')}
+                        >
+                          <Plus className="h-4 w-4 mr-2" />
+                          Criar Primeiro Orçamento
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+
+                {/* Analytics Section */}
+                <motion.div 
+                  className="desktop-flex-row"
+                  variants={itemVariants}
+                >
+                  <div className="desktop-card flex-1">
+                    <div className="desktop-card-header">
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-5 w-5 text-primary" />
+                        <h3 className="text-lg font-semibold">Análise de Vendas</h3>
+                      </div>
+                    </div>
+                    <div className="desktop-card-content">
+                      <div className="h-32 bg-gradient-to-r from-primary/10 to-primary/5 rounded-lg flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Gráfico de vendas em breve</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="desktop-card flex-1">
+                    <div className="desktop-card-header">
+                      <div className="flex items-center gap-2">
+                        <PieChart className="h-5 w-5 text-primary" />
+                        <h3 className="text-lg font-semibold">Distribuição</h3>
+                      </div>
+                    </div>
+                    <div className="desktop-card-content">
+                      <div className="h-32 bg-gradient-to-r from-secondary/10 to-secondary/5 rounded-lg flex items-center justify-center">
+                        <p className="text-sm text-muted-foreground">Gráfico de distribuição em breve</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+
+              {/* Sidebar Area */}
+              <div className="desktop-dashboard-sidebar space-y-6">
+                {/* License Status */}
+                <motion.div variants={itemVariants}>
+                  <LicenseStatusCard />
+                </motion.div>
+
+                {/* Quick Actions */}
+                <motion.div 
+                  className="desktop-card"
+                  variants={itemVariants}
+                >
+                  <div className="desktop-card-header">
+                    <h3 className="text-lg font-semibold">Ações Rápidas</h3>
+                  </div>
+                  <div className="desktop-card-content space-y-3">
+                    <Button 
+                      variant="default" 
+                      className="w-full justify-start gap-3 desktop-primary-button"
+                      onClick={() => onNavigateTo?.('new-budget')}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Novo Orçamento
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start gap-3"
+                      onClick={() => onNavigateTo?.('clients')}
+                    >
+                      <Users className="h-4 w-4" />
+                      Gerenciar Clientes
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start gap-3"
+                      onClick={() => onNavigateTo?.('settings')}
+                    >
+                      <Shield className="h-4 w-4" />
+                      Configurações
+                    </Button>
+                  </div>
+                </motion.div>
+
+                {/* Recent Activity */}
+                <motion.div 
+                  className="desktop-card"
+                  variants={itemVariants}
+                >
+                  <div className="desktop-card-header">
+                    <div className="flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-primary" />
+                      <h3 className="text-lg font-semibold">Atividade Recente</h3>
+                    </div>
+                  </div>
+                  <div className="desktop-card-content space-y-3">
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Orçamento aprovado</p>
+                        <p className="text-xs text-muted-foreground">há 2 horas</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Novo cliente cadastrado</p>
+                        <p className="text-xs text-muted-foreground">há 4 horas</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/30">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Sistema atualizado</p>
+                        <p className="text-xs text-muted-foreground">ontem</p>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      {/* License Status Card - New Addition */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {/* New Enhanced License Card */}
-        <LicenseStatusCard />
-        {!isIOS && <UserLicenseCard />}
-        <Card className="glass-card shadow-strong animate-slide-up">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl font-bold">Estatísticas</CardTitle>
-            <CardTitle className="text-sm text-muted-foreground">Visão geral</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 grid-cols-1 md:grid-cols-2">
-            <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-green-100 p-3">
-                <ShoppingBag className="h-5 w-5 text-green-500" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">R$ 2.457,00</div>
-                <div className="text-sm text-muted-foreground">Total Gasto</div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-blue-100 p-3">
-                <CreditCard className="h-5 w-5 text-blue-500" />
-              </div>
-              <div className="space-y-1">
-                <div className="text-2xl font-bold">R$ 1.234,00</div>
-                <div className="text-sm text-muted-foreground">Orçamento Restante</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="glass-card shadow-strong animate-slide-up">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl font-bold">Recursos</CardTitle>
-            <CardTitle className="text-sm text-muted-foreground">Links úteis</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <Button variant="secondary" className="w-full justify-start gap-2">
-              <Sparkles className="h-4 w-4" />
-              Novos Recursos
-            </Button>
-            <Button variant="secondary" className="w-full justify-start gap-2">
-              <Shield className="h-4 w-4" />
-              Central de Ajuda
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card className="glass-card shadow-strong animate-slide-up">
-        <CardHeader>
-          <CardTitle>Orçamentos Recentes</CardTitle>
-          <CardTitle className="text-sm text-muted-foreground">
-            Seus últimos orçamentos
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {budgetsLoading ? (
-            <p>Carregando orçamentos...</p>
-          ) : budgets && budgets.length > 0 ? (
-            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {budgets.map((budget) => (
-                <Card key={budget.id} className="bg-muted/50">
-                  <CardHeader>
-                    <CardTitle>{budget.client_name}</CardTitle>
-                    <CardTitle className="text-sm text-muted-foreground">
-                      Criado em {new Date(budget.created_at).toLocaleDateString()}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-2xl font-bold">R$ {budget.total_price}</p>
-                    <Button
-                      variant="secondary"
-                      className="w-full"
-                      onClick={() => onNavigateTo?.('budget-details', budget.id)}
-                    >
-                      Ver Detalhes
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <p>Nenhum orçamento recente encontrado.</p>
-          )}
-        </CardContent>
-      </Card>
-    </ResponsiveContainer>
-
-    {/* Command Palette */}
-    <CommandPalette 
-      isOpen={isCommandPaletteOpen}
-      onClose={() => setIsCommandPaletteOpen(false)}
-    />
-  </>
+      {/* Command Palette */}
+      <CommandPalette 
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+      />
+    </>
   );
 };

@@ -112,16 +112,13 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
           className={cn(
             'absolute -top-1 -right-1 flex items-center justify-center p-0 text-xs font-bold z-20',
             'bg-red-500 text-white border-2 border-background',
-            'shadow-lg transition-all duration-200',
-            'animate-[pulse_3s_ease-in-out_infinite]', // Slower, gentler pulse
+            'shadow-lg',
             size === 'sm' && 'h-4 w-4 text-[10px] min-w-4',
             size === 'default' && 'h-5 w-5 min-w-5',
             size === 'lg' && 'h-6 w-6 text-sm min-w-6'
           )}
         >
-          <span className="animate-none">
-            {unreadCount > 99 ? '99+' : unreadCount}
-          </span>
+          {unreadCount > 99 ? '99+' : unreadCount}
         </Badge>
       )}
       

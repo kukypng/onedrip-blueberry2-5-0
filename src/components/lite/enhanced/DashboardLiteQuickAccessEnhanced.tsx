@@ -39,7 +39,7 @@ const quickAccessActions: QuickAccessAction[] = [{
   iconColor: 'text-blue-600'
 }, {
   id: 'service-orders',
-  label: 'Ordens de Serviço',
+  label: 'Ordens de Serviço VIP',
   icon: Wrench,
   tab: 'service-orders',
   permission: null,

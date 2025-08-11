@@ -161,7 +161,7 @@ export const ServiceOrdersLite = ({ userId, onBack }: ServiceOrdersLiteProps) =>
 
         {/* Title */}
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Ordens de Serviço</h1>
+          <h1 className="text-2xl font-bold mb-2">Ordens de Serviço VIP</h1>
           <p className="text-muted-foreground">Gerencie suas ordens de serviço</p>
         </div>
 

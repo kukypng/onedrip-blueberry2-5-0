@@ -57,8 +57,8 @@ export const generateWhatsAppMessage = (budget: BudgetData): string => {
   }
 
   // Qualidade da peça e observações
-  let qualityInfo = budget.part_quality ? `*Qualidade da peça:* ${budget.part_quality}` : '';
-  let obsInfo = budget.notes ? `\n*Obs:* ${budget.notes}` : '';
+  const qualityInfo = budget.part_quality ? `*Qualidade da peça:* ${budget.part_quality}` : '';
+  const obsInfo = budget.notes ? `\n*Obs:* ${budget.notes}` : '';
 
   // Serviços inclusos
   let includedServices = '';
@@ -149,7 +149,7 @@ const detectWhatsAppPWA = (): boolean => {
   try {
     // Verificar se está rodando como PWA
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    const isInWebAppiOS = (window.navigator as any).standalone === true;
+    const isInWebAppiOS = (window.navigator as unknown as { standalone?: boolean }).standalone === true;
     const isInWebAppChrome = window.matchMedia('(display-mode: standalone)').matches;
     
     // Verificar se há evidências do PWA do WhatsApp
@@ -198,6 +198,50 @@ const tryReuseWhatsAppTab = (url: string): boolean => {
     console.warn('Erro ao tentar reutilizar aba do WhatsApp:', error);
     return false;
   }
+};
+
+// Função para gerar mensagem personalizada do plano selecionado
+export const generatePlanWhatsAppMessage = (
+  planData: {
+    nome: string;
+    preco: number;
+    preco_original?: number;
+    moeda: string;
+    periodo: string;
+  },
+  billingCycle: 'monthly' | 'yearly',
+  isVip: boolean = false,
+  vipPrice: number = 10
+): string => {
+  const cycleText = billingCycle === 'yearly' ? 'Anual' : 'Mensal';
+  const totalPrice = isVip ? planData.preco + vipPrice : planData.preco;
+  const savings = planData.preco_original ? planData.preco_original - planData.preco : 0;
+  
+  let message = `🚀 *Interesse no ${planData.nome}*\n\n`;
+  message += `📋 *Detalhes do Plano:*\n`;
+  message += `• Ciclo: ${cycleText}\n`;
+  message += `• Valor: ${planData.moeda}${totalPrice.toFixed(2)}${planData.periodo}\n`;
+  
+  if (planData.preco_original && savings > 0) {
+    const discountPercent = Math.round((savings / planData.preco_original) * 100);
+    message += `• Desconto: ${discountPercent}% OFF (economia de ${planData.moeda}${savings.toFixed(2)})\n`;
+  }
+  
+  if (isVip) {
+    message += `\n👑 *Upgrade VIP Incluído:*\n`;
+    message += `• Sistema de Ordem de Serviço\n`;
+    message += `• Gestão completa de clientes\n`;
+    message += `• Relatórios avançados\n`;
+    message += `• Suporte prioritário\n`;
+  }
+  
+  if (billingCycle === 'yearly') {
+    message += `\n💰 *Vantagem Anual:* 2 meses grátis!\n`;
+  }
+  
+  message += `\n📞 Gostaria de mais informações sobre este plano!`;
+  
+  return message;
 };
 
 export const shareViaWhatsApp = (message: string) => {

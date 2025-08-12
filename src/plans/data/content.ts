@@ -10,31 +10,84 @@ export const PLANS_CONTENT = {
   titulo_principal: "Escolha seu Plano",
   subtitulo_principal: "Tenha acesso completo ao sistema de gestão de orçamentos mais eficiente para assistências técnicas.",
 
-  // DADOS DO PLANO
-  plano: {
-    nome: "Plano Profissional",
-    descricao: "Para assistências técnicas que querem crescer",
-    preco: 45,
+  // DADOS DOS PLANOS (MENSAL E ANUAL)
+  planos: {
+    mensal: {
+      nome: "Plano Profissional",
+      descricao: "Para assistências técnicas que querem crescer",
+      preco: 68.90,
+      preco_original: 80.00,
+      moeda: "R$",
+      periodo: "/mês",
+      ciclo: "monthly",
+      badge_popular: "Mais Popular",
+      mostrar_badge: true,
+      economia_texto: "",
+      
+      // Lista de benefícios do plano
+      beneficios: [
+        "Sistema completo de orçamentos",
+        "Gestão de clientes ilimitada", 
+        "Relatórios e estatísticas",
+        "Cálculos automáticos",
+        "Controle de dispositivos",
+        "Suporte técnico incluso",
+        "Atualizações gratuitas",
+        "Backup automático"
+      ]
+    },
+    anual: {
+      nome: "Plano Profissional Anual",
+      descricao: "Para assistências técnicas que querem crescer com economia",
+      preco: 638.55,
+      preco_original: 800.00,
+      moeda: "R$",
+      periodo: "/ano",
+      ciclo: "yearly",
+      badge_popular: "Melhor Oferta",
+      mostrar_badge: true,
+      economia_texto: "2 meses grátis",
+      
+      // Lista de benefícios do plano
+      beneficios: [
+        "Sistema completo de orçamentos",
+        "Gestão de clientes ilimitada", 
+        "Relatórios e estatísticas",
+        "Cálculos automáticos",
+        "Controle de dispositivos",
+        "Suporte técnico incluso",
+        "Atualizações gratuitas",
+        "Backup automático",
+        "2 meses de economia"
+      ]
+    }
+  },
+
+  // OPÇÃO VIP
+  vip: {
+    nome: "Upgrade VIP",
+    descricao: "Funcionalidades avançadas para sua assistência",
+    preco_adicional: 0.83,
     moeda: "R$",
-    periodo: "/mês",
-    badge_popular: "Mais Popular",
-    mostrar_badge: true,
+    icone: "Crown",
+    
+    // Benefícios exclusivos VIP
+    beneficios: [
+      "Sistema de ordem de serviço",
+      "Gestão avançada de técnicos",
+      "Relatórios detalhados de produtividade",
+      "Controle de estoque avançado",
+      "Integração com fornecedores",
+      "Suporte prioritário"
+    ]
+  },
+
+  // CONFIGURAÇÕES GERAIS
+  configuracoes_gerais: {
     botao_texto: "Assinar Agora",
     mostrar_suporte: true,
     texto_suporte: "Suporte via WhatsApp incluso",
-    informacoes_extras: "✓ Sem taxa de setup • ✓ Cancele quando quiser • ✓ Suporte brasileiro",
-    
-    // Lista de benefícios do plano
-    beneficios: [
-      "Sistema completo de orçamentos",
-      "Gestão de clientes ilimitada", 
-      "Relatórios e estatísticas",
-      "Cálculos automáticos",
-      "Controle de dispositivos",
-      "Suporte técnico incluso",
-      "Atualizações gratuitas",
-      "Backup automático"
-    ]
+    informacoes_extras: "✓ Sem taxa de setup • ✓ Cancele quando quiser • ✓ Suporte brasileiro"
   },
 
   // SEÇÃO DE VANTAGENS/BENEFÍCIOS
@@ -125,7 +178,7 @@ export const PLANS_CONTENT = {
 
   // CONFIGURAÇÕES TÉCNICAS
   configuracoes: {
-    whatsapp_numero: "556496028022",
+    whatsapp_numero: "64996028022",
     url_pagamento: "https://mpago.la/246f2WV"
   }
 };

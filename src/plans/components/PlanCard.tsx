@@ -6,6 +6,7 @@ interface DadosPlano {
   nome: string;
   descricao: string;
   preco: number;
+  preco_original?: number;
   moeda: string;
   periodo: string;
   badge_popular: string;
@@ -47,13 +48,25 @@ export const PlanCard = ({ plano, aoSelecionarPlano }: PlanCardProps) => {
             </p>
             
             {/* Preço */}
-            <div className="flex items-baseline justify-center mb-6">
-              <span className="text-5xl font-bold text-foreground">
-                {plano.moeda}{plano.preco}
-              </span>
-              <span className="text-xl text-muted-foreground ml-1">
-                {plano.periodo}
-              </span>
+            <div className="flex flex-col items-center justify-center mb-6">
+              {plano.preco_original && (
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-lg text-muted-foreground line-through">
+                    {plano.moeda}{plano.preco_original.toFixed(2)}
+                  </span>
+                  <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full font-semibold">
+                    {Math.round(((plano.preco_original - plano.preco) / plano.preco_original) * 100)}% OFF
+                  </span>
+                </div>
+              )}
+              <div className="flex items-baseline justify-center">
+                <span className="text-5xl font-bold text-foreground">
+                  {plano.moeda}{plano.preco.toFixed(2)}
+                </span>
+                <span className="text-xl text-muted-foreground ml-1">
+                  {plano.periodo}
+                </span>
+              </div>
             </div>
           </div>
           

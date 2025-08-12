@@ -17,9 +17,14 @@ import { PLANS_CONTENT } from './data/content';
 import { PlansHero } from './components/PlansHero';
 import { BenefitsSection } from './components/BenefitsSection';
 import { PlanCard } from './components/PlanCard';
+import { PlanSelector } from './components/PlanSelector';
+import { VipOption } from './components/VipOption';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
+
+// Importando utilitários do WhatsApp
+import { generatePlanWhatsAppMessage, openWhatsApp } from '@/utils/whatsappUtils';
 
 // Configuração do MercadoPago
 declare global {
@@ -29,8 +34,12 @@ declare global {
   }
 }
 
+type BillingCycle = 'monthly' | 'yearly';
+
 export const PlansPage = () => {
   const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
+  const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
+  const [isVipSelected, setIsVipSelected] = useState(false);
   const navigate = useNavigate();
 
   // Carregamento do script do MercadoPago
@@ -58,9 +67,28 @@ export const PlansPage = () => {
     carregarScriptMercadoPago();
   }, []);
 
+  // Obter dados do plano atual baseado no ciclo selecionado
+  const getCurrentPlanData = () => {
+    return billingCycle === 'yearly' 
+      ? PLANS_CONTENT.planos.anual 
+      : PLANS_CONTENT.planos.mensal;
+  };
+
   // Funções de ação
   const aoSelecionarPlano = () => {
-    setMostrarConfirmacao(true);
+    // Gerar mensagem personalizada para WhatsApp
+    const planData = getCurrentPlanData();
+    const message = generatePlanWhatsAppMessage(
+      planData,
+      billingCycle,
+      isVipSelected,
+      PLANS_CONTENT.vip.preco_adicional
+    );
+    
+    // Abrir WhatsApp com a mensagem
+    const whatsappNumber = PLANS_CONTENT.configuracoes.whatsapp_numero;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    openWhatsApp(whatsappUrl);
   };
   
   const aoConfirmarPagamento = () => {
@@ -112,11 +140,28 @@ export const PlansPage = () => {
           vantagens={PLANS_CONTENT.vantagens.lista}
         />
 
+        {/* Seletor de Planos */}
+        <div className="text-center">
+          <PlanSelector 
+            selectedCycle={billingCycle}
+            onCycleChange={setBillingCycle}
+          />
+        </div>
+
         {/* Card do Plano */}
         <PlanCard 
-          plano={PLANS_CONTENT.plano}
+          plano={getCurrentPlanData()}
           aoSelecionarPlano={aoSelecionarPlano}
         />
+
+        {/* Opção VIP */}
+        <div className="max-w-4xl mx-auto">
+          <VipOption 
+            isSelected={isVipSelected}
+            onToggle={setIsVipSelected}
+            billingCycle={billingCycle}
+          />
+        </div>
 
         {/* Seção de Depoimentos */}
         <TestimonialsSection 
@@ -137,7 +182,7 @@ export const PlansPage = () => {
         {/* Seção Final */}
         <FinalCTA 
           titulo={PLANS_CONTENT.secao_final.titulo}
-          informacoesExtras={PLANS_CONTENT.plano.informacoes_extras}
+          informacoesExtras={getCurrentPlanData().informacoes_extras}
           botaoTexto={PLANS_CONTENT.secao_final.botao_texto}
           aoSelecionarPlano={aoSelecionarPlano}
         />

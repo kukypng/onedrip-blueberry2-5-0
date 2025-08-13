@@ -45,7 +45,7 @@ export const TermsPage = () => {
               Termos de Uso
             </CardTitle>
             <p className="text-muted-foreground mt-2">
-              OneDrip System - Última atualização: Janeiro de 2025
+              OneDrip - Última atualização: Janeiro de 2025
             </p>
           </CardHeader>
 
@@ -300,7 +300,8 @@ export const TermsPage = () => {
                 </p>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Mail className="h-4 w-4" />
-                  <span>legal@onedrip.com.br</span>
+                  <span>suporte@onedrip.com.br</span>
+
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" />
@@ -316,7 +317,7 @@ export const TermsPage = () => {
             {/* Footer */}
             <div className="text-center pt-8 border-t">
               <p className="text-sm text-muted-foreground">
-                © 2025 OneDrip System - KukySolutions™ | Todos os direitos reservados
+                © 2025 OneDrip - KukySolutions™ | Todos os direitos reservados
               </p>
             </div>
           </CardContent>

@@ -45,7 +45,7 @@ export const PrivacyPage = () => {
               Política de Privacidade
             </CardTitle>
             <p className="text-muted-foreground mt-2">
-              OneDrip System - Última atualização: Janeiro de 2025
+              OneDrip - Última atualização: Janeiro de 2025
             </p>
           </CardHeader>
 
@@ -57,7 +57,7 @@ export const PrivacyPage = () => {
                 1. Introdução
               </h2>
               <p className="text-muted-foreground leading-relaxed">
-                A OneDrip System, desenvolvida por André Ribeiro Lima (KukySolutions™), está comprometida em proteger 
+                A OneDrip, desenvolvida por André Ribeiro Lima (KukySolutions™), está comprometida em proteger 
                 a privacidade e os dados pessoais de nossos usuários. Esta Política de Privacidade descreve como 
                 coletamos, usamos, armazenamos e protegemos suas informações pessoais em conformidade com a Lei Geral 
                 de Proteção de Dados (LGPD - Lei nº 13.709/2018) e demais regulamentações aplicáveis.
@@ -217,7 +217,7 @@ export const PrivacyPage = () => {
                 </p>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Mail className="h-4 w-4" />
-                  <span>privacy@onedrip.com.br</span>
+                  <span>suporte@onedrip.com.br</span>
                 </div>
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <Phone className="h-4 w-4" />
@@ -233,7 +233,7 @@ export const PrivacyPage = () => {
             {/* Footer */}
             <div className="text-center pt-8 border-t">
               <p className="text-sm text-muted-foreground">
-                © 2025 OneDrip System - KukySolutions™ | Todos os direitos reservados
+                © 2025 OneDrip - KukySolutions™ | Todos os direitos reservados
               </p>
             </div>
           </CardContent>

@@ -1,6 +1,6 @@
 /**
  * Sistema de Rate Limiting Cliente-Side
- * OneDrip System - Segurança Avançada
+ * OneDrip - Segurança Avançada
  */
 
 interface RateLimitConfig {

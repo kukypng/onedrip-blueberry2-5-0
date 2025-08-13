@@ -1,4 +1,4 @@
--- 🔒 CORREÇÕES CRÍTICAS DE SEGURANÇA - OneDrip System
+-- 🔒 CORREÇÕES CRÍTICAS DE SEGURANÇA - 
 -- Implementação completa do plano de segurança
 
 -- ===== 1. CORREÇÃO DE FUNÇÕES COM search_path VULNERÁVEL =====

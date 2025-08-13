@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { TrendingUp, TrendingDown, DollarSign, Clock, Users, CheckCircle, Wrench } from 'lucide-react';
+import { TrendingUp, TrendingDown, DollarSign, Clock, Users, CheckCircle, Wrench, Calendar, RefreshCw, AlertTriangle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { GlassCard, AnimatedCounter, BounceBadge } from '@/components/ui/animations/micro-interactions';
 import { AdvancedSkeleton } from '@/components/ui/animations/loading-states';
 import { StaggerContainer } from '@/components/ui/animations/page-transitions';
 import { useResponsive } from '@/hooks/useResponsive';
+import { useUserLicenseDetails } from '@/hooks/useUserLicenseDetails';
 interface DashboardLiteStatsEnhancedProps {
   profile: any;
   userId?: string;
@@ -27,6 +28,7 @@ export const DashboardLiteStatsEnhanced = ({
   userId
 }: DashboardLiteStatsEnhancedProps) => {
   const { isDesktop } = useResponsive();
+  const { licenseDetails, loading: licenseLoading } = useUserLicenseDetails();
   const [stats, setStats] = useState<StatsData>({
     totalBudgets: 0,
     weeklyGrowth: 0,
@@ -129,14 +131,34 @@ export const DashboardLiteStatsEnhanced = ({
           
           <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-primary/10 to-primary/5 rounded-2xl">
             <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-              <TrendingUp className="h-5 w-5 text-primary" />
+              {licenseLoading ? (
+                <RefreshCw className="h-5 w-5 text-primary animate-spin" />
+              ) : licenseDetails?.is_valid ? (
+                licenseDetails.days_remaining && licenseDetails.days_remaining <= 7 ? (
+                  <AlertTriangle className="h-5 w-5 text-yellow-500" />
+                ) : (
+                  <CheckCircle className="h-5 w-5 text-green-500" />
+                )
+              ) : (
+                <AlertTriangle className="h-5 w-5 text-red-500" />
+              )}
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">
-                Crescimento semanal
+                Status da Licença
               </p>
               <p className="text-lg font-bold text-primary">
-                +{stats.weeklyGrowth} orçamentos
+                {licenseLoading ? (
+                  'Carregando...'
+                ) : licenseDetails?.is_valid ? (
+                  licenseDetails.days_remaining !== undefined ? (
+                    `${licenseDetails.days_remaining} dias restantes`
+                  ) : (
+                    'Licença Ativa'
+                  )
+                ) : (
+                  'Licença Inválida'
+                )}
               </p>
             </div>
           </div>

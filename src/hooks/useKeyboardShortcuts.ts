@@ -96,7 +96,7 @@ export const useKeyboardShortcuts = ({ shortcuts, isEnabled = true }: UseKeyboar
         const helpDialog = document.querySelector('[data-help-dialog]') as HTMLElement;
         helpDialog?.click();
       },
-      description: 'Abrir central de ajuda'
+      description: 'Ajuda'
     },
     {
       key: 'Escape',

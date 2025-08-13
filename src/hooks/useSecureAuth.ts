@@ -1,6 +1,6 @@
 /**
  * Hook de Autenticação Segura
- * OneDrip System - Implementação com Rate Limiting e Auditoria
+ * OneDrip - Implementação com Rate Limiting e Auditoria
  */
 
 import { useState, useEffect } from 'react';

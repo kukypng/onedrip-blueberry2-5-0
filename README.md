@@ -330,6 +330,6 @@ Agradecemos a todos que contribuíram para o desenvolvimento do OneDrip:
 
 *"Seus clientes merecem o melhor. O OneDrip entrega excelência."*
 
-**© 2025 OneDrip System - Desenvolvido por KukySolutions™**
+**© 2025 OneDrip - Desenvolvido por KukySolutions™**
 
 </div>

@@ -1,4 +1,4 @@
-# 🔐 Política de Segurança - OneDrip System
+# 🔐 Política de Segurança - OneDrip
 
 <div align="center">
 
@@ -28,7 +28,7 @@
 
 ## 🛡️ **Visão Geral de Segurança**
 
-O **OneDrip System** implementa um conjunto abrangente de medidas de segurança para proteger dados sensíveis, garantir a integridade do sistema e manter a confiança dos usuários. Nossa arquitetura segue as melhores práticas da indústria e padrões internacionais de segurança.
+O **OneDrip** implementa um conjunto abrangente de medidas de segurança para proteger dados sensíveis, garantir a integridade do sistema e manter a confiança dos usuários. Nossa arquitetura segue as melhores práticas da indústria e padrões internacionais de segurança.
 
 ---
 
@@ -164,7 +164,7 @@ Levamos a segurança muito a sério. Se você descobrir uma vulnerabilidade, ped
 ### **📋 Processo de Reporte**
 
 1. **🚫 NÃO** abra um issue público no GitHub
-2. **📧 ENVIE** um e-mail detalhado para security@onedrip.com.br
+2. **📧 ENVIE** um e-mail detalhado para suporte@onedrip.com.br
 3. **📋 INCLUA** as seguintes informações:
    - Descrição detalhada da vulnerabilidade
    - Passos para reprodução
@@ -251,7 +251,7 @@ Investimos constantemente em segurança porque sabemos que a confiança dos noss
 ---
 
 **Desenvolvido com segurança em mente desde o primeiro dia**  
-**© 2025 - OneDrip System by KukySolutions™**
+**© 2025 - OneDrip by KukySolutions™**
 
 *Última atualização: Agosto 2025*
 

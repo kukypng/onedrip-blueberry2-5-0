@@ -1,6 +1,6 @@
 /**
  * Componente de Headers de Segurança
- * OneDrip System - CSP e Meta Security Tags
+ * OneDrip - CSP e Meta Security Tags
  */
 
 import { useEffect } from 'react';

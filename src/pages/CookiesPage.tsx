@@ -109,7 +109,7 @@ export const CookiesPage = () => {
               Política de Cookies
             </CardTitle>
             <p className="text-muted-foreground mt-2">
-              OneDrip System - Última atualização: Janeiro de 2025
+              OneDrip - Última atualização: Janeiro de 2025
             </p>
           </CardHeader>
 
@@ -346,7 +346,7 @@ export const CookiesPage = () => {
               </p>
               <div className="space-y-2">
                 <p className="text-muted-foreground">
-                  <strong>E-mail:</strong> privacy@onedrip.com.br
+                  <strong>E-mail:</strong> suporte@onedrip.com.br
                 </p>
                 <p className="text-muted-foreground">
                   <strong>WhatsApp:</strong> +55 (64) 9602-8022
@@ -357,7 +357,7 @@ export const CookiesPage = () => {
             {/* Footer */}
             <div className="text-center pt-8 border-t">
               <p className="text-sm text-muted-foreground">
-                © 2025 OneDrip System - KukySolutions™ | Todos os direitos reservados
+                © 2025 OneDrip - KukySolutions™ | Todos os direitos reservados
               </p>
             </div>
           </CardContent>

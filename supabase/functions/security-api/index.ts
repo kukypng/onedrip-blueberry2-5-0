@@ -1,6 +1,6 @@
 /**
  * Edge Function para API de Segurança
- * OneDrip System - Rate Limiting e Auditoria Server-Side
+ *  - Rate Limiting e Auditoria Server-Side
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"

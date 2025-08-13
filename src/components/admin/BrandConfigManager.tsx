@@ -369,7 +369,7 @@ export type MarketingConfig = typeof APP_CONFIG.marketing;`;
                     type="email"
                     value={config.security}
                     onChange={(e) => setConfig({...config, security: e.target.value})}
-                    placeholder="bugs@onedrip.com.br"
+                    placeholder="suporte@onedrip.com.br"
                   />
                 </div>
                 <div>

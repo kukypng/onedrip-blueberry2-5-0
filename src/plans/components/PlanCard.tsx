@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Check, Loader2, CreditCard, Crown } from 'lucide-react';
-import { createPayment, redirectToCheckout } from '../../services/paymentService';
+import { redirectToPayment } from '../../services/paymentService';
 import { PLANS_CONTENT } from '../data/content';
 
 interface DadosPlano {
@@ -48,16 +48,13 @@ export const PlanCard = ({ plano, aoSelecionarPlano, isVip = false, userEmail = 
     return basePrice + vipPrice;
   };
 
-  const handlePayment = async () => {
+  const handlePayment = () => {
     setLoading(true);
     try {
-      const result = await createPayment({
+      redirectToPayment({
         planType: plano.ciclo, // 'monthly' ou 'yearly'
-        isVip: isVip,
-        userEmail: userEmail
+        isVip: vipSelected // Usar vipSelected em vez de isVip prop
       });
-      
-      redirectToCheckout(result.initPoint);
     } catch (error) {
       console.error('Erro no pagamento:', error);
       alert('Erro ao processar pagamento. Tente novamente.');

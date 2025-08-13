@@ -177,7 +177,7 @@ export const PLANS_CONTENT = {
 
   // CONFIGURAÇÕES TÉCNICAS
   configuracoes: {
-    whatsapp_numero: "64996028022",
-    url_pagamento: "https://link.mercadopago.com.br/onedrip"
+    whatsapp_numero: "64996028022"
+    // url_pagamento removido - agora usa redirecionamento específico por plano no paymentService.ts
   }
 };

@@ -50,7 +50,7 @@ Cada seção tem um campo `mostrar_secao` que pode ser `true` ou `false`:
 
 #### 5. **CONFIGURAÇÕES TÉCNICAS**
 - `whatsapp_numero`: "64996028022"
-- `url_pagamento`: "https://link.mercadopago.com.br/onedrip"
+- `url_pagamento`: Removido - agora usa redirecionamento específico por plano
 
 ## 💳 Sistema de Pagamento
 
@@ -58,7 +58,7 @@ Cada seção tem um campo `mostrar_secao` que pode ser `true` ou `false`:
 1. **Seleção do Plano**: Usuário escolhe entre mensal/anual + VIP opcional
 2. **Clique no Botão**: Ação de "Assinar Agora"
 3. **Redirecionamento Direto**: Usuário é direcionado para o MercadoPago
-4. **Link Configurado**: `https://link.mercadopago.com.br/onedrip`
+4. **Links Configurados**: Links específicos por plano no `paymentService.ts`
 5. **Confirmação**: Após pagamento, usuário envia comprovante via WhatsApp
 
 ### ⚙️ Configuração do Link de Pagamento
@@ -67,7 +67,7 @@ O link de pagamento está configurado em:
 // src/plans/data/content.ts
 configuracoes: {
   whatsapp_numero: "64996028022",
-  url_pagamento: "https://link.mercadopago.com.br/onedrip"
+  // url_pagamento: Removido - redirecionamento específico por plano
 }
 ```
 

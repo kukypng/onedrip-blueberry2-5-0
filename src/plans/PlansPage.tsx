@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
+
 
 // Importando os dados editáveis
 import { PLANS_CONTENT } from './data/content';
@@ -25,6 +25,9 @@ import { FinalCTA } from './components/FinalCTA';
 // Importando utilitários do WhatsApp
 import { generatePlanWhatsAppMessage, openWhatsApp } from '@/utils/whatsappUtils';
 
+// Importando serviço de pagamento
+import { redirectToPayment } from '@/services/paymentService';
+
 // Configuração do MercadoPago
 declare global {
   interface Window {
@@ -36,7 +39,6 @@ declare global {
 type BillingCycle = 'monthly' | 'yearly';
 
 export const PlansPage = () => {
-  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('monthly');
   const [isVipSelected, setIsVipSelected] = useState(false);
   const navigate = useNavigate();
@@ -75,15 +77,8 @@ export const PlansPage = () => {
 
   // Funções de ação
   const aoSelecionarPlano = () => {
-    // Redirecionar diretamente para o MercadoPago
-    setMostrarConfirmacao(true);
-  };
-  
-  const aoConfirmarPagamento = () => {
-    setMostrarConfirmacao(false);
-    const urlPagamento = PLANS_CONTENT.configuracoes.url_pagamento;
-    console.log('Redirecionando para:', urlPagamento);
-    window.location.href = urlPagamento;
+    // Redirecionar diretamente para o MercadoPago usando o novo serviço
+    redirectToPayment(billingCycle, isVipSelected);
   };
 
   const aoVoltar = () => {
@@ -169,16 +164,7 @@ export const PlansPage = () => {
         />
       </div>
 
-      {/* Diálogo de Confirmação */}
-      <ConfirmationDialog 
-        open={mostrarConfirmacao} 
-        onOpenChange={setMostrarConfirmacao} 
-        onConfirm={aoConfirmarPagamento} 
-        title="Finalizar Assinatura" 
-        description="Você será redirecionado para o MercadoPago para realizar o pagamento de forma segura. Após a confirmação do pagamento, entre em contato via WhatsApp (64) 99602-8022 para ativarmos sua conta imediatamente." 
-        confirmButtonText="Ir para MercadoPago" 
-        cancelButtonText="Cancelar" 
-      />
+
     </div>
   );
 };

@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
 import { supabase } from '@/integrations/supabase/client';
 import { PlansHero } from '@/components/plans/PlansHero';
 import { BenefitsSection } from '@/components/plans/BenefitsSection';
@@ -11,6 +10,7 @@ import { PlanCard } from '@/components/plans/PlanCard';
 import { TestimonialsSection } from '@/components/plans/TestimonialsSection';
 import { FAQSection } from '@/components/plans/FAQSection';
 import { FinalCTA } from '@/components/plans/FinalCTA';
+import { redirectToPayment } from '@/services/paymentService';
 declare global {
   interface Window {
     $MPC_loaded?: boolean;
@@ -64,8 +64,8 @@ interface SiteSettings {
 }
 
 export const PlansPage = () => {
-  const [showConfirmation, setShowConfirmation] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+  const [isVip, setIsVip] = useState(false);
   const navigate = useNavigate();
 
   // Fetch site settings from database
@@ -113,14 +113,8 @@ export const PlansPage = () => {
   }, []);
   useEffect(() => { document.title = "Planos | OneDrip"; }, []);
   const handlePlanSelection = () => {
-    setShowConfirmation(true);
-  };
-  
-  const handleConfirmPayment = () => {
-    setShowConfirmation(false);
-    const paymentUrl = settings?.payment_url || 'https://mpago.la/246f2WV';
-    console.log('Redirecting to payment URL:', paymentUrl);
-    window.location.href = paymentUrl;
+    console.log('Redirecting to payment with:', { billingCycle, isVip });
+    redirectToPayment(billingCycle, isVip);
   };
 
   const handleGoBack = () => {
@@ -217,19 +211,34 @@ export const PlansPage = () => {
           show={config.show_benefits_section}
         />
         {/* Billing cycle toggle */}
-        <div className="flex items-center justify-center gap-2 mb-2">
-          <Button variant={billingCycle === 'monthly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('monthly')}>
-            Mensal
-          </Button>
-          <Button variant={billingCycle === 'yearly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('yearly')}>
-            Anual <span className="ml-2 text-xs text-muted-foreground">(2 meses grátis)</span>
-          </Button>
+        <div className="flex flex-col items-center gap-4 mb-2">
+          <div className="flex items-center justify-center gap-2">
+            <Button variant={billingCycle === 'monthly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('monthly')}>
+              Mensal
+            </Button>
+            <Button variant={billingCycle === 'yearly' ? 'default' : 'outline'} size="sm" onClick={() => setBillingCycle('yearly')}>
+              Anual <span className="ml-2 text-xs text-muted-foreground">(2 meses grátis)</span>
+            </Button>
+          </div>
+          
+          {/* VIP toggle */}
+          <div className="flex items-center justify-center gap-2">
+            <Button variant={!isVip ? 'default' : 'outline'} size="sm" onClick={() => setIsVip(false)}>
+              Plano Normal
+            </Button>
+            <Button variant={isVip ? 'default' : 'outline'} size="sm" onClick={() => setIsVip(true)}>
+              Plano VIP <span className="ml-2 text-xs text-muted-foreground">(Recursos extras)</span>
+            </Button>
+          </div>
         </div>
         <PlanCard 
           config={{
             ...config,
+            plan_name: isVip ? `${config.plan_name} VIP` : config.plan_name,
+            plan_description: isVip ? `${config.plan_description} + Recursos VIP` : config.plan_description,
             plan_price: billingCycle === 'yearly' ? Math.round(config.plan_price * 12 * 0.83) : config.plan_price,
             plan_period: billingCycle === 'yearly' ? '/ano' : config.plan_period,
+            plan_features: isVip ? [...config.plan_features, "Recursos VIP exclusivos", "Suporte prioritário", "Funcionalidades avançadas"] : config.plan_features,
           }} 
           onPlanSelection={handlePlanSelection} 
         />
@@ -295,7 +304,6 @@ export const PlansPage = () => {
         </div>
       </div>
 
-      {/* Confirmation Dialog */}
-      <ConfirmationDialog open={showConfirmation} onOpenChange={setShowConfirmation} onConfirm={handleConfirmPayment} title="Confirmar Assinatura" description="Você será redirecionado para o MercadoPago para finalizar o pagamento. Após a confirmação do pagamento, envie o comprovante para nosso WhatsApp para ativarmos sua conta imediatamente." confirmButtonText="Ir para Pagamento" cancelButtonText="Cancelar" />
+
     </div>;
 };

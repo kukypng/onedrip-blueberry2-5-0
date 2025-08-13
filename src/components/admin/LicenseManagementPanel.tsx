@@ -54,7 +54,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { LicenseEditModal } from './LicenseEditModal';
+import { LicenseEditModal } from '@/components/license/LicenseEditModal';
 import { LicenseCreateModal } from './LicenseCreateModal';
 import { LicenseHistoryModal } from './LicenseHistoryModal';
 
@@ -664,11 +664,19 @@ export const LicenseManagementPanel = () => {
 
       {/* Modals */}
       <LicenseEditModal
-        license={selectedLicense}
+        license={selectedLicense ? {
+          ...selectedLicense,
+          license_code: selectedLicense.code,
+          activated_at: selectedLicense.activated_at || '',
+          notes: ''
+        } : null}
         isOpen={editModalOpen}
         onClose={() => {
           setEditModalOpen(false);
           setSelectedLicense(null);
+        }}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['admin-licenses'] });
         }}
       />
       

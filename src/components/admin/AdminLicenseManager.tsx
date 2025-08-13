@@ -17,7 +17,8 @@ import {
   Copy,
   CheckCircle,
   XCircle,
-  Clock
+  Clock,
+  Edit
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -38,6 +39,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { LicenseEditModal } from '@/components/license/LicenseEditModal';
 
 interface License {
   id: string;
@@ -52,6 +54,7 @@ interface License {
 export const AdminLicenseManager = () => {
   const [renewalDays, setRenewalDays] = useState('30');
   const [expirationDate, setExpirationDate] = useState('');
+  const [editingLicense, setEditingLicense] = useState<License | null>(null);
   const { showSuccess, showError } = useToast();
   const queryClient = useQueryClient();
 
@@ -346,43 +349,54 @@ export const AdminLicenseManager = () => {
                     })}
                   </TableCell>
                   <TableCell>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="sm">
-                          <RefreshCw className="mr-2 h-4 w-4" />
-                          Renovar
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Renovar Licença</DialogTitle>
-                          <DialogDescription>
-                            Código: <code className="bg-muted px-2 py-1 rounded">{license.code}</code>
-                          </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4">
-                          <div>
-                            <Label htmlFor="renewal-days">Dias para Adicionar</Label>
-                            <Input
-                              id="renewal-days"
-                              type="number"
-                              value={renewalDays}
-                              onChange={(e) => setRenewalDays(e.target.value)}
-                              min="1"
-                              max="365"
-                            />
-                          </div>
-                        </div>
-                        <DialogFooter>
-                          <Button 
-                            onClick={() => handleRenewLicense(license.id)}
-                            disabled={renewLicenseMutation.isPending}
-                          >
-                            {renewLicenseMutation.isPending ? 'Renovando...' : 'Renovar'}
+                    <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setEditingLicense(license)}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Editar
+                      </Button>
+                      
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline" size="sm">
+                            <RefreshCw className="mr-2 h-4 w-4" />
+                            Renovar
                           </Button>
-                        </DialogFooter>
-                      </DialogContent>
-                    </Dialog>
+                        </DialogTrigger>
+                        <DialogContent>
+                          <DialogHeader>
+                            <DialogTitle>Renovar Licença</DialogTitle>
+                            <DialogDescription>
+                              Código: <code className="bg-muted px-2 py-1 rounded">{license.code}</code>
+                            </DialogDescription>
+                          </DialogHeader>
+                          <div className="space-y-4">
+                            <div>
+                              <Label htmlFor="renewal-days">Dias para Adicionar</Label>
+                              <Input
+                                id="renewal-days"
+                                type="number"
+                                value={renewalDays}
+                                onChange={(e) => setRenewalDays(e.target.value)}
+                                min="1"
+                                max="365"
+                              />
+                            </div>
+                          </div>
+                          <DialogFooter>
+                            <Button 
+                              onClick={() => handleRenewLicense(license.id)}
+                              disabled={renewLicenseMutation.isPending}
+                            >
+                              {renewLicenseMutation.isPending ? 'Renovando...' : 'Renovar'}
+                            </Button>
+                          </DialogFooter>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -398,6 +412,27 @@ export const AdminLicenseManager = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* License Edit Modal */}
+      <LicenseEditModal
+        isOpen={!!editingLicense}
+        onClose={() => setEditingLicense(null)}
+        license={editingLicense ? {
+          id: editingLicense.id,
+          user_id: editingLicense.user_id || '',
+          user_name: editingLicense.user_name || '',
+          user_email: editingLicense.user_email || '',
+          license_code: editingLicense.code,
+          expires_at: editingLicense.expires_at || '',
+          activated_at: '',
+          is_active: true,
+          notes: ''
+        } : null}
+        onSuccess={() => {
+          queryClient.invalidateQueries({ queryKey: ['admin-licenses'] });
+          setEditingLicense(null);
+        }}
+      />
     </div>
   );
 };

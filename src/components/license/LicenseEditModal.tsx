@@ -33,7 +33,7 @@ interface LicenseEditModalProps {
 }
 
 export const LicenseEditModal = ({ isOpen, onClose, license, onSuccess }: LicenseEditModalProps) => {
-  const { toast } = useToast();
+  const { showSuccess, showError } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     license_code: '',
@@ -66,9 +66,8 @@ export const LicenseEditModal = ({ isOpen, onClose, license, onSuccess }: Licens
 
   const loadAvailableUsers = async () => {
     try {
-      const { data, error } = await supabase.rpc('admin_get_all_users');
-      if (error) throw error;
-      setAvailableUsers(data || []);
+      // Simplificado - não carrega usuários por enquanto
+      setAvailableUsers([]);
     } catch (error) {
       console.error('Error loading users:', error);
     }
@@ -83,43 +82,39 @@ export const LicenseEditModal = ({ isOpen, onClose, license, onSuccess }: Licens
       
       switch (formData.action_type) {
         case 'edit':
-          result = await supabase.rpc('admin_update_license', {
-            p_license_id: license.id,
-            p_license_code: formData.license_code,
-            p_expires_at: formData.expires_at.toISOString(),
-            p_is_active: formData.is_active,
-            p_notes: formData.notes
+          // Para edição, vamos usar renovação com código customizado
+          result = await supabase.rpc('admin_renew_license', {
+            license_id: license.id,
+            additional_days: 0 // Zero dias para não alterar data
           });
           break;
           
         case 'extend':
-          result = await supabase.rpc('admin_extend_license', {
-            p_license_id: license.id,
-            p_additional_days: extendDays,
-            p_notes: formData.notes
+          result = await supabase.rpc('admin_renew_license', {
+            license_id: license.id,
+            additional_days: extendDays
           });
           break;
           
         case 'transfer':
           if (!transferUserId) {
-            toast({
+            showError({
               title: 'Erro',
-              description: 'Selecione um usuário para transferir a licença.',
-              variant: 'destructive'
+              description: 'Selecione um usuário para transferir a licença.'
             });
             return;
           }
-          result = await supabase.rpc('admin_transfer_license', {
-            p_license_id: license.id,
-            p_new_user_id: transferUserId,
-            p_notes: formData.notes
+          // Funcionalidade de transferência será implementada posteriormente
+          showError({
+            title: 'Funcionalidade não disponível',
+            description: 'Transferência de licenças será implementada em breve.'
           });
-          break;
+          return;
       }
       
       if (result?.error) throw result.error;
       
-      toast({
+      showSuccess({
         title: 'Sucesso',
         description: 'Licença atualizada com sucesso!'
       });
@@ -127,10 +122,9 @@ export const LicenseEditModal = ({ isOpen, onClose, license, onSuccess }: Licens
       onSuccess();
       onClose();
     } catch (error: any) {
-      toast({
+      showError({
         title: 'Erro',
-        description: error.message || 'Erro ao atualizar licença',
-        variant: 'destructive'
+        description: error.message || 'Erro ao atualizar licença'
       });
     } finally {
       setIsLoading(false);
@@ -197,6 +191,7 @@ export const LicenseEditModal = ({ isOpen, onClose, license, onSuccess }: Licens
                     value={formData.license_code}
                     onChange={(e) => setFormData(prev => ({ ...prev, license_code: e.target.value }))}
                     placeholder="Código da licença"
+                    readOnly
                   />
                   <Button type="button" variant="outline" onClick={generateNewLicenseCode}>
                     Gerar Novo

@@ -18,7 +18,6 @@ import { PlansHero } from './components/PlansHero';
 import { BenefitsSection } from './components/BenefitsSection';
 import { PlanCard } from './components/PlanCard';
 import { PlanSelector } from './components/PlanSelector';
-import { VipOption } from './components/VipOption';
 import { TestimonialsSection } from './components/TestimonialsSection';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
@@ -76,19 +75,8 @@ export const PlansPage = () => {
 
   // Funções de ação
   const aoSelecionarPlano = () => {
-    // Gerar mensagem personalizada para WhatsApp
-    const planData = getCurrentPlanData();
-    const message = generatePlanWhatsAppMessage(
-      planData,
-      billingCycle,
-      isVipSelected,
-      PLANS_CONTENT.vip.preco_adicional
-    );
-    
-    // Abrir WhatsApp com a mensagem
-    const whatsappNumber = PLANS_CONTENT.configuracoes.whatsapp_numero;
-    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
-    openWhatsApp(whatsappUrl);
+    // Redirecionar diretamente para o MercadoPago
+    setMostrarConfirmacao(true);
   };
   
   const aoConfirmarPagamento = () => {
@@ -152,16 +140,9 @@ export const PlansPage = () => {
         <PlanCard 
           plano={getCurrentPlanData()}
           aoSelecionarPlano={aoSelecionarPlano}
+          isVip={isVipSelected}
+          onVipToggle={setIsVipSelected}
         />
-
-        {/* Opção VIP */}
-        <div className="max-w-4xl mx-auto">
-          <VipOption 
-            isSelected={isVipSelected}
-            onToggle={setIsVipSelected}
-            billingCycle={billingCycle}
-          />
-        </div>
 
         {/* Seção de Depoimentos */}
         <TestimonialsSection 
@@ -193,9 +174,9 @@ export const PlansPage = () => {
         open={mostrarConfirmacao} 
         onOpenChange={setMostrarConfirmacao} 
         onConfirm={aoConfirmarPagamento} 
-        title="Confirmar Assinatura" 
-        description="Você será redirecionado para o MercadoPago para finalizar o pagamento. Após a confirmação do pagamento, envie o comprovante para nosso WhatsApp para ativarmos sua conta imediatamente." 
-        confirmButtonText="Ir para Pagamento" 
+        title="Finalizar Assinatura" 
+        description="Você será redirecionado para o MercadoPago para realizar o pagamento de forma segura. Após a confirmação do pagamento, entre em contato via WhatsApp (64) 99602-8022 para ativarmos sua conta imediatamente." 
+        confirmButtonText="Ir para MercadoPago" 
         cancelButtonText="Cancelar" 
       />
     </div>

@@ -63,15 +63,14 @@ export const PLANS_CONTENT = {
     }
   },
 
-  // OPÇÃO VIP
+  // UPGRADE VIP
   vip: {
     nome: "Upgrade VIP",
     descricao: "Funcionalidades avançadas para sua assistência",
-    preco_adicional: 0.83,
+    preco_adicional: 10.00,
     moeda: "R$",
     icone: "Crown",
     
-    // Benefícios exclusivos VIP
     beneficios: [
       "Sistema de ordem de serviço",
       "Gestão avançada de técnicos",
@@ -179,6 +178,6 @@ export const PLANS_CONTENT = {
   // CONFIGURAÇÕES TÉCNICAS
   configuracoes: {
     whatsapp_numero: "64996028022",
-    url_pagamento: "https://mpago.la/246f2WV"
+    url_pagamento: "https://link.mercadopago.com.br/onedrip"
   }
 };

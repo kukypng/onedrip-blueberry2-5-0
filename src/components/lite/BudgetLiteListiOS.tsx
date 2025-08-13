@@ -95,20 +95,29 @@ export const BudgetLiteListiOS = ({
   const hasActiveSearch = searchTerm.trim().length > 0;
   const searchSubtitle = hasActiveSearch ? `${budgets.length} resultado(s) encontrado(s)` : `${allBudgets.length} orçamentos`;
 
-  // Função de exclusão simples
+  // Função de exclusão com auditoria
   const handleDeleteBudget = useCallback(async (budgetId: string) => {
     try {
-      const { error: deleteError } = await supabase
-        .from('budgets')
-        .update({ deleted_at: new Date().toISOString() })
-        .eq('id', budgetId);
+      // Usar a função RPC para soft delete com auditoria
+      const { data, error } = await supabase.rpc('soft_delete_budget_with_audit', {
+        p_budget_id: budgetId,
+        p_deletion_reason: 'Exclusão via interface mobile iOS'
+      });
 
-      if (deleteError) throw deleteError;
+      if (error) {
+        console.error('Error in soft delete RPC:', error);
+        throw new Error(error.message || 'Erro ao excluir orçamento');
+      }
+
+      const response = data as any;
+      if (!response?.success) {
+        throw new Error(response?.error || 'Falha na exclusão do orçamento');
+      }
 
       return { success: true };
     } catch (error) {
       console.error('Error deleting budget:', error);
-      return { success: false, error: 'Erro ao excluir orçamento' };
+      return { success: false, error: error instanceof Error ? error.message : 'Erro ao excluir orçamento' };
     }
   }, []);
 

@@ -21,7 +21,11 @@ import {
   RefreshCw,
   BarChart3,
   Activity,
-  Cog
+  Cog,
+  Key,
+  Copy,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -80,6 +84,8 @@ export const EnhancedUserManagement = () => {
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState('users');
+  const [showLicenseCodes, setShowLicenseCodes] = useState(false);
+  const [copiedLicense, setCopiedLicense] = useState<string | null>(null);
 
   // Filtros e ordenação avançados
   const filteredAndSortedUsers = useMemo(() => {
@@ -169,12 +175,15 @@ export const EnhancedUserManagement = () => {
   // Função para gerar CSV
   const generateCSV = (users: User[]) => {
     return [
-      ['Nome', 'Email', 'Função', 'Status', 'Orçamentos', 'Criado em', 'Último login'].join(','),
+      ['Nome', 'Email', 'Função', 'Status', 'Código da Licença', 'Licença Expira', 'Licença Ativada', 'Orçamentos', 'Criado em', 'Último login'].join(','),
       ...users.map(user => [
         user.name,
         user.email,
         user.role === 'admin' ? 'Administrador' : user.role === 'manager' ? 'Gerente' : 'Usuário',
         user.license_active ? 'Ativo' : 'Inativo',
+        user.license_code || 'N/A',
+        user.license_expires_at ? format(new Date(user.license_expires_at), 'dd/MM/yyyy', { locale: ptBR }) : 'N/A',
+        user.license_activated_at ? format(new Date(user.license_activated_at), 'dd/MM/yyyy', { locale: ptBR }) : 'N/A',
         user.budget_count,
         format(new Date(user.created_at), 'dd/MM/yyyy', { locale: ptBR }),
         user.last_sign_in_at ? format(new Date(user.last_sign_in_at), 'dd/MM/yyyy HH:mm', { locale: ptBR }) : 'Nunca'
@@ -231,6 +240,23 @@ export const EnhancedUserManagement = () => {
 
     const csvContent = generateCSV(usersToExport);
     downloadCSV(csvContent, `usuarios_${format(new Date(), 'yyyy-MM-dd')}.csv`);
+  };
+
+  // Função para copiar código da licença
+  const copyLicenseCode = async (licenseCode: string) => {
+    try {
+      await navigator.clipboard.writeText(licenseCode);
+      setCopiedLicense(licenseCode);
+      toast.success('Código da licença copiado!');
+      setTimeout(() => setCopiedLicense(null), 2000);
+    } catch (error) {
+      toast.error('Erro ao copiar código da licença');
+    }
+  };
+
+  // Função para alternar visibilidade dos códigos de licença
+  const toggleLicenseVisibility = () => {
+    setShowLicenseCodes(!showLicenseCodes);
   };
 
   if (!debugInfo?.is_admin) {
@@ -402,6 +428,16 @@ export const EnhancedUserManagement = () => {
                       <Download className="h-4 w-4 mr-1" />
                       Exportar
                     </Button>
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={toggleLicenseVisibility}
+                      title={showLicenseCodes ? 'Ocultar códigos de licença' : 'Mostrar códigos de licença'}
+                    >
+                      {showLicenseCodes ? <EyeOff className="h-4 w-4 mr-1" /> : <Eye className="h-4 w-4 mr-1" />}
+                      {showLicenseCodes ? 'Ocultar' : 'Mostrar'} Licenças
+                    </Button>
 
                     {/* Seletor de visualização */}
                     <div className="flex border rounded-md">
@@ -524,6 +560,9 @@ export const EnhancedUserManagement = () => {
                   onRenew={handleRenew}
                   getRoleBadge={getRoleBadge}
                   getStatusBadge={getStatusBadge}
+                  showLicenseCodes={showLicenseCodes}
+                  copyLicenseCode={copyLicenseCode}
+                  copiedLicense={copiedLicense}
                 />
               ) : (
                 <UserCardsView 
@@ -602,7 +641,10 @@ const UserTableView = ({
   onDelete, 
   onRenew,
   getRoleBadge,
-  getStatusBadge 
+  getStatusBadge,
+  showLicenseCodes,
+  copyLicenseCode,
+  copiedLicense
 }: {
   users: User[];
   selectedUsers: string[];
@@ -613,6 +655,9 @@ const UserTableView = ({
   onRenew: (user: User) => void;
   getRoleBadge: (role: string) => any;
   getStatusBadge: (user: User) => React.ReactNode;
+  showLicenseCodes: boolean;
+  copyLicenseCode: (code: string) => void;
+  copiedLicense: string | null;
 }) => (
   <Table>
     <TableHeader>
@@ -626,6 +671,7 @@ const UserTableView = ({
         <TableHead>Nome</TableHead>
         <TableHead>Função</TableHead>
         <TableHead>Status</TableHead>
+        {showLicenseCodes && <TableHead>Licença</TableHead>}
         <TableHead>Orçamentos</TableHead>
         <TableHead>Último login</TableHead>
         <TableHead className="text-right">Ações</TableHead>
@@ -657,6 +703,37 @@ const UserTableView = ({
               </Badge>
             </TableCell>
             <TableCell>{getStatusBadge(user)}</TableCell>
+            {showLicenseCodes && (
+              <TableCell>
+                {user.license_code ? (
+                  <div className="flex items-center gap-2">
+                    <code className="text-xs bg-muted px-2 py-1 rounded font-mono">
+                      {user.license_code}
+                    </code>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyLicenseCode(user.license_code!)}
+                      className="h-6 w-6 p-0"
+                      title="Copiar código"
+                    >
+                      {copiedLicense === user.license_code ? (
+                        <span className="text-green-500 text-xs">✓</span>
+                      ) : (
+                        <Copy className="h-3 w-3" />
+                      )}
+                    </Button>
+                    {user.license_expires_at && (
+                      <div className="text-xs text-muted-foreground">
+                        Exp: {format(new Date(user.license_expires_at), 'dd/MM/yy', { locale: ptBR })}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <span className="text-xs text-muted-foreground">Sem licença</span>
+                )}
+              </TableCell>
+            )}
             <TableCell>{user.budget_count}</TableCell>
             <TableCell>
               {user.last_sign_in_at 

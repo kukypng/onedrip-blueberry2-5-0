@@ -5,6 +5,9 @@ export interface User {
   email: string;
   role: string;
   license_active: boolean;
+  license_code?: string;
+  license_expires_at?: string | null;
+  license_activated_at?: string | null;
   created_at: string;
   last_sign_in_at: string | null;
   budget_count: number;

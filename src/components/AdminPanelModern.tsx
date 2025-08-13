@@ -33,6 +33,7 @@ import { SiteSettingsContent } from '@/components/SiteSettingsContent';
 import { AdminImageManager } from '@/components/admin/AdminImageManager';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
+import { LicenseManagementPanel } from '@/components/admin/LicenseManagementPanel';
 import { Link } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { AdminNavigation } from '@/components/admin/AdminNavigation';
@@ -251,7 +252,19 @@ export const AdminPanelModern = () => {
           </Card>
         );
       case 'licenses':
-        return <AdminLicenseManagerEnhanced />;
+        return (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Key className="h-5 w-5" />
+                Gerenciamento de Licenças
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <LicenseManagementPanel />
+            </CardContent>
+          </Card>
+        );
       case 'site':
         return <SiteSettingsContent />;
       case 'notifications':

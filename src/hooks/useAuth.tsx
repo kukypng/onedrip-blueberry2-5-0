@@ -123,21 +123,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         console.log('🔍 Verificando sessão existente...');
         
-        // DEBUG: Verificar se localStorage tem tokens
-        const authToken = localStorage.getItem('sb-oghjlypdnmqecaavekyr-auth-token');
-        console.log('🔑 Token do Supabase existe?', authToken ? 'SIM' : 'NÃO');
-        
-        if (authToken) {
-          try {
-            const tokenData = JSON.parse(authToken);
-            console.log('📊 Dados do token:', {
-              hasAccessToken: !!tokenData?.access_token,
-              hasRefreshToken: !!tokenData?.refresh_token,
-              expiresAt: tokenData?.expires_at,
-              isExpired: tokenData?.expires_at ? new Date(tokenData.expires_at * 1000) < new Date() : 'UNKNOWN'
-            });
-          } catch (parseError) {
-            console.warn('⚠️ Erro ao parsear token:', parseError);
+        // DEBUG: Verificar se localStorage tem tokens (apenas em desenvolvimento)
+        if (import.meta.env.DEV) {
+          const authToken = localStorage.getItem('sb-oghjlypdnmqecaavekyr-auth-token');
+          console.log('🔑 Token do Supabase existe?', authToken ? 'SIM' : 'NÃO');
+          
+          if (authToken) {
+            try {
+              const tokenData = JSON.parse(authToken);
+              console.log('📊 Dados do token:', {
+                hasAccessToken: !!tokenData?.access_token,
+                hasRefreshToken: !!tokenData?.refresh_token,
+                expiresAt: tokenData?.expires_at,
+                isExpired: tokenData?.expires_at ? new Date(tokenData.expires_at * 1000) < new Date() : 'UNKNOWN'
+              });
+            } catch (parseError) {
+              console.warn('⚠️ Erro ao parsear token:', parseError);
+            }
           }
         }
         
@@ -292,7 +294,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         // Lidar com TOKEN_REFRESHED para manter a sessão ativa
         if (event === 'TOKEN_REFRESHED' && session) {
-          console.log('🔄 Token renovado automaticamente');
+          if (import.meta.env.DEV) {
+            console.log('🔄 Token renovado automaticamente');
+          }
         }
 
         // Lidar com SIGNED_OUT

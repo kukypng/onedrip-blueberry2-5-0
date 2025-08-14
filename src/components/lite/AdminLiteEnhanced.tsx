@@ -22,8 +22,7 @@ import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
 import { AdminLicenseManagerEnhanced } from '@/components/admin/AdminLicenseManagerEnhanced';
 import { AdminNotificationManager } from '@/components/admin/AdminNotificationManager';
 import { AdminLogs } from '@/components/AdminLogs';
-import { AdminDebugPanel } from '@/components/AdminDebugPanel';
-import { AdminTestPanel } from '@/components/AdminTestPanel';
+// Debug panels removidos para produção
 import { AdminImageManager } from '@/components/admin/AdminImageManager';
 import { SiteSettingsContent } from '@/components/SiteSettingsContent';
 import { toast } from 'sonner';
@@ -612,11 +611,11 @@ const AdminLiteEnhancedComponent = ({
           </TabsContent>
 
           <TabsContent value="debug" className="p-4">
-            <AdminDebugPanel />
+            {/* Debug panels removidos para produção */}
           </TabsContent>
 
           <TabsContent value="tests" className="p-4">
-            <AdminTestPanel />
+            {/* Debug panels removidos para produção */}
           </TabsContent>
 
           <TabsContent value="images" className="p-4">

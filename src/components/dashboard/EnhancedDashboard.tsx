@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { UserLicenseCard } from '@/components/dashboard/UserLicenseCard';
-import { UserLicenseCardIOS } from '@/components/dashboard/UserLicenseCardIOS';
+// Componentes de licença removidos - funcionalidade integrada ao sistema de licenças
 import { useIOSDetection } from '@/hooks/useIOSDetection';
 import { LicenseStatus } from '@/components/dashboard/LicenseStatus';
 import { LicenseStatusCard } from '@/components/license/LicenseStatusCard';

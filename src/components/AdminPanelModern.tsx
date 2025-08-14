@@ -27,8 +27,7 @@ import {
 } from 'lucide-react';
 import { UserManagement } from '@/components/UserManagement';
 import { AdminLogs } from '@/components/AdminLogs';
-import { AdminDebugPanel } from '@/components/AdminDebugPanel';
-import { AdminTestPanel } from '@/components/AdminTestPanel';
+// Debug panels removidos para produção
 import { SiteSettingsContent } from '@/components/SiteSettingsContent';
 import { AdminImageManager } from '@/components/admin/AdminImageManager';
 import { GameSettingsPanel } from '@/components/admin/GameSettingsPanel';
@@ -48,9 +47,8 @@ export const AdminPanelModern = () => {
 
 
   const toolsSubmenu = [
-    { id: 'debug', label: 'Debug', icon: AlertTriangle, component: AdminDebugPanel },
+    // Painéis de debug removidos para produção
     { id: 'logs', label: 'Logs', icon: FileText, component: AdminLogs },
-    { id: 'tests', label: 'Testes', icon: Zap, component: AdminTestPanel },
     { id: 'images', label: 'Imagens', icon: Image, component: AdminImageManager },
     { id: 'game', label: 'Jogo', icon: Gamepad2, component: GameSettingsPanel }
   ];

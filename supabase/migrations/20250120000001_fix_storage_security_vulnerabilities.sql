@@ -300,10 +300,10 @@ $$;
 
 -- Aplicar trigger na tabela de objetos do storage
 -- Nota: Este trigger pode precisar ser aplicado via dashboard do Supabase
--- CREATE TRIGGER validate_storage_upload_trigger
---   BEFORE INSERT ON storage.objects
---   FOR EACH ROW
---   EXECUTE FUNCTION public.validate_storage_upload();
+CREATE TRIGGER validate_storage_upload_trigger
+  BEFORE INSERT ON storage.objects
+  FOR EACH ROW
+  EXECUTE FUNCTION public.validate_storage_upload();
 
 -- 9. ADICIONAR COMENTÁRIOS PARA DOCUMENTAÇÃO
 COMMENT ON TABLE public.file_upload_audit IS 'Auditoria de uploads de arquivos para monitoramento de segurança';

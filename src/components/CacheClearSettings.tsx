@@ -12,16 +12,13 @@ export const CacheClearSettings = () => {
   const clearSiteCache = async (): Promise<void> => {
     setIsClearing(true);
     try {
-      // Importar o storage manager
-      const { storageManager } = await import('@/utils/localStorageManager');
+      // 1. LIMPAR COMPLETAMENTE TODO O localStorage
+      localStorage.clear();
       
-      // Limpeza inteligente - preserva configurações essenciais
-      storageManager.smartClear();
-      
-      // Clear sessionStorage (dados temporários)
+      // 2. LIMPAR COMPLETAMENTE O sessionStorage
       sessionStorage.clear();
       
-      // Clear Service Worker caches
+      // 3. LIMPAR TODOS os Service Worker caches
       if ('caches' in window) {
         const cacheNames = await caches.keys();
         await Promise.all(
@@ -29,27 +26,27 @@ export const CacheClearSettings = () => {
         );
       }
       
-      // Clear IndexedDB data (Supabase pode usar)
+      // 4. LIMPAR TODOS os bancos IndexedDB
       if ('indexedDB' in window) {
         try {
           const databases = await indexedDB.databases?.();
           if (databases) {
-            // Filtrar apenas databases não essenciais
-            const nonEssentialDbs = databases.filter(db => 
-              db.name && !db.name.includes('supabase-auth')
-            );
-            
             await Promise.all(
-              nonEssentialDbs.map(db => {
+              databases.map(db => {
                 if (db.name) {
-                  return new Promise<void>((resolve, reject) => {
+                  return new Promise<void>((resolve) => {
                     const deleteReq = indexedDB.deleteDatabase(db.name!);
                     deleteReq.onsuccess = () => resolve();
-                    deleteReq.onerror = () => reject(deleteReq.error);
-                    deleteReq.onblocked = () => {
-                      console.warn(`Blocked deleting database: ${db.name}`);
+                    deleteReq.onerror = () => {
+                      console.warn(`Erro ao remover IndexedDB: ${db.name}`);
                       resolve(); // Continue anyway
                     };
+                    deleteReq.onblocked = () => {
+                      console.warn(`Bloqueado ao remover IndexedDB: ${db.name}`);
+                      resolve(); // Continue anyway
+                    };
+                    // Timeout para evitar travamento
+                    setTimeout(() => resolve(), 5000);
                   });
                 }
                 return Promise.resolve();
@@ -57,13 +54,56 @@ export const CacheClearSettings = () => {
             );
           }
         } catch (error) {
-          console.warn('Não foi possível limpar IndexedDB:', error);
+          console.warn('IndexedDB cleanup error:', error);
         }
       }
 
+      // 5. LIMPAR WebSQL (se suportado - deprecated mas ainda presente em alguns browsers)
+      try {
+        if ('openDatabase' in window) {
+          // @ts-ignore - WebSQL é deprecated mas ainda pode existir
+          const db = window.openDatabase('', '', '', '');
+          if (db) {
+            db.transaction((tx: any) => {
+              tx.executeSql('DROP TABLE IF EXISTS data');
+            });
+          }
+        }
+      } catch (error) {
+        console.warn('WebSQL cleanup error:', error);
+      }
+
+      // 6. LIMPAR cookies do domínio atual
+      try {
+        document.cookie.split(";").forEach((c) => {
+          const eqPos = c.indexOf("=");
+          const name = eqPos > -1 ? c.substr(0, eqPos) : c;
+          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=" + window.location.hostname;
+          document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=." + window.location.hostname;
+        });
+      } catch (error) {
+        console.warn('Cookie cleanup error:', error);
+      }
+
+      // 7. LIMPAR registros de Service Worker
+      if ('serviceWorker' in navigator) {
+        try {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          await Promise.all(
+            registrations.map(registration => registration.unregister())
+          );
+          console.log('Service Workers desregistrados');
+        } catch (error) {
+          console.warn('Service Worker cleanup error:', error);
+        }
+      }
+
+      console.log('🧹 LIMPEZA COMPLETA: Todos os dados locais removidos');
+
       toast({
-        title: "Cache otimizado com sucesso! ✨",
-        description: "Dados desnecessários removidos. Configurações importantes preservadas.",
+        title: "Limpeza completa realizada! 🧹",
+        description: "TODOS os dados locais foram removidos. Os dados do backend permanecem intactos.",
       });
 
       // Navigate instead of reloading
@@ -87,10 +127,10 @@ export const CacheClearSettings = () => {
       <CardHeader>
         <CardTitle className="text-warning flex items-center gap-2">
           <Trash2 className="h-5 w-5" />
-          Limpar Cache e Dados Locais
+          Limpar Todos os Dados Locais
         </CardTitle>
         <CardDescription>
-          Remove todos os dados armazenados localmente no seu dispositivo, incluindo preferências e cache do aplicativo.
+          Remove TODOS os dados salvos localmente no dispositivo (cache, banco de dados, cookies, etc.). Os dados do backend (Supabase) não serão afetados.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -106,20 +146,28 @@ export const CacheClearSettings = () => {
               ) : (
                 <Trash2 className="h-4 w-4" />
               )}
-              Limpar Cache
+              Limpar Todos os Dados
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent className="max-w-md mx-auto">
             <AlertDialogHeader>
-              <AlertDialogTitle>⚠️ Confirmar Limpeza de Cache</AlertDialogTitle>
+              <AlertDialogTitle>⚠️ Confirmar Limpeza Total de Dados</AlertDialogTitle>
               <AlertDialogDescription className="space-y-2">
-                <p>Esta ação irá remover todos os dados locais salvos, incluindo:</p>
-                <ul className="list-disc list-inside space-y-1 text-sm">
-                  <li>Configurações e preferências</li>
-                  <li>Dados em cache</li>
-                  <li>Sessões armazenadas</li>
-                  <li>Dados temporários</li>
-                </ul>
+                <p className="font-medium text-destructive">Esta ação irá remover TODOS os dados locais:</p>
+                <div className="bg-muted/50 p-3 rounded-md">
+                  <ul className="text-xs space-y-1">
+                    <li>• TODO o localStorage</li>
+                    <li>• TODO o sessionStorage</li>
+                    <li>• TODOS os bancos IndexedDB</li>
+                    <li>• TODOS os caches do Service Worker</li>
+                    <li>• Cookies do domínio</li>
+                    <li>• Dados WebSQL (se houver)</li>
+                    <li>• Registros de Service Worker</li>
+                  </ul>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  ✅ <strong>Os dados do backend (Supabase) NÃO serão afetados</strong>
+                </p>
                 <p className="font-medium text-destructive">
                   Você precisará fazer login novamente e reconfigurar suas preferências.
                 </p>

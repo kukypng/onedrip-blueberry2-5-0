@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { safeRedirect } from '@/utils/secureNavigation';
 
 interface ErrorBoundaryProps {
   children?: ReactNode;
@@ -85,7 +86,7 @@ export class EnhancedErrorBoundary extends Component<ErrorBoundaryProps, ErrorBo
                 
                 <Button 
                   variant="outline" 
-                  onClick={() => window.location.href = '/'} 
+                  onClick={() => safeRedirect('/')} 
                   className="w-full" 
                   size="lg"
                 >
@@ -146,7 +147,7 @@ export const AuthErrorBoundary: React.FC<{ children: ReactNode }> = ({ children 
               Ocorreu um problema com o sistema de login.
             </p>
             <Button 
-              onClick={() => window.location.href = '/auth'} 
+              onClick={() => safeRedirect('/auth')} 
               className="w-full"
             >
               <Home className="mr-2 h-4 w-4" />

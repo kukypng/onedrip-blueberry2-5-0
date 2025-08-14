@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 import { useToast } from '@/hooks/useToast';
 import { useNavigate } from 'react-router-dom';
+import { getSecureItem } from '@/utils/secureStorage';
 
 export type UserRole = 'admin' | 'manager' | 'user';
 
@@ -125,12 +126,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         // DEBUG: Verificar se localStorage tem tokens (apenas em desenvolvimento)
         if (import.meta.env.DEV) {
-          const authToken = localStorage.getItem('sb-oghjlypdnmqecaavekyr-auth-token');
+          const authToken = await getSecureItem('sb-oghjlypdnmqecaavekyr-auth-token');
           console.log('🔑 Token do Supabase existe?', authToken ? 'SIM' : 'NÃO');
           
           if (authToken) {
             try {
-              const tokenData = JSON.parse(authToken);
+              const tokenData = typeof authToken === 'string' ? JSON.parse(authToken) : authToken;
               console.log('📊 Dados do token:', {
                 hasAccessToken: !!tokenData?.access_token,
                 hasRefreshToken: !!tokenData?.refresh_token,

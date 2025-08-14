@@ -194,7 +194,7 @@ LANGUAGE sql
 SECURITY DEFINER
 SET search_path TO 'public'
 AS $$
-  SELECT
+  SELECT DISTINCT
     n.id,
     n.title::text,
     n.message::text,
@@ -207,6 +207,9 @@ AS $$
     n.created_at,
     n.updated_at
   FROM public.notifications n
+  LEFT JOIN public.user_notifications_read unr ON n.id = unr.notification_id
+  WHERE n.is_active = true
+    AND (unr.is_deleted IS NULL OR unr.is_deleted = false)
   ORDER BY n.created_at DESC
   LIMIT p_limit OFFSET p_offset;
 $$;

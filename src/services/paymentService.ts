@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { toast } from 'sonner';
+import { safeRedirect, isUrlSafe } from '@/utils/secureNavigation';
 
 const API_URL = 'http://localhost:3001';
 
@@ -34,7 +36,11 @@ export const redirectToPayment = (planType: 'monthly' | 'yearly', isVip: boolean
     const fullLink = link.startsWith('http') ? link : `https://${link}`;
     
     console.log(`Redirecionando para: ${fullLink} (Plano: ${planType}, VIP: ${isVip})`);
-    window.location.href = fullLink;
+    if (isUrlSafe(fullLink)) {
+      safeRedirect(fullLink, '/dashboard');
+    } else {
+      toast.error('Link de pagamento inválido');
+    }
   } catch (error) {
     console.error('Erro ao redirecionar para pagamento:', error);
     alert('Erro ao processar pagamento. Tente novamente.');
@@ -53,5 +59,9 @@ export const createPayment = async (data: {
 
 // Função mantida para compatibilidade
 export const redirectToCheckout = (initPoint: string) => {
-  window.location.href = initPoint;
+  if (isUrlSafe(initPoint)) {
+    safeRedirect(initPoint, '/dashboard');
+  } else {
+    toast.error('Link de pagamento inválido');
+  }
 };

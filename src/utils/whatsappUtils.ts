@@ -1,3 +1,7 @@
+import { toast } from 'sonner';
+import { BudgetPDFData } from './pdfGenerator';
+import { buildSafeWhatsAppUrl, safeRedirect, safeOpenInNewTab } from './secureNavigation';
+
 interface BudgetData {
   id: string;
   device_model: string;
@@ -123,11 +127,11 @@ export const openWhatsApp = (url: string, message?: string) => {
     const hasPWA = detectWhatsAppPWA();
     
     if (hasPWA) {
-      window.location.href = url;
+      safeRedirect(url, '/');
     } else if (isMobile && url.includes('wa.me')) {
       // Para mobile, tentar app nativo primeiro
       const nativeUrl = url.replace('https://wa.me/', 'whatsapp://send?phone=');
-      window.location.href = nativeUrl;
+      safeRedirect(nativeUrl, '/');
       
       // Fallback para web após delay
       setTimeout(() => {
@@ -254,7 +258,7 @@ export const shareViaWhatsApp = (message: string) => {
   // Se já estamos no PWA do WhatsApp, usar a mesma janela
   if (hasPWA) {
     const webUrl = `https://web.whatsapp.com/send?text=${encodedMessage}`;
-    window.location.href = webUrl;
+    safeRedirect(webUrl, '/');
     return;
   }
   
@@ -263,14 +267,14 @@ export const shareViaWhatsApp = (message: string) => {
     const nativeUrl = `whatsapp://send?text=${encodedMessage}`;
     
     // Tentar abrir o app nativo
-    window.location.href = nativeUrl;
+    safeRedirect(nativeUrl, '/');
     
     // Fallback para WhatsApp Web após um delay se o app não abrir
     setTimeout(() => {
       const webUrl = `https://wa.me/?text=${encodedMessage}`;
       if (!tryReuseWhatsAppTab(webUrl)) {
-        window.open(webUrl, '_blank');
-      }
+          safeOpenInNewTab(webUrl);
+        }
     }, 1500);
   } else {
     // Para desktop, tentar reutilizar aba existente primeiro
@@ -279,7 +283,7 @@ export const shareViaWhatsApp = (message: string) => {
     // Tentar reutilizar aba existente
     if (!tryReuseWhatsAppTab(webUrl)) {
       // Se não conseguir reutilizar, abrir normalmente
-      window.open(webUrl, '_blank');
+      safeOpenInNewTab(webUrl);
     }
   }
 };

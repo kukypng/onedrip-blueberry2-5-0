@@ -6,6 +6,7 @@ import { Shield, User } from 'lucide-react';
 import { DashboardSkeleton } from '@/components/ui/loading-states';
 import { useLicenseValidation } from '@/hooks/useLicenseValidation';
 import { useNavigate } from 'react-router-dom';
+import { safeRedirect } from '@/utils/secureNavigation';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -36,7 +37,7 @@ export const ProtectedRoute = ({
         description="Você precisa estar logado para acessar esta página."
         action={{
           label: "Fazer Login",
-          onClick: () => window.location.href = '/auth'
+          onClick: () => safeRedirect('/auth')
         }}
       />
     );
@@ -78,7 +79,7 @@ export const ProtectedRoute = ({
         description={`Você precisa ter o nível de acesso "${requiredRole}" ou superior para acessar esta página.`}
         action={{
           label: "Voltar ao Dashboard",
-          onClick: () => window.location.href = '/dashboard'
+          onClick: () => safeRedirect('/dashboard')
         }}
       />
     );

@@ -7,6 +7,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Shield, FileText, Cookie, ExternalLink, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { setSecureItem, getSecureItem, removeSecureItem } from '@/utils/secureStorage';
 interface AcceptTermsModalProps {
   isOpen: boolean;
   onAccept: () => void;
@@ -42,7 +43,7 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
       [type]: checked
     }));
   };
-  const handleAcceptAll = () => {
+  const handleAcceptAll = async () => {
     if (!allTermsAccepted) {
       toast({
         title: "Aceite necessário",
@@ -58,7 +59,7 @@ export const AcceptTermsModal: React.FC<AcceptTermsModalProps> = ({
       timestamp: new Date().toISOString(),
       version: '1.0'
     };
-    localStorage.setItem('termsAcceptance', JSON.stringify(acceptanceData));
+    await setSecureItem('termsAcceptance', acceptanceData, { encrypt: true });
     toast({
       title: "Termos aceitos",
       description: "Obrigado por aceitar nossos termos e políticas."
@@ -228,15 +229,15 @@ export const useTermsAcceptance = () => {
   const [needsAcceptance, setNeedsAcceptance] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    const checkAcceptance = () => {
+    const checkAcceptance = async () => {
       try {
-        const stored = localStorage.getItem('termsAcceptance');
+        const stored = await getSecureItem('termsAcceptance');
         if (!stored) {
           setNeedsAcceptance(true);
           setIsLoading(false);
           return;
         }
-        const acceptance = JSON.parse(stored);
+        const acceptance = stored;
         const isValid = acceptance.privacy && acceptance.terms && acceptance.cookies;
 
         // Verificar se a aceitação não é muito antiga (opcional)
@@ -262,7 +263,7 @@ export const useTermsAcceptance = () => {
     setNeedsAcceptance(false);
   };
   const clearAcceptance = () => {
-    localStorage.removeItem('termsAcceptance');
+    removeSecureItem('termsAcceptance');
     setNeedsAcceptance(true);
   };
   return {

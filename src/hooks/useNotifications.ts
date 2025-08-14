@@ -192,8 +192,23 @@ export const useNotifications = () => {
     mutationFn: async (notificationId: string) => {
       console.log('🗑️ DEBUG: Iniciando soft delete:', { notificationId, userId: user?.id });
       
+      // Garantir que o notificationId seja um UUID válido
+      let validUuid: string;
+      try {
+        // Se já é um UUID válido, usar diretamente
+        if (/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(notificationId)) {
+          validUuid = notificationId;
+        } else {
+          // Se não é UUID, tentar converter ou usar como está (pode ser que o backend aceite)
+          validUuid = notificationId;
+        }
+      } catch (e) {
+        console.error('🗑️ DEBUG: Erro ao validar UUID:', e);
+        validUuid = notificationId;
+      }
+      
       const { data, error } = await supabase.rpc('delete_user_notification', {
-        p_notification_id: notificationId
+        p_notification_id: validUuid
       });
 
       console.log('🗑️ DEBUG: Resultado da RPC delete_user_notification:', { data, error });
@@ -253,11 +268,17 @@ export const useNotifications = () => {
   // Deletar todas as notificações
   const deleteAllNotificationsMutation = useMutation({
     mutationFn: async () => {
-      const promises = notificationsArray.map((notification: any) =>
-        supabase.rpc('delete_user_notification', {
-          p_notification_id: notification.id
-        })
-      );
+      const promises = notificationsArray.map((notification: any) => {
+        // Garantir que o ID seja um UUID válido
+        let validUuid = notification.id;
+        if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(notification.id)) {
+          console.warn('🗑️ DEBUG: ID não é UUID válido:', notification.id);
+        }
+        
+        return supabase.rpc('delete_user_notification', {
+          p_notification_id: validUuid
+        });
+      });
 
       const results = await Promise.allSettled(promises);
       

@@ -2,6 +2,7 @@
 import { jsPDF } from 'jspdf';
 import html2canvas from 'html2canvas';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { sanitizeHTML, sanitizeTemplateText } from './sanitization';
 
 export interface BudgetPDFData {
   // Dados do orçamento
@@ -366,7 +367,7 @@ const generateSimplePDF = async (data: BudgetPDFData): Promise<Blob> => {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(9);
     doc.setTextColor(colors.darkGray[0], colors.darkGray[1], colors.darkGray[2]);
-    doc.text(`Método de Pagamento: ${data.payment_condition}`, 20, currentY);
+    doc.text(`Método de Pagamento: ${data.payment_condition ? sanitizeTemplateText(data.payment_condition) : ''}`, 20, currentY);
   }
 
   // SEÇÃO GARANTIA
@@ -520,19 +521,30 @@ export const generatePDFImage = async (data: BudgetPDFData): Promise<string> => 
         <span>LOGO</span>
       </div>`;
     
+    // Sanitizar todos os dados antes de usar no HTML
+    const safeShopName = sanitizeTemplateText(data.shop_name);
+    const safeShopCnpj = data.shop_cnpj ? sanitizeTemplateText(data.shop_cnpj) : '';
+    const safeShopAddress = sanitizeTemplateText(data.shop_address);
+    const safeShopPhone = sanitizeTemplateText(data.shop_phone);
+    const safeClientName = data.client_name ? sanitizeTemplateText(data.client_name) : '';
+    const safeClientPhone = data.client_phone ? sanitizeTemplateText(data.client_phone) : '';
+    const safeDeviceModel = sanitizeTemplateText(data.device_model);
+    const safeDeviceType = sanitizeTemplateText(data.device_type);
+    const safeNotes = data.notes ? sanitizeTemplateText(data.notes) : '';
+
     tempDiv.innerHTML = `
       <!-- Header Principal -->
       <div style="background: #f0f0f0; padding: 25px; border-radius: 8px; margin-bottom: 30px; color: #000;">
         <div style="display: flex; align-items: center; margin-bottom: 15px;">
           ${logoSection}
           <div>
-            <h1 style="margin: 0; font-size: 24px; font-weight: bold; color: #000;">${data.shop_name}</h1>
+            <h1 style="margin: 0; font-size: 24px; font-weight: bold; color: #000;">${safeShopName}</h1>
             <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Assistência Técnica Especializada</p>
           </div>
         </div>
         <div style="font-size: 12px; color: #666; line-height: 1.4;">
-          ${data.shop_cnpj ? `<div>CNPJ: ${data.shop_cnpj}</div>` : ''}
-          <div>${data.shop_address} | ${data.shop_phone}</div>
+          ${safeShopCnpj ? `<div>CNPJ: ${safeShopCnpj}</div>` : ''}
+          <div>${safeShopAddress} | ${safeShopPhone}</div>
         </div>
       </div>
       
@@ -553,12 +565,12 @@ export const generatePDFImage = async (data: BudgetPDFData): Promise<string> => 
         </div>
       </div>
       
-      ${data.client_name || data.client_phone ? `
+      ${safeClientName || safeClientPhone ? `
         <div style="margin-bottom: 30px; background: #f8f8f8; padding: 20px; border-radius: 8px; border-left: 4px solid #666;">
           <h3 style="color: #000; margin: 0 0 15px 0; font-size: 16px; font-weight: bold; text-transform: uppercase;">Dados do Cliente</h3>
           <div style="font-size: 14px; color: #000; line-height: 1.6;">
-            ${data.client_name ? `<div style="margin-bottom: 5px;"><strong>Nome:</strong> ${data.client_name}</div>` : ''}
-            ${data.client_phone ? `<div><strong>Telefone:</strong> ${data.client_phone}</div>` : ''}
+            ${safeClientName ? `<div style="margin-bottom: 5px;"><strong>Nome:</strong> ${safeClientName}</div>` : ''}
+            ${safeClientPhone ? `<div><strong>Telefone:</strong> ${safeClientPhone}</div>` : ''}
           </div>
         </div>
       ` : ''}
@@ -579,18 +591,18 @@ export const generatePDFImage = async (data: BudgetPDFData): Promise<string> => 
           <div style="padding: 0;">
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 15px; border-bottom: 1px solid #f0f0f0; background: #fafafa;">
               <div style="font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Modelo</div>
-              <div style="font-weight: bold; color: #000; font-size: 14px;">${data.device_model}</div>
+              <div style="font-weight: bold; color: #000; font-size: 14px;">${safeDeviceModel}</div>
             </div>
             ${data.part_quality ? `
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 15px; border-bottom: 1px solid #f0f0f0; background: white;">
               <div style="font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Qualidade</div>
-              <div style="font-weight: bold; color: #000; font-size: 14px;">${data.part_quality}</div>
+              <div style="font-weight: bold; color: #000; font-size: 14px;">${sanitizeTemplateText(data.part_quality)}</div>
             </div>
             ` : ''}
-            ${data.notes ? `
+            ${safeNotes ? `
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px; padding: 15px; background: #fafafa;">
               <div style="font-weight: 600; color: #666; font-size: 12px; text-transform: uppercase;">Obs</div>
-              <div style="font-weight: bold; color: #000; font-size: 14px;">${data.notes}</div>
+              <div style="font-weight: bold; color: #000; font-size: 14px;">${safeNotes}</div>
             </div>
             ` : ''}
           </div>

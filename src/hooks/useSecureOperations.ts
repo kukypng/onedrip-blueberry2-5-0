@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/useToast';
+import { setSecureItem, getSecureItem } from '@/utils/secureStorage';
 
 interface ValidationResult {
   isValid: boolean;
@@ -104,25 +105,25 @@ export const useSecureOperations = () => {
     windowMinutes = 15
   ): Promise<{ allowed: boolean; attempts: number; resetAt: string }> => {
     try {
-      // Implementação simples de rate limiting usando localStorage
+      // Implementação simples de rate limiting usando armazenamento seguro
       const key = `rate_limit_${identifier}_${actionType}`;
-      const stored = localStorage.getItem(key);
+      const stored = await getSecureItem(key);
       const now = Date.now();
       
       if (!stored) {
         const data = { attempts: 1, windowStart: now };
-        localStorage.setItem(key, JSON.stringify(data));
+        await setSecureItem(key, data, { encrypt: true });
         return { allowed: true, attempts: 1, resetAt: new Date(now + windowMinutes * 60000).toISOString() };
       }
 
-      const data = JSON.parse(stored);
+      const data = stored;
       const windowStart = data.windowStart;
       const windowEnd = windowStart + (windowMinutes * 60000);
 
       if (now > windowEnd) {
         // Nova janela de tempo
         const newData = { attempts: 1, windowStart: now };
-        localStorage.setItem(key, JSON.stringify(newData));
+        await setSecureItem(key, newData, { encrypt: true });
         return { allowed: true, attempts: 1, resetAt: new Date(now + windowMinutes * 60000).toISOString() };
       }
 
@@ -132,7 +133,7 @@ export const useSecureOperations = () => {
       
       if (allowed) {
         const newData = { attempts, windowStart };
-        localStorage.setItem(key, JSON.stringify(newData));
+        await setSecureItem(key, newData, { encrypt: true });
       }
 
       return { 

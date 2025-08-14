@@ -18,7 +18,7 @@ import { PlansHero } from './components/PlansHero';
 import { BenefitsSection } from './components/BenefitsSection';
 import { PlanCard } from './components/PlanCard';
 import { PlanSelector } from './components/PlanSelector';
-import { TestimonialsSection } from './components/TestimonialsSection';
+import TestimonialsSection from './components/testimonialssection';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
 

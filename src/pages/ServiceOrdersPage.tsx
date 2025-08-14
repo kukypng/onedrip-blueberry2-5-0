@@ -96,8 +96,6 @@ export const ServiceOrdersPage = () => {
         return <Wrench className="h-4 w-4" />;
       case 'completed':
         return <CheckCircle className="h-4 w-4" />;
-      case 'completed':
-        return <CheckCircle className="h-4 w-4" />;
       default:
         return <AlertCircle className="h-4 w-4" />;
     }
@@ -110,8 +108,6 @@ export const ServiceOrdersPage = () => {
         return 'bg-blue-500/20 text-blue-700 border-blue-500/20';
       case 'completed':
         return 'bg-green-500/20 text-green-700 border-green-500/20';
-      case 'completed':
-        return 'bg-emerald-500/20 text-emerald-700 border-emerald-500/20';
       default:
         return 'bg-gray-500/20 text-gray-700 border-gray-500/20';
     }
@@ -122,8 +118,6 @@ export const ServiceOrdersPage = () => {
         return 'Pendente';
       case 'in_progress':
         return 'Em Andamento';
-      case 'completed':
-        return 'Concluída';
       case 'completed':
         return 'Concluído';
       default:

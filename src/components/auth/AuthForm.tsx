@@ -10,6 +10,9 @@ import { Link } from 'react-router-dom';
 import { useSecureAuth } from '@/hooks/useSecureAuth';
 import { useToast } from '@/hooks/useToast';
 import { supabase } from '@/integrations/supabase/client';
+import { useHCaptcha } from '@/hooks/useHCaptcha';
+import { isHCaptchaEnabled, getHCaptchaSiteKey, logHCaptchaStatus } from '@/utils/hcaptcha';
+import HCaptcha from '@hcaptcha/react-hcaptcha';
 
 export const AuthForm = () => {
   const [email, setEmail] = useState('');
@@ -18,6 +21,24 @@ export const AuthForm = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const { signIn, signUp, resetPassword, loading, isLoginBlocked } = useSecureAuth();
   const { showSuccess, showError } = useToast();
+  const {
+    captchaRef,
+    captchaToken,
+    captchaError,
+    resetCaptcha,
+    onCaptchaVerify,
+    onCaptchaError,
+    onCaptchaExpire,
+  } = useHCaptcha();
+
+  // Check if hCaptcha is enabled
+  const hCaptchaEnabled = isHCaptchaEnabled();
+  const hCaptchaSiteKey = getHCaptchaSiteKey();
+
+  // Log hCaptcha status on component mount
+  React.useEffect(() => {
+    logHCaptchaStatus();
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +46,15 @@ export const AuthForm = () => {
       showError({
         title: 'Erro no login',
         description: 'Por favor, preencha todos os campos.',
+      });
+      return;
+    }
+    
+    // Verificar captcha apenas para login
+    if (!captchaToken) {
+      showError({
+        title: 'Verificação necessária',
+        description: 'Por favor, complete a verificação de segurança.',
       });
       return;
     }
@@ -38,7 +68,8 @@ export const AuthForm = () => {
       return;
     }
     
-    await signIn({ email, password });
+    await signIn({ email, password, captchaToken: hCaptchaEnabled ? captchaToken : null });
+    resetCaptcha();
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -159,7 +190,39 @@ export const AuthForm = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          
+          {/* hCaptcha - only for login and when enabled */}
+          {!isSignUp && hCaptchaEnabled && hCaptchaSiteKey && (
+            <div className="space-y-2">
+              <div className="flex justify-center">
+                <HCaptcha
+                  ref={captchaRef}
+                  sitekey={hCaptchaSiteKey}
+                  onVerify={onCaptchaVerify}
+                  onError={onCaptchaError}
+                  onExpire={onCaptchaExpire}
+                  theme="light"
+                  size="normal"
+                />
+              </div>
+              {captchaError && (
+                <p className="text-sm text-red-600 text-center">{captchaError}</p>
+              )}
+            </div>
+          )}
+          
+          {/* Info message when hCaptcha is disabled */}
+          {!isSignUp && !hCaptchaEnabled && (
+            <div className="space-y-2">
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+                <p className="text-sm text-yellow-800">
+                  💡 hCaptcha está desabilitado. Para habilitar, configure VITE_HCAPTCHA_SITE_KEY no arquivo .env
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <Button type="submit" className="w-full" disabled={loading || (!isSignUp && !captchaToken)}>
             {loading ? 'Carregando...' : isSignUp ? 'Criar Conta' : 'Entrar'}
           </Button>
         </form>

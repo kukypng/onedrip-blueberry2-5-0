@@ -8,6 +8,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/useToast';
 import { useRateLimit, getClientIdentifier, RATE_LIMIT_CONFIGS } from '@/utils/security/rateLimiting';
 import { validateEmail, validateInput, logSecurityEvent } from '@/utils/security/inputValidation';
+import { isHCaptchaEnabled } from '@/utils/hcaptcha';
 import type { User, Session } from '@supabase/supabase-js';
 
 interface AuthState {
@@ -20,6 +21,7 @@ interface AuthState {
 interface LoginCredentials {
   email: string;
   password: string;
+  captchaToken?: string;
 }
 
 interface SignUpCredentials extends LoginCredentials {
@@ -91,8 +93,8 @@ export const useSecureAuth = () => {
     };
   }, []);
 
-  // Login seguro com rate limiting
-  const signIn = async ({ email, password }: LoginCredentials) => {
+  // Login seguro com rate limiting e hCaptcha
+  const signIn = async ({ email, password, captchaToken }: LoginCredentials) => {
     try {
       // Validação de entrada
       const emailValidation = validateEmail(email);
@@ -118,6 +120,25 @@ export const useSecureAuth = () => {
         return { error: new Error('Dados inválidos') };
       }
 
+      // Validate captcha token only if hCaptcha is enabled
+      const hCaptchaEnabled = isHCaptchaEnabled();
+      if (hCaptchaEnabled && !captchaToken) {
+        showError({
+          title: 'Verificação necessária',
+          description: 'Por favor, complete a verificação captcha'
+        });
+        return { error: new Error('Captcha não verificado') };
+      }
+
+      // Verificar hCaptcha se fornecido
+      if (captchaToken) {
+        // Log da verificação do captcha
+        logSecurityEvent('CAPTCHA_VERIFICATION_ATTEMPT', {
+          email: emailValidation.sanitized,
+          clientId: getClientIdentifier()
+        });
+      }
+
       // Verificar rate limiting
       const rateLimitResult = loginRateLimit.checkLimit(emailValidation.sanitized);
       if (!rateLimitResult.allowed) {
@@ -138,11 +159,20 @@ export const useSecureAuth = () => {
         return { error: new Error(message) };
       }
 
-      // Tentar autenticar
-      const { data, error } = await supabase.auth.signInWithPassword({
+      // Tentar autenticar com captcha se fornecido
+      const authOptions: any = {
         email: emailValidation.sanitized,
         password: password.trim()
-      });
+      };
+
+      // Only add captcha token if hCaptcha is enabled
+      if (hCaptchaEnabled && captchaToken) {
+        authOptions.options = {
+          captchaToken
+        };
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword(authOptions);
 
       if (error) {
         // Log de falha na autenticação
@@ -152,12 +182,35 @@ export const useSecureAuth = () => {
           clientId: getClientIdentifier()
         }, 'medium');
 
+        // Incrementar contador de tentativas falhadas
+        loginRateLimit.recordFailure(emailValidation.sanitized);
+
         // Mapear erros comuns
-        const errorMessage = error.message.includes('Invalid login credentials')
-          ? 'Email ou senha incorretos.'
-          : error.message.includes('Email not confirmed')
-          ? 'Por favor, confirme seu email antes de fazer login.'
-          : 'Erro no login. Tente novamente.';
+        let errorMessage = 'Erro no login. Tente novamente.';
+        
+        if (error.message.includes('Invalid login credentials')) {
+          errorMessage = 'Email ou senha incorretos.';
+        } else if (error.message.includes('Email not confirmed')) {
+          errorMessage = 'Por favor, confirme seu email antes de fazer login.';
+        } else if (error.message.includes('Too many requests')) {
+          errorMessage = 'Muitas tentativas de login. Tente novamente mais tarde.';
+        } else if (error.message.includes('captcha') || error.message.includes('Captcha')) {
+          errorMessage = 'Falha na verificação do captcha. Tente novamente.';
+          // Log específico para erro de captcha
+          logSecurityEvent('CAPTCHA_VERIFICATION_FAILED', {
+            email: emailValidation.sanitized,
+            error: error.message,
+            clientId: getClientIdentifier()
+          });
+        } else if (error.message.includes('hcaptcha') || error.message.includes('hCaptcha')) {
+          errorMessage = 'Erro na verificação hCaptcha. Recarregue a página e tente novamente.';
+          // Log específico para erro de hCaptcha
+          logSecurityEvent('HCAPTCHA_VERIFICATION_FAILED', {
+            email: emailValidation.sanitized,
+            error: error.message,
+            clientId: getClientIdentifier()
+          });
+        }
 
         showError({
           title: 'Erro no login',

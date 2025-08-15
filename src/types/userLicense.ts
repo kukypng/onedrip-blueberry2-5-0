@@ -3,23 +3,15 @@
 export interface EnhancedUser {
   id: string;
   email: string;
-  name?: string;
-  phone?: string;
-  company?: string;
-  role?: string;
   created_at: string;
   last_sign_in_at: string | null;
   email_confirmed_at: string | null;
+  phone: string | null;
   user_metadata: Record<string, unknown>;
   license_count: number;
   active_licenses: number;
   total_license_value: number;
   last_license_activity: string | null;
-  licenses?: License[];
-  license?: License;
-  total_licenses?: number;
-  expired_licenses?: number;
-  last_login?: string;
 }
 
 export interface UserLicenseAnalytics {
@@ -64,7 +56,6 @@ export interface LicenseStatistics {
   suspended_licenses: number;
   licenses_created_today: number;
   licenses_expiring_soon: number;
-  active_users?: number;
 }
 
 export interface License {
@@ -74,12 +65,8 @@ export interface License {
   status: 'active' | 'expired' | 'suspended' | 'cancelled';
   created_at: string;
   updated_at: string;
-  expires_at: string;
+  expires_at: string | null;
   metadata: Record<string, unknown>;
-  max_devices?: number;
-  devices_used?: number;
-  features?: string[];
-  notes?: string;
 }
 
 export interface UserProfile {
@@ -107,16 +94,13 @@ export interface UserListFilters {
 }
 
 export interface UserListSorting {
-  sort_by: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
+  sort_by: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at';
   sort_order: 'asc' | 'desc';
-  field?: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
-  direction?: 'asc' | 'desc';
 }
 
 export interface PaginationParams {
   limit: number;
   offset: number;
-  page?: number;
 }
 
 // Bulk operation request types
@@ -220,12 +204,6 @@ export interface UseEnhancedUsersReturn {
   hasMore: boolean;
   refetch: () => void;
   loadMore: () => void;
-  pagination?: {
-    page: number;
-    totalPages: number;
-    total?: number;
-  };
-  refresh?: () => void;
 }
 
 export interface UseLicenseAnalyticsReturn {
@@ -233,7 +211,6 @@ export interface UseLicenseAnalyticsReturn {
   loading: boolean;
   error: string | null;
   refetch: () => void;
-  refresh?: () => void;
 }
 
 export interface UseBulkOperationsReturn {
@@ -242,10 +219,6 @@ export interface UseBulkOperationsReturn {
   error: string | null;
   createOperation: (type: string, userIds: string[], data?: Record<string, unknown>) => Promise<string>;
   getOperationStatus: (operationId: string) => BulkOperation | null;
-  createBulkOperation?: (data: BulkOperationRequest) => Promise<string>;
-  cancelOperation?: (operationId: string) => Promise<void>;
-  deleteOperation?: (operationId: string) => Promise<void>;
-  refresh?: () => void;
 }
 
 export interface UseLicenseStatisticsReturn {
@@ -294,82 +267,4 @@ export interface UserLicenseConfig {
     default_date_range_days: number;
     refresh_interval_seconds: number;
   };
-}
-
-// Additional types for components
-export interface AnalyticsDashboardProps {
-  className?: string;
-}
-
-export interface LicenseAnalyticsFilter {
-  date_range: DateRange;
-  license_types: string[];
-  user_types: string[];
-}
-
-export type DateRange = 'last_7_days' | 'last_30_days' | 'last_90_days' | 'last_year';
-
-export interface BulkOperationsPanelProps {
-  selectedUsers: string[];
-  onOperationComplete?: (operation: BulkOperation) => void;
-  onClose?: () => void;
-}
-
-export interface BulkOperationRequest {
-  type: string;
-  user_ids: string[];
-  license_data?: Record<string, unknown>;
-  reason?: string;
-}
-
-export type BulkOperationType = 'bulk_create' | 'bulk_renew' | 'bulk_suspend' | 'bulk_delete';
-
-export interface EnhancedUserProfileProps {
-  userId: string;
-  onClose?: () => void;
-}
-
-export interface LicenseCreateRequest {
-  type: string;
-  expires_at: string;
-  max_devices: number;
-  features: string[];
-  notes?: string;
-}
-
-export interface LicenseUpdateRequest {
-  type?: string;
-  expires_at?: string;
-  max_devices?: number;
-  features?: string[];
-  notes?: string;
-}
-
-export interface IntegratedUserListProps {
-  onUserSelect?: (user: EnhancedUser) => void;
-  onBulkAction?: (action: string, userIds: string[]) => void;
-  onViewProfile?: (user: EnhancedUser) => void;
-  onManageLicense?: (user: EnhancedUser) => void;
-}
-
-export interface UserFilters {
-  search?: string;
-  license_status?: 'active' | 'inactive' | 'expired' | null;
-  licenseStatus?: 'active' | 'inactive' | 'expired' | null;
-  licenseType?: string;
-  dateFrom?: string;
-  dateTo?: string;
-  date_range?: {
-    start: string;
-    end: string;
-  };
-  license_type?: string;
-}
-
-export type UserSortField = 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
-export type SortDirection = 'asc' | 'desc';
-
-export interface UnifiedDashboardProps {
-  className?: string;
-  onNavigate?: (section: string) => void;
 }

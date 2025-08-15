@@ -20,169 +20,165 @@ import {
   TableRow,
 } from '../ui/table';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import {
   Search,
   Filter,
-  Download,
   MoreHorizontal,
-  Eye,
-  CreditCard,
-  UserX,
-  RefreshCw,
   Users,
+  CreditCard,
+  Calendar,
   AlertTriangle,
-  Clock,
   CheckCircle,
-  XCircle,
-  ArrowUpDown,
+  Clock,
+  X,
+  Download,
+  RefreshCw,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { useEnhancedUsers } from '../../hooks/useEnhancedUsers';
-import { useBulkOperations } from '../../hooks/useBulkOperations';
-import { BulkOperationsPanel } from './BulkOperationsPanel';
-import { EnhancedUserProfile } from './EnhancedUserProfile';
+import { useEnhancedUsers, useUserSelection } from '../../hooks/useEnhancedUsers';
 import type {
   IntegratedUserListProps,
   EnhancedUser,
   UserFilters,
   UserSortField,
-  SortDirection,
-  UserListSorting,
-  PaginationParams
+  SortDirection
 } from '../../types/userLicense';
 
-// User selection hook
-function useUserSelection() {
-  const [selectedUsers, setSelectedUsers] = useState<EnhancedUser[]>([]);
-  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
-
-  const selectUser = (user: EnhancedUser) => {
-    const isSelected = selectedUserIds.includes(user.id);
-    if (isSelected) {
-      setSelectedUsers(prev => prev.filter(u => u.id !== user.id));
-      setSelectedUserIds(prev => prev.filter(id => id !== user.id));
-    } else {
-      setSelectedUsers(prev => [...prev, user]);
-      setSelectedUserIds(prev => [...prev, user.id]);
-    }
-  };
-
-  const selectAllUsers = (users: EnhancedUser[]) => {
-    setSelectedUsers(users);
-    setSelectedUserIds(users.map(u => u.id));
-  };
-
-  const clearSelection = () => {
-    setSelectedUsers([]);
-    setSelectedUserIds([]);
-  };
-
-  const isSelected = (userId: string) => selectedUserIds.includes(userId);
-
-  const selectedCount = selectedUsers.length;
-
-  return {
-    selectedUsers,
-    selectedUserIds,
-    selectUser,
-    selectAllUsers,
-    clearSelection,
-    isSelected,
-    selectedCount
-  };
+interface FilterChipProps {
+  label: string;
+  onRemove: () => void;
 }
 
-function UserTableRow({ user, isSelected, onSelect, onViewProfile, onManageLicense }: {
+function FilterChip({ label, onRemove }: FilterChipProps) {
+  return (
+    <Badge variant="secondary" className="flex items-center space-x-1">
+      <span>{label}</span>
+      <button onClick={onRemove} className="ml-1 hover:bg-gray-300 rounded-full p-0.5">
+        <X className="h-3 w-3" />
+      </button>
+    </Badge>
+  );
+}
+
+interface UserRowProps {
   user: EnhancedUser;
   isSelected: boolean;
-  onSelect: (user: EnhancedUser) => void;
-  onViewProfile?: (user: EnhancedUser) => void;
-  onManageLicense?: (user: EnhancedUser) => void;
-}) {
+  onSelect: (userId: string, selected: boolean) => void;
+  onViewProfile: (userId: string) => void;
+  onManageLicense: (userId: string) => void;
+}
+
+function UserRow({ user, isSelected, onSelect, onViewProfile, onManageLicense }: UserRowProps) {
   const getLicenseStatusBadge = () => {
-    if (user.active_licenses > 0) {
-      return <Badge className="bg-green-500">Ativa</Badge>;
-    } else if (user.expired_licenses > 0) {
-      return <Badge variant="destructive">Expirada</Badge>;
-    } else {
+    if (!user.license) {
       return <Badge variant="outline">Sem Licença</Badge>;
+    }
+
+    switch (user.license.status) {
+      case 'active':
+        return <Badge variant="default" className="bg-green-500">Ativa</Badge>;
+      case 'expired':
+        return <Badge variant="destructive">Expirada</Badge>;
+      case 'suspended':
+        return <Badge variant="secondary">Suspensa</Badge>;
+      default:
+        return <Badge variant="outline">{user.license.status}</Badge>;
     }
   };
 
-  const isExpired = user.expired_licenses > 0;
-  const isExpiringSoon = user.license?.expires_at ? 
-    new Date(user.license.expires_at).getTime() - Date.now() < 30 * 24 * 60 * 60 * 1000 : false;
+  const formatDate = (date: string | null) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleDateString('pt-BR');
+  };
+
+  const getDaysUntilExpiry = () => {
+    if (!user.license?.expires_at) return null;
+    const today = new Date();
+    const expiryDate = new Date(user.license.expires_at);
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const daysUntilExpiry = getDaysUntilExpiry();
+  const isExpiringSoon = daysUntilExpiry !== null && daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+  const isExpired = daysUntilExpiry !== null && daysUntilExpiry <= 0;
 
   return (
-    <TableRow className={isSelected ? 'bg-muted/50' : ''}>
+    <TableRow className={isSelected ? 'bg-blue-50' : ''}>
       <TableCell>
-        <Checkbox 
+        <Checkbox
           checked={isSelected}
-          onCheckedChange={() => onSelect(user)}
+          onCheckedChange={(checked) => onSelect(user.id, !!checked)}
         />
       </TableCell>
       <TableCell>
-        <div>
-          <p className="font-medium">{user.name || user.email}</p>
-          <p className="text-sm text-muted-foreground">{user.email}</p>
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+            <Users className="h-4 w-4 text-gray-600" />
+          </div>
+          <div>
+            <p className="font-medium">{user.name || 'Nome não informado'}</p>
+            <p className="text-sm text-gray-500">{user.email}</p>
+          </div>
         </div>
       </TableCell>
       <TableCell>
         <div className="flex items-center space-x-2">
           {getLicenseStatusBadge()}
           {isExpiringSoon && (
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
+            <AlertTriangle className="h-4 w-4 text-yellow-500" title="Expira em breve" />
           )}
           {isExpired && (
-            <Clock className="h-4 w-4 text-red-500" />
+            <Clock className="h-4 w-4 text-red-500" title="Expirada" />
           )}
         </div>
       </TableCell>
       <TableCell>
-        <div className="text-sm">
-          <p>Total: {user.license_count || 0}</p>
-          <p className="text-muted-foreground">Ativas: {user.active_licenses || 0}</p>
-        </div>
+        {user.license ? (
+          <div>
+            <p className="text-sm">{user.license.type}</p>
+            <p className="text-xs text-gray-500">
+              Expira: {formatDate(user.license.expires_at)}
+            </p>
+          </div>
+        ) : (
+          <span className="text-gray-400">-</span>
+        )}
       </TableCell>
       <TableCell>
-        {user.last_sign_in_at ? 
-          new Date(user.last_sign_in_at).toLocaleDateString('pt-BR') : 
-          'Nunca'
-        }
+        <span className="text-sm">{formatDate(user.created_at)}</span>
+      </TableCell>
+      <TableCell>
+        <span className="text-sm">{formatDate(user.last_login)}</span>
       </TableCell>
       <TableCell>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" className="h-8 w-8 p-0">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => onViewProfile?.(user)}>
-                <Eye className="h-4 w-4 mr-2" />
-                Ver Perfil
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onManageLicense?.(user)}>
-                <CreditCard className="h-4 w-4 mr-2" />
-                Gerenciar Licença
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
+            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => onViewProfile(user.id)}>
+              Ver Perfil
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onManageLicense(user.id)}>
+              Gerenciar Licença
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="text-red-600">
+              Suspender Usuário
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
@@ -190,372 +186,383 @@ function UserTableRow({ user, isSelected, onSelect, onViewProfile, onManageLicen
   );
 }
 
-export function IntegratedUserList({ 
-  onUserSelect, 
+export function IntegratedUserList({
+  onUserSelect,
   onBulkAction,
   onViewProfile,
-  onManageLicense 
+  onManageLicense
 }: IntegratedUserListProps) {
-  const [showBulkOperations, setShowBulkOperations] = useState(false);
-  const [showUserProfile, setShowUserProfile] = useState<string | null>(null);
-  const [showFilters, setShowFilters] = useState(false);
-  
-  // Filters and sorting
-  const [filters, setFilters] = useState<UserFilters>({
-    search: '',
-    license_status: null,
-    license_type: '',
-    date_range: undefined
-  });
-  
-  const [sorting, setSorting] = useState<UserListSorting>({
-    sort_by: 'created_at',
-    sort_order: 'desc',
-    field: 'created_at',
-    direction: 'desc'
-  });
-  
-  const [pagination, setPagination] = useState<PaginationParams>({
-    page: 1,
-    limit: 20,
-    offset: 0
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filters, setFilters] = useState<UserFilters>({});
+  const [sortField, setSortField] = useState<UserSortField>('created_at');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
+
+  const {
+    users,
+    loading,
+    error,
+    pagination,
+    refresh
+  } = useEnhancedUsers({
+    filters: {
+      ...filters,
+      search: searchTerm || undefined
+    },
+    sorting: {
+      field: sortField,
+      direction: sortDirection
+    },
+    pagination: {
+      page: currentPage,
+      limit: pageSize
+    },
+    autoRefresh: true
   });
 
-  // Data fetching
-  const { users, loading, error, total, hasMore, refetch } = useEnhancedUsers({
-    filters,
-    sorting,
-    pagination
-  });
-
-  // User selection
   const {
     selectedUsers,
-    selectedUserIds,
     selectUser,
-    selectAllUsers,
+    selectAll,
     clearSelection,
-    isSelected,
-    selectedCount
-  } = useUserSelection();
+    isAllSelected
+  } = useUserSelection(users);
 
-  // Derived state
-  const hasSelection = selectedCount > 0;
-  const allCurrentPageSelected = users.length > 0 && users.every(user => isSelected(user.id));
-
-  // Event handlers
-  const handleSearch = (query: string) => {
-    setFilters(prev => ({ ...prev, search: query }));
-    setPagination(prev => ({ ...prev, page: 1, offset: 0 }));
-  };
-
-  const handleFilterChange = (key: keyof UserFilters, value: any) => {
-    setFilters(prev => ({ ...prev, [key]: value }));
-    setPagination(prev => ({ ...prev, page: 1, offset: 0 }));
-  };
+  const activeFilters = useMemo(() => {
+    const active = [];
+    if (filters.licenseStatus) {
+      active.push({
+        key: 'licenseStatus',
+        label: `Status: ${filters.licenseStatus}`,
+        remove: () => setFilters(prev => ({ ...prev, licenseStatus: undefined }))
+      });
+    }
+    if (filters.licenseType) {
+      active.push({
+        key: 'licenseType',
+        label: `Tipo: ${filters.licenseType}`,
+        remove: () => setFilters(prev => ({ ...prev, licenseType: undefined }))
+      });
+    }
+    if (filters.dateFrom) {
+      active.push({
+        key: 'dateFrom',
+        label: `A partir de: ${new Date(filters.dateFrom).toLocaleDateString('pt-BR')}`,
+        remove: () => setFilters(prev => ({ ...prev, dateFrom: undefined }))
+      });
+    }
+    if (filters.dateTo) {
+      active.push({
+        key: 'dateTo',
+        label: `Até: ${new Date(filters.dateTo).toLocaleDateString('pt-BR')}`,
+        remove: () => setFilters(prev => ({ ...prev, dateTo: undefined }))
+      });
+    }
+    return active;
+  }, [filters]);
 
   const handleSort = (field: UserSortField) => {
-    const newDirection: SortDirection = 
-      sorting.field === field && sorting.direction === 'asc' ? 'desc' : 'asc';
-    setSorting({
-      sort_by: field,
-      sort_order: newDirection,
-      field,
-      direction: newDirection
-    });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPagination(prev => ({ 
-      ...prev, 
-      page: newPage,
-      offset: (newPage - 1) * prev.limit
-    }));
-  };
-
-  const handleSelectAll = () => {
-    if (allCurrentPageSelected) {
-      clearSelection();
+    if (sortField === field) {
+      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
     } else {
-      selectAllUsers(users);
+      setSortField(field);
+      setSortDirection('asc');
     }
   };
 
-  const handleBulkOperation = (operation: string) => {
-    onBulkAction?.(operation, selectedUserIds);
-    setShowBulkOperations(false);
-    clearSelection();
+  const handleBulkAction = (action: string) => {
+    if (selectedUsers.length === 0) return;
+    onBulkAction?.(action, selectedUsers);
   };
 
-  const handleExportData = () => {
-    console.log('Exporting user data...');
+  const clearAllFilters = () => {
+    setFilters({});
+    setSearchTerm('');
   };
 
-  const totalPages = Math.ceil(total / pagination.limit);
+  if (error) {
+    return (
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-2 text-red-600">
+            <AlertTriangle className="h-5 w-5" />
+            <span>Erro ao carregar usuários: {error}</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Usuários</h2>
-          <p className="text-muted-foreground">
-            {total > 0 ? `${total} usuários encontrados` : 'Carregando usuários...'}
+          <h2 className="text-xl font-semibold text-gray-900">Usuários e Licenças</h2>
+          <p className="text-gray-600">
+            {pagination?.total || 0} usuários encontrados
           </p>
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center space-x-2"
-          >
-            <Filter className="h-4 w-4" />
-            <span>Filtros</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={handleExportData}
-            className="flex items-center space-x-2"
-          >
-            <Download className="h-4 w-4" />
-            <span>Exportar</span>
-          </Button>
-          <Button
-            variant="outline"
-            onClick={refetch}
+            onClick={refresh}
             disabled={loading}
             className="flex items-center space-x-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
             <span>Atualizar</span>
           </Button>
+          <Button variant="outline" className="flex items-center space-x-2">
+            <Download className="h-4 w-4" />
+            <span>Exportar</span>
+          </Button>
         </div>
       </div>
 
-      {/* Filters */}
-      {showFilters && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Filtros</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="text-sm font-medium mb-2 block">Status da Licença</label>
-                <Select 
-                  value={filters.license_status || ''} 
-                  onValueChange={(value) => handleFilterChange('license_status', value || null)}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
-                    <SelectItem value="active">Ativa</SelectItem>
-                    <SelectItem value="expired">Expirada</SelectItem>
-                    <SelectItem value="inactive">Inativa</SelectItem>
-                  </SelectContent>
-                </Select>
+      {/* Search and Filters */}
+      <Card>
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            {/* Search Bar */}
+            <div className="flex items-center space-x-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Buscar por nome, email ou ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">Tipo de Licença</label>
-                <Select 
-                  value={filters.license_type || ''} 
-                  onValueChange={(value) => handleFilterChange('license_type', value)}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" className="flex items-center space-x-2">
+                    <Filter className="h-4 w-4" />
+                    <span>Filtros</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56">
+                  <DropdownMenuLabel>Filtrar por</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <div className="p-2 space-y-2">
+                    <Select
+                      value={filters.licenseStatus || ''}
+                      onValueChange={(value) => 
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          licenseStatus: value || undefined 
+                        }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Status da Licença" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">Ativa</SelectItem>
+                        <SelectItem value="expired">Expirada</SelectItem>
+                        <SelectItem value="suspended">Suspensa</SelectItem>
+                        <SelectItem value="none">Sem Licença</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={filters.licenseType || ''}
+                      onValueChange={(value) => 
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          licenseType: value || undefined 
+                        }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Tipo de Licença" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Básica</SelectItem>
+                        <SelectItem value="premium">Premium</SelectItem>
+                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {/* Active Filters */}
+            {activeFilters.length > 0 && (
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-gray-600">Filtros ativos:</span>
+                {activeFilters.map((filter) => (
+                  <FilterChip
+                    key={filter.key}
+                    label={filter.label}
+                    onRemove={filter.remove}
+                  />
+                ))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearAllFilters}
+                  className="text-xs"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todos" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="">Todos</SelectItem>
-                    <SelectItem value="basic">Básica</SelectItem>
-                    <SelectItem value="premium">Premium</SelectItem>
-                    <SelectItem value="enterprise">Enterprise</SelectItem>
-                  </SelectContent>
-                </Select>
+                  Limpar todos
+                </Button>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Bulk Actions */}
+      {selectedUsers.length > 0 && (
+        <Card className="border-blue-200 bg-blue-50">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="h-5 w-5 text-blue-600" />
+                <span className="text-blue-900 font-medium">
+                  {selectedUsers.length} usuário(s) selecionado(s)
+                </span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction('create_license')}
+                >
+                  Criar Licenças
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction('renew_license')}
+                >
+                  Renovar Licenças
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleBulkAction('suspend_license')}
+                >
+                  Suspender
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearSelection}
+                >
+                  Limpar Seleção
+                </Button>
               </div>
             </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Search */}
-      <div className="flex items-center space-x-4">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar usuários por nome ou email..."
-              value={filters.search}
-              onChange={(e) => handleSearch(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </div>
-        {hasSelection && (
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-muted-foreground">
-              {selectedCount} selecionado(s)
-            </span>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowBulkOperations(true)}
-            >
-              Operações em Lote
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={clearSelection}
-            >
-              Limpar Seleção
-            </Button>
-          </div>
-        )}
-      </div>
-
       {/* Users Table */}
       <Card>
         <CardContent className="p-0">
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <RefreshCw className="h-8 w-8 animate-spin" />
-            </div>
-          ) : error ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <XCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
-                <p className="text-red-600">{error}</p>
-              </div>
-            </div>
-          ) : users.length === 0 ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="text-center">
-                <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">Nenhum usuário encontrado</p>
-              </div>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-12">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={selectAll}
+                  />
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('name')}
+                >
+                  Usuário
+                </TableHead>
+                <TableHead>Status da Licença</TableHead>
+                <TableHead>Detalhes da Licença</TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('created_at')}
+                >
+                  Criado em
+                </TableHead>
+                <TableHead 
+                  className="cursor-pointer hover:bg-gray-50"
+                  onClick={() => handleSort('last_login')}
+                >
+                  Último Login
+                </TableHead>
+                <TableHead className="w-12">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                Array.from({ length: 5 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell colSpan={7}>
+                      <div className="h-12 bg-gray-100 animate-pulse rounded" />
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : users.length === 0 ? (
                 <TableRow>
-                  <TableHead className="w-12">
-                    <Checkbox 
-                      checked={allCurrentPageSelected}
-                      onCheckedChange={handleSelectAll}
-                    />
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('email')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Usuário</span>
-                      <ArrowUpDown className="h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Status da Licença</TableHead>
-                  <TableHead>Licenças</TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      onClick={() => handleSort('last_sign_in_at')}
-                      className="flex items-center space-x-1 p-0 h-auto font-medium"
-                    >
-                      <span>Último Login</span>
-                      <ArrowUpDown className="h-4 w-4" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Ações</TableHead>
+                  <TableCell colSpan={7} className="text-center py-8">
+                    <div className="flex flex-col items-center space-y-2">
+                      <Users className="h-8 w-8 text-gray-400" />
+                      <p className="text-gray-500">Nenhum usuário encontrado</p>
+                    </div>
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {users.map((user) => (
-                  <UserTableRow
+              ) : (
+                users.map((user) => (
+                  <UserRow
                     key={user.id}
                     user={user}
-                    isSelected={isSelected(user.id)}
+                    isSelected={selectedUsers.includes(user.id)}
                     onSelect={selectUser}
-                    onViewProfile={onViewProfile}
-                    onManageLicense={onManageLicense}
+                    onViewProfile={onViewProfile || (() => {})}
+                    onManageLicense={onManageLicense || (() => {})}
                   />
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                ))
+              )}
+            </TableBody>
+          </Table>
         </CardContent>
       </Card>
 
       {/* Pagination */}
-      {totalPages > 1 && (
+      {pagination && pagination.totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <div className="text-sm text-muted-foreground">
-            Mostrando {(pagination.page - 1) * pagination.limit + 1} até{' '}
-            {Math.min(pagination.page * pagination.limit, total)} de {total} usuários
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">
+              Mostrando {((currentPage - 1) * pageSize) + 1} a {Math.min(currentPage * pageSize, pagination.total)} de {pagination.total} usuários
+            </span>
           </div>
           <div className="flex items-center space-x-2">
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page === 1}
+              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+              disabled={currentPage === 1}
             >
               <ChevronLeft className="h-4 w-4" />
-              Anterior
             </Button>
             <span className="text-sm">
-              Página {pagination.page} de {totalPages}
+              Página {currentPage} de {pagination.totalPages}
             </span>
             <Button
               variant="outline"
               size="sm"
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(pagination.totalPages, prev + 1))}
+              disabled={currentPage === pagination.totalPages}
             >
-              Próxima
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
-
-      {/* Bulk Operations Dialog */}
-      <Dialog open={showBulkOperations} onOpenChange={setShowBulkOperations}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Operações em Lote</DialogTitle>
-            <DialogDescription>
-              Execute operações em {selectedCount} usuário(s) selecionado(s)
-            </DialogDescription>
-          </DialogHeader>
-          <BulkOperationsPanel
-            selectedUsers={selectedUserIds}
-            onOperationComplete={() => {
-              setShowBulkOperations(false);
-              clearSelection();
-              refetch();
-            }}
-            onClose={() => setShowBulkOperations(false)}
-          />
-        </DialogContent>
-      </Dialog>
-
-      {/* User Profile Dialog */}
-      <Dialog open={!!showUserProfile} onOpenChange={() => setShowUserProfile(null)}>
-        <DialogContent className="max-w-4xl">
-          <DialogHeader>
-            <DialogTitle>Perfil do Usuário</DialogTitle>
-          </DialogHeader>
-          {showUserProfile && (
-            <EnhancedUserProfile
-              userId={showUserProfile}
-              onClose={() => setShowUserProfile(null)}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
+
+export default IntegratedUserList;

@@ -144,7 +144,7 @@ export function UnifiedDashboard({ onNavigate }: UnifiedDashboardProps) {
   const { revenue, loading: revenueLoading } = useLicenseRevenue('month');
   const { users, loading: usersLoading, pagination } = useEnhancedUsers({
     filters: {},
-    pagination: { page: 1, limit: 1, offset: 0 }, // Just to get total count
+    pagination: { page: 1, limit: 1 }, // Just to get total count
     autoRefresh: true
   });
 
@@ -236,7 +236,7 @@ export function UnifiedDashboard({ onNavigate }: UnifiedDashboardProps) {
           count={alerts?.expiringSoon || 0}
           icon={<Clock className="h-5 w-5" />}
           variant="warning"
-          action={() => onNavigate?.('licenses')}
+          action={() => onNavigate?.('licenses', { filter: 'expiring' })}
           actionLabel="Ver Detalhes"
         />
         <AlertCard
@@ -244,7 +244,7 @@ export function UnifiedDashboard({ onNavigate }: UnifiedDashboardProps) {
           count={alerts?.expiredToday || 0}
           icon={<AlertTriangle className="h-5 w-5" />}
           variant="error"
-          action={() => onNavigate?.('licenses')}
+          action={() => onNavigate?.('licenses', { filter: 'expired_today' })}
           actionLabel="Renovar"
         />
         <AlertCard
@@ -252,7 +252,7 @@ export function UnifiedDashboard({ onNavigate }: UnifiedDashboardProps) {
           count={metrics?.suspendedLicenses || 0}
           icon={<Activity className="h-5 w-5" />}
           variant="info"
-          action={() => onNavigate?.('licenses')}
+          action={() => onNavigate?.('licenses', { filter: 'suspended' })}
           actionLabel="Gerenciar"
         />
       </div>

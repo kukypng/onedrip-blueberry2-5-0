@@ -3,14 +3,12 @@ import { useAuth } from '@/hooks/useAuth';
 import { AuthGuard } from '@/components/AuthGuard';
 import { supabase } from '@/integrations/supabase/client';
 import { AdaptiveLayout } from '@/components/adaptive/AdaptiveLayout';
-import { AppSidebar } from '@/components/AppSidebar';
 import { DashboardLiteContent } from '@/components/lite/DashboardLiteContent';
 import { DashboardLiteStatsEnhanced } from '@/components/lite/enhanced/DashboardLiteStatsEnhanced';
 import { DashboardLiteQuickAccessEnhanced } from '@/components/lite/enhanced/DashboardLiteQuickAccessEnhanced';
 import { DashboardLiteLicenseStatus } from '@/components/lite/DashboardLiteLicenseStatus';
 import { DashboardLiteHelpSupport } from '@/components/lite/DashboardLiteHelpSupport';
 import { useResponsive } from '@/hooks/useResponsive';
-import { cn } from '@/lib/utils';
 
 import { BudgetErrorBoundary, AuthErrorBoundary } from '@/components/ErrorBoundaries';
 import { LayoutProvider } from '@/contexts/LayoutContext';
@@ -99,59 +97,71 @@ export const DashboardLite = () => {
   // Memoização do conteúdo principal para evitar re-renders desnecessários
   const dashboardContent = useMemo(() => (
     <PageTransition type="fadeScale">
-      <div className={`${isDesktop ? 'pt-20 desktop-dashboard-layout' : 'p-4 space-y-6'}`}>
-        {isDesktop ? (
-          // Layout desktop moderno com espaçamento para navigation fixa
-          <div className="max-w-7xl mx-auto px-6 py-6 space-y-8">
-            <DashboardLiteContent 
-              activeTab={activeTab} 
-              onTabChange={setActiveTab}
-              stats={{ budgets, loading, error }}
-            />
+      <div className={`${isDesktop ? 'desktop-dashboard-layout' : 'p-4 space-y-6'}`}>
+        <div className={`${isDesktop ? 'desktop-dashboard-main' : ''}`}>
+          <DashboardLiteStatsEnhanced profile={profile} userId={user?.id} />
+          <DashboardLiteQuickAccessEnhanced onTabChange={setActiveTab} hasPermission={hasPermission} />
+        </div>
+        {isDesktop && (
+          <div className="desktop-dashboard-sidebar">
+            <DashboardLiteLicenseStatus profile={profile} />
+            <DashboardLiteHelpSupport />
           </div>
-        ) : (
-          // Layout mobile/tablet original
+        )}
+        {!isDesktop && (
           <>
-            <DashboardLiteStatsEnhanced budgets={budgets} loading={loading} />
-            <DashboardLiteQuickAccessEnhanced 
-              onTabChange={setActiveTab}
-              activeTab={activeTab}
-              quickStats={{ total: budgets.length, pending: budgets.filter(b => b.status === 'pending').length }}
-            />
-            <DashboardLiteLicenseStatus />
+            <DashboardLiteLicenseStatus profile={profile} />
             <DashboardLiteHelpSupport />
           </>
         )}
       </div>
     </PageTransition>
-  ), [activeTab, budgets, loading, error, isDesktop]);
+  ), [profile, user?.id, hasPermission, isDesktop])
+
+  const renderContent = useCallback(() => {
+    
+    if (activeTab !== 'dashboard') {
+      return (
+        <PageTransition type="slideLeft" key={activeTab}>
+          <DashboardLiteContent 
+            budgets={budgets} 
+            loading={loading} 
+            error={error} 
+            onRefresh={handleRefresh} 
+            profile={profile} 
+            activeView={activeTab} 
+            userId={user.id} 
+            hasPermission={hasPermission} 
+            onNavigateBack={() => setActiveTab('dashboard')} 
+            onNavigateTo={(view, budgetId) => {
+              if (budgetId) {
+                console.log('Navigate to budget detail:', budgetId);
+              } else {
+                setActiveTab(view);
+              }
+            }} 
+            isiOSDevice={isiOSDevice} 
+          />
+        </PageTransition>
+      );
+    }
+    return dashboardContent;
+  }, [activeTab, budgets, loading, error, handleRefresh, profile, user.id, hasPermission, isiOSDevice, dashboardContent]);
 
   return (
-    <AuthGuard>
-      <BudgetErrorBoundary>
-        <AuthErrorBoundary>
+    <AuthErrorBoundary>
+      <AuthGuard>
+        <BudgetErrorBoundary>
           <LayoutProvider>
-            <div className={cn(
-              "h-[100dvh] bg-background",
-              isDesktop && "desktop-layout"
-            )}>
-              {/* Navegação aprimorada */}
-              <AppSidebar 
-                activeTab={activeTab} 
-                onTabChange={setActiveTab}
-              />
-              
-              {/* Conteúdo principal */}
-              <main className={cn(
-                "flex-1 overflow-auto",
-                isDesktop && "ml-0" // Sem margin pois nav é fixa no topo
-              )}>
-                {dashboardContent}
-              </main>
-            </div>
+            <AdaptiveLayout 
+              activeTab={activeTab} 
+              onTabChange={setActiveTab}
+            >
+              {renderContent()}
+            </AdaptiveLayout>
           </LayoutProvider>
-        </AuthErrorBoundary>
-      </BudgetErrorBoundary>
-    </AuthGuard>
+        </BudgetErrorBoundary>
+      </AuthGuard>
+    </AuthErrorBoundary>
   );
 };

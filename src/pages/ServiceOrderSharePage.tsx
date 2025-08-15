@@ -40,17 +40,26 @@ const ServiceOrderSharePage: React.FC = () => {
 
   useEffect(() => {
     const loadData = async () => {
+      console.log('🚀 Iniciando carregamento de dados...');
+      console.log('📝 Token recebido:', shareToken);
+      
       if (!shareToken) {
+        console.log('⚠️ Nenhum token fornecido, saindo...');
         setError('Token de compartilhamento inválido');
         return;
       }
 
+      console.log('⏳ Estado de loading definido como true');
+
       try {
+        console.log('🔄 Iniciando chamadas paralelas para buscar dados...');
         const [orderData, companyData] = await Promise.all([
           getServiceOrderByToken(shareToken),
           getCompanyInfoByToken(shareToken)
         ]);
 
+        console.log('📦 Dados recebidos:', { orderData, companyData });
+        
         if (!orderData) {
           setError('Ordem de serviço não encontrada ou token expirado');
           return;
@@ -58,8 +67,9 @@ const ServiceOrderSharePage: React.FC = () => {
 
         setServiceOrder(orderData);
         setCompanyInfo(companyData);
+        console.log('✅ Estados atualizados com sucesso');
       } catch (err) {
-        console.error('Erro ao carregar dados:', err);
+        console.error('💥 Erro ao carregar dados:', err);
         setError('Erro ao carregar informações');
       }
     };

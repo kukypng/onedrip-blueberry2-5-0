@@ -67,13 +67,16 @@ export function useServiceOrderShare() {
     try {
       setIsLoading(true);
       
+      console.log('🔍 Buscando ordem de serviço com token:', shareToken);
       const { data, error } = await supabase
         .rpc('get_service_order_by_share_token', {
           p_share_token: shareToken
         });
 
+      console.log('📊 Resposta da função RPC get_service_order_by_share_token:', { data, error });
+
       if (error) {
-        console.error('Erro ao buscar ordem de serviço:', error);
+        console.error('❌ Erro ao buscar ordem de serviço:', error);
         return null;
       }
 
@@ -81,9 +84,10 @@ export function useServiceOrderShare() {
         return null;
       }
 
+      console.log('✅ Ordem de serviço encontrada:', data[0]);
       return data[0] as ServiceOrderShareData;
     } catch (error) {
-      console.error('Erro ao buscar OS:', error);
+      console.error('💥 Erro geral ao buscar ordem de serviço:', error);
       return null;
     } finally {
       setIsLoading(false);
@@ -92,13 +96,16 @@ export function useServiceOrderShare() {
 
   const getCompanyInfoByToken = async (shareToken: string): Promise<CompanyInfo | null> => {
     try {
+      console.log('🏢 Buscando informações da empresa com token:', shareToken);
       const { data, error } = await supabase
         .rpc('get_company_info_by_share_token', {
           p_share_token: shareToken
         });
 
+      console.log('📋 Resposta da função RPC get_company_info_by_share_token:', { data, error });
+
       if (error) {
-        console.error('Erro ao buscar informações da empresa:', error);
+        console.error('❌ Erro ao buscar informações da empresa:', error);
         return null;
       }
 
@@ -106,9 +113,10 @@ export function useServiceOrderShare() {
         return null;
       }
 
+      console.log('✅ Informações da empresa encontradas:', data[0]);
       return data[0] as CompanyInfo;
     } catch (error) {
-      console.error('Erro ao buscar empresa:', error);
+      console.error('💥 Erro geral ao buscar informações da empresa:', error);
       return null;
     }
   };

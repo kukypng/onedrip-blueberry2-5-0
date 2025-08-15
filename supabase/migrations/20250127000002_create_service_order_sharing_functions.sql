@@ -15,7 +15,7 @@ AS $$
 DECLARE
     v_token TEXT;
     v_expires_at TIMESTAMP WITH TIME ZONE;
-    v_base_url TEXT := 'https://app.oliverblueberry.com';
+    v_base_url TEXT := 'https://kuky.pro';
 BEGIN
     -- Verificar se o usuário tem acesso à OS
     IF NOT EXISTS (

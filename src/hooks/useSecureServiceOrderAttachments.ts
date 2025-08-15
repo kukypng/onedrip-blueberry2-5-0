@@ -99,13 +99,10 @@ export const useSecureServiceOrderAttachments = (): UseSecureServiceOrderAttachm
 
       // 3. Validar descrição se fornecida
       if (description) {
-        const descriptionValidation = await validateInput(description, {
-          maxLength: 500,
-          inputType: 'text'
-        });
+        const descriptionValidation = await validateInput(description, 'form');
         
         if (!descriptionValidation.isValid) {
-          throw new Error(`Descrição inválida: ${descriptionValidation.errors?.join(', ')}`);
+          throw new Error(`Descrição inválida: ${descriptionValidation.threats.join(', ')}`);
         }
       }
 

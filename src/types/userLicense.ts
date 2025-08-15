@@ -107,13 +107,16 @@ export interface UserListFilters {
 }
 
 export interface UserListSorting {
-  sort_by: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at';
+  sort_by: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
   sort_order: 'asc' | 'desc';
+  field?: 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
+  direction?: 'asc' | 'desc';
 }
 
 export interface PaginationParams {
   limit: number;
   offset: number;
+  page?: number;
 }
 
 // Bulk operation request types
@@ -217,6 +220,12 @@ export interface UseEnhancedUsersReturn {
   hasMore: boolean;
   refetch: () => void;
   loadMore: () => void;
+  pagination?: {
+    page: number;
+    totalPages: number;
+    total?: number;
+  };
+  refresh?: () => void;
 }
 
 export interface UseLicenseAnalyticsReturn {
@@ -313,7 +322,7 @@ export interface BulkOperationRequest {
   reason?: string;
 }
 
-export type BulkOperationType = 'bulk_create' | 'bulk_renew' | 'bulk_suspend' | 'bulk_delete' | 'create_license' | 'renew_license' | 'suspend_license' | 'delete_license';
+export type BulkOperationType = 'bulk_create' | 'bulk_renew' | 'bulk_suspend' | 'bulk_delete';
 
 export interface EnhancedUserProfileProps {
   userId: string;
@@ -334,4 +343,33 @@ export interface LicenseUpdateRequest {
   max_devices?: number;
   features?: string[];
   notes?: string;
+}
+
+export interface IntegratedUserListProps {
+  onUserSelect?: (user: EnhancedUser) => void;
+  onBulkAction?: (action: string, userIds: string[]) => void;
+  onViewProfile?: (user: EnhancedUser) => void;
+  onManageLicense?: (user: EnhancedUser) => void;
+}
+
+export interface UserFilters {
+  search?: string;
+  license_status?: 'active' | 'inactive' | 'expired' | null;
+  licenseStatus?: 'active' | 'inactive' | 'expired' | null;
+  licenseType?: string;
+  dateFrom?: string;
+  dateTo?: string;
+  date_range?: {
+    start: string;
+    end: string;
+  };
+  license_type?: string;
+}
+
+export type UserSortField = 'email' | 'created_at' | 'license_count' | 'last_sign_in_at' | 'name' | 'last_login';
+export type SortDirection = 'asc' | 'desc';
+
+export interface UnifiedDashboardProps {
+  className?: string;
+  onNavigate?: (section: string) => void;
 }

@@ -47,13 +47,18 @@ export const isUrlSafe = (url: string): boolean => {
     // Verificar URLs absolutas
     const urlObj = new URL(url);
     
-    // Permitir apenas HTTP e HTTPS
-    if (!['http:', 'https:'].includes(urlObj.protocol)) {
+    // Permitir apenas HTTP, HTTPS e WhatsApp protocol
+    if (!['http:', 'https:', 'whatsapp:'].includes(urlObj.protocol)) {
       return false;
     }
 
-    // Verificar se é o mesmo domínio (origem)
-    if (urlObj.origin === window.location.origin) {
+    // Para protocolo whatsapp://, sempre permitir
+    if (urlObj.protocol === 'whatsapp:') {
+      return true;
+    }
+
+    // Verificar se é o mesmo domínio (origem) - apenas se window estiver disponível
+    if (typeof window !== 'undefined' && window.location && urlObj.origin === window.location.origin) {
       const pathname = urlObj.pathname;
       return ALLOWED_INTERNAL_PATHS.includes(pathname) || 
              ALLOWED_INTERNAL_PATHS.some(path => pathname.startsWith(path + '/'));

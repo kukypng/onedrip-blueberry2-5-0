@@ -13,8 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Search, Plus, Filter, MoreVertical, Eye, Edit, Trash2, Clock, AlertCircle, CheckCircle, XCircle, Wrench, Phone, Calendar, DollarSign, FileText, X } from 'lucide-react';
+import { ArrowLeft, Search, Plus, Filter, MoreVertical, Eye, Edit, Trash2, Clock, AlertCircle, CheckCircle, XCircle, Wrench, Phone, Calendar, DollarSign, FileText, X, Share2 } from 'lucide-react';
 import { useSecureServiceOrders, useServiceOrderStats, useDeletedServiceOrdersCount } from '@/hooks/useSecureServiceOrders';
+import { useServiceOrderShare } from '@/hooks/useServiceOrderShare';
 import { toast } from 'sonner';
 import type { Enums } from '@/integrations/supabase/types';
 type ServiceOrderStatus = Enums<'service_order_status'>;
@@ -32,6 +33,7 @@ export const ServiceOrdersPage = () => {
     profile
   } = useAuth();
   const navigate = useNavigate();
+  const { generateShareToken, shareViaWhatsApp, isGenerating } = useServiceOrderShare();
   const [filters, setFilters] = useState<ServiceOrderFilters>({
     search: '',
     status: 'all',
@@ -557,6 +559,23 @@ export const ServiceOrdersPage = () => {
                       <Button variant="ghost" size="sm" onClick={() => {/* TODO: Generate PDF */}} className="flex flex-col items-center gap-1 p-2 h-auto text-muted-foreground hover:text-foreground">
                         <FileText className="h-5 w-5" />
                         <span className="text-xs">PDF</span>
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={async () => {
+                          const shareData = await generateShareToken(order.id);
+                          if (shareData) {
+                            const deviceInfo = `${order.device_type} ${order.device_model}`.trim();
+                            shareViaWhatsApp(shareData.share_url, deviceInfo);
+                          }
+                        }}
+                        disabled={isGenerating}
+                        className="flex flex-col items-center gap-1 p-2 h-auto text-green-600 hover:text-green-700"
+                      >
+                        <Share2 className="h-5 w-5" />
+                        <span className="text-xs">Compartilhar</span>
                       </Button>
                     </div>
                   </div>

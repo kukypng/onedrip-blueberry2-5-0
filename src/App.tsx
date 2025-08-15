@@ -37,6 +37,7 @@ import { LicensePage } from "./pages/LicensePage";
 import { PWAProvider } from "./components/PWAProvider";
 import NotificationsPage from "./pages/NotificationsPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import ServiceOrderSharePage from "./pages/ServiceOrderSharePage";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -121,6 +122,10 @@ const AppContent = () => {
         <Route path="/payment/failure" element={<PaymentFailure />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/verify" element={<VerifyPage />} />
+        
+        {/* Rota pública para compartilhamento de OS */}
+        <Route path="/share/service-order/:shareToken" element={<ServiceOrderSharePage />} />
+        
         <Route
           path="/reset-email"
           element={

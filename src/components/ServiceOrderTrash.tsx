@@ -53,7 +53,32 @@ const ServiceOrderTrash: React.FC = () => {
     queryFn: async (): Promise<DeletedServiceOrder[]> => {
       const { data, error } = await supabase.rpc('get_deleted_service_orders');
       if (error) throw error;
-      return data || [];
+      // Map the returned data to match our interface
+      return (data || []).map((item: any) => ({
+        id: item.id,
+        title: item.title || `Ordem #${item.id.slice(0, 8)}`,
+        description: item.description || item.reported_issue,
+        status: item.status,
+        priority: item.priority,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        deleted_at: item.deleted_at,
+        owner_id: item.owner_id,
+        owner_name: item.owner_name,
+        client_id: item.client_id,
+        device_type: item.device_type || 'N/A',
+        device_model: item.device_model || 'N/A',
+        imei_serial: item.imei_serial,
+        reported_issue: item.reported_issue || item.description,
+        total_price: item.total_price || 0,
+        labor_cost: item.labor_cost || 0,
+        parts_cost: item.parts_cost || 0,
+        is_paid: item.is_paid || false,
+        delivery_date: item.delivery_date,
+        warranty_months: item.warranty_months || 0,
+        notes: item.notes,
+        deleted_by: item.deleted_by
+      })) as DeletedServiceOrder[];
     },
   });
 
@@ -255,70 +280,70 @@ const ServiceOrderTrash: React.FC = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div className="space-y-2">
-                    <div>
-                      <span className="font-medium">Dispositivo:</span>
-                      <span className="ml-2">{order.device_type} {order.device_model}</span>
-                    </div>
-                    {order.imei_serial && (
-                      <div>
-                        <span className="font-medium">IMEI/Serial:</span>
-                        <span className="ml-2">{order.imei_serial}</span>
-                      </div>
-                    )}
-                    <div>
-                      <span className="font-medium">Status:</span>
-                      <span className="ml-2">{order.status}</span>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div>
-                      <span className="font-medium">Preço Total:</span>
-                      <span className="ml-2">R$ {order.total_price.toFixed(2)}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Mão de obra:</span>
-                      <span className="ml-2">R$ {order.labor_cost.toFixed(2)}</span>
-                    </div>
-                    <div>
-                      <span className="font-medium">Peças:</span>
-                      <span className="ml-2">R$ {order.parts_cost.toFixed(2)}</span>
-                    </div>
-                  </div>
-                </div>
+                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                   <div className="space-y-2">
+                     <div>
+                       <span className="font-medium">Dispositivo:</span>
+                       <span className="ml-2">{order.device_type || 'N/A'} {order.device_model || ''}</span>
+                     </div>
+                     {order.imei_serial && (
+                       <div>
+                         <span className="font-medium">IMEI/Serial:</span>
+                         <span className="ml-2">{order.imei_serial}</span>
+                       </div>
+                     )}
+                     <div>
+                       <span className="font-medium">Status:</span>
+                       <span className="ml-2">{order.status}</span>
+                     </div>
+                   </div>
+                   <div className="space-y-2">
+                     <div>
+                       <span className="font-medium">Preço Total:</span>
+                       <span className="ml-2">R$ {(order.total_price || 0).toFixed(2)}</span>
+                     </div>
+                     <div>
+                       <span className="font-medium">Mão de obra:</span>
+                       <span className="ml-2">R$ {(order.labor_cost || 0).toFixed(2)}</span>
+                     </div>
+                     <div>
+                       <span className="font-medium">Peças:</span>
+                       <span className="ml-2">R$ {(order.parts_cost || 0).toFixed(2)}</span>
+                     </div>
+                   </div>
+                 </div>
                 
-                {order.reported_issue && (
-                  <div className="mb-4">
-                    <span className="font-medium">Problema Relatado:</span>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {order.reported_issue}
-                    </p>
-                  </div>
-                )}
+                 {order.reported_issue && (
+                   <div className="mb-4">
+                     <span className="font-medium">Problema Relatado:</span>
+                     <p className="text-sm text-muted-foreground mt-1">
+                       {order.reported_issue}
+                     </p>
+                   </div>
+                 )}
 
-                {order.notes && (
-                  <div className="mb-4">
-                    <span className="font-medium">Observações:</span>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {order.notes}
-                    </p>
-                  </div>
-                )}
+                 {order.notes && (
+                   <div className="mb-4">
+                     <span className="font-medium">Observações:</span>
+                     <p className="text-sm text-muted-foreground mt-1">
+                       {order.notes}
+                     </p>
+                   </div>
+                 )}
 
-                <div className="flex items-center justify-between pt-4 border-t">
-                  <div className="flex items-center gap-4 text-sm">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      order.is_paid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
-                      {order.is_paid ? 'Pago' : 'Não Pago'}
-                    </span>
-                    {order.warranty_months && (
-                      <span>
-                        <span className="font-medium">Garantia:</span> {order.warranty_months} meses
-                      </span>
-                    )}
-                  </div>
+                 <div className="flex items-center justify-between pt-4 border-t">
+                   <div className="flex items-center gap-4 text-sm">
+                     <span className={`px-2 py-1 rounded text-xs ${
+                       order.is_paid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                     }`}>
+                       {order.is_paid ? 'Pago' : 'Não Pago'}
+                     </span>
+                     {order.warranty_months && order.warranty_months > 0 && (
+                       <span>
+                         <span className="font-medium">Garantia:</span> {order.warranty_months} meses
+                       </span>
+                     )}
+                   </div>
                   <div className="flex items-center gap-2">
                     <Button
                       variant="outline"

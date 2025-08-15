@@ -3,15 +3,23 @@
 export interface EnhancedUser {
   id: string;
   email: string;
+  name?: string;
+  phone?: string;
+  company?: string;
+  role?: string;
   created_at: string;
   last_sign_in_at: string | null;
   email_confirmed_at: string | null;
-  phone: string | null;
   user_metadata: Record<string, unknown>;
   license_count: number;
   active_licenses: number;
   total_license_value: number;
   last_license_activity: string | null;
+  licenses?: License[];
+  license?: License;
+  total_licenses?: number;
+  expired_licenses?: number;
+  last_login?: string;
 }
 
 export interface UserLicenseAnalytics {
@@ -56,6 +64,7 @@ export interface LicenseStatistics {
   suspended_licenses: number;
   licenses_created_today: number;
   licenses_expiring_soon: number;
+  active_users?: number;
 }
 
 export interface License {
@@ -65,8 +74,12 @@ export interface License {
   status: 'active' | 'expired' | 'suspended' | 'cancelled';
   created_at: string;
   updated_at: string;
-  expires_at: string | null;
+  expires_at: string;
   metadata: Record<string, unknown>;
+  max_devices?: number;
+  devices_used?: number;
+  features?: string[];
+  notes?: string;
 }
 
 export interface UserProfile {
@@ -211,6 +224,7 @@ export interface UseLicenseAnalyticsReturn {
   loading: boolean;
   error: string | null;
   refetch: () => void;
+  refresh?: () => void;
 }
 
 export interface UseBulkOperationsReturn {
@@ -219,6 +233,10 @@ export interface UseBulkOperationsReturn {
   error: string | null;
   createOperation: (type: string, userIds: string[], data?: Record<string, unknown>) => Promise<string>;
   getOperationStatus: (operationId: string) => BulkOperation | null;
+  createBulkOperation?: (data: BulkOperationRequest) => Promise<string>;
+  cancelOperation?: (operationId: string) => Promise<void>;
+  deleteOperation?: (operationId: string) => Promise<void>;
+  refresh?: () => void;
 }
 
 export interface UseLicenseStatisticsReturn {
@@ -267,4 +285,53 @@ export interface UserLicenseConfig {
     default_date_range_days: number;
     refresh_interval_seconds: number;
   };
+}
+
+// Additional types for components
+export interface AnalyticsDashboardProps {
+  className?: string;
+}
+
+export interface LicenseAnalyticsFilter {
+  date_range: DateRange;
+  license_types: string[];
+  user_types: string[];
+}
+
+export type DateRange = 'last_7_days' | 'last_30_days' | 'last_90_days' | 'last_year';
+
+export interface BulkOperationsPanelProps {
+  selectedUsers: string[];
+  onOperationComplete?: (operation: BulkOperation) => void;
+  onClose?: () => void;
+}
+
+export interface BulkOperationRequest {
+  type: string;
+  user_ids: string[];
+  license_data?: Record<string, unknown>;
+  reason?: string;
+}
+
+export type BulkOperationType = 'bulk_create' | 'bulk_renew' | 'bulk_suspend' | 'bulk_delete' | 'create_license' | 'renew_license' | 'suspend_license' | 'delete_license';
+
+export interface EnhancedUserProfileProps {
+  userId: string;
+  onClose?: () => void;
+}
+
+export interface LicenseCreateRequest {
+  type: string;
+  expires_at: string;
+  max_devices: number;
+  features: string[];
+  notes?: string;
+}
+
+export interface LicenseUpdateRequest {
+  type?: string;
+  expires_at?: string;
+  max_devices?: number;
+  features?: string[];
+  notes?: string;
 }

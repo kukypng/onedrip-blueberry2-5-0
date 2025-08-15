@@ -18,7 +18,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '../ui/dialog';
 import {
   Tabs,
@@ -57,17 +56,12 @@ import {
   Phone,
   MapPin,
   Building,
-  Globe
 } from 'lucide-react';
-import { useLicenseAnalytics } from '../../hooks/useLicenseAnalytics';
-import { useBulkOperations } from '../../hooks/useBulkOperations';
 import type {
-  EnhancedUserProfileProps,
+  UserProfileProps,
   EnhancedUser,
   License,
-  UserLicenseAnalytics,
-  LicenseCreateRequest,
-  LicenseUpdateRequest
+  LicenseCreateRequest
 } from '../../types/userLicense';
 
 interface LicenseFormData {
@@ -129,19 +123,8 @@ function LicenseCard({ license, onEdit, onDelete, onRenew, onSuspend, onActivate
     });
   };
 
-  const getDaysUntilExpiry = () => {
-    const today = new Date();
-    const expiryDate = new Date(license.expires_at);
-    const diffTime = expiryDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
-
-  const daysUntilExpiry = getDaysUntilExpiry();
-  const isExpiringSoon = daysUntilExpiry <= 30 && daysUntilExpiry > 0;
-
   return (
-    <Card className={`${isExpiringSoon ? 'border-yellow-200 bg-yellow-50' : ''}`}>
+    <Card>
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
@@ -182,13 +165,10 @@ function LicenseCard({ license, onEdit, onDelete, onRenew, onSuspend, onActivate
           <div>
             <p className="text-sm text-gray-600">Expira em</p>
             <p className="font-medium">{formatDate(license.expires_at)}</p>
-            {isExpiringSoon && (
-              <p className="text-xs text-yellow-600">Expira em {daysUntilExpiry} dias</p>
-            )}
           </div>
           <div>
             <p className="text-sm text-gray-600">Dispositivos</p>
-            <p className="font-medium">{license.devices_used || 0}/{license.max_devices}</p>
+            <p className="font-medium">{license.devices_used || 0}/{license.max_devices || 1}</p>
           </div>
         </div>
         
@@ -225,121 +205,7 @@ function LicenseCard({ license, onEdit, onDelete, onRenew, onSuspend, onActivate
   );
 }
 
-function LicenseForm({ license, onSave, onCancel }: {
-  license?: License;
-  onSave: (data: LicenseFormData) => void;
-  onCancel: () => void;
-}) {
-  const [formData, setFormData] = useState<LicenseFormData>({
-    type: license?.type || 'basic',
-    expires_at: license?.expires_at ? new Date(license.expires_at).toISOString().split('T')[0] : '',
-    max_devices: license?.max_devices || 1,
-    features: license?.features || [],
-    notes: license?.notes || ''
-  });
-
-  const availableFeatures = [
-    'api_access',
-    'advanced_analytics',
-    'priority_support',
-    'custom_branding',
-    'bulk_operations',
-    'export_data',
-    'integrations'
-  ];
-
-  const handleFeatureToggle = (feature: string) => {
-    setFormData(prev => ({
-      ...prev,
-      features: prev.features.includes(feature)
-        ? prev.features.filter(f => f !== feature)
-        : [...prev.features, feature]
-    }));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium">Tipo de Licença</label>
-          <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="basic">Básica</SelectItem>
-              <SelectItem value="premium">Premium</SelectItem>
-              <SelectItem value="enterprise">Enterprise</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="text-sm font-medium">Data de Expiração</label>
-          <Input
-            type="date"
-            value={formData.expires_at}
-            onChange={(e) => setFormData(prev => ({ ...prev, expires_at: e.target.value }))}
-            required
-          />
-        </div>
-      </div>
-      
-      <div>
-        <label className="text-sm font-medium">Máximo de Dispositivos</label>
-        <Input
-          type="number"
-          min="1"
-          value={formData.max_devices}
-          onChange={(e) => setFormData(prev => ({ ...prev, max_devices: parseInt(e.target.value) }))}
-          required
-        />
-      </div>
-
-      <div>
-        <label className="text-sm font-medium mb-2 block">Recursos</label>
-        <div className="grid grid-cols-2 gap-2">
-          {availableFeatures.map((feature) => (
-            <label key={feature} className="flex items-center space-x-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.features.includes(feature)}
-                onChange={() => handleFeatureToggle(feature)}
-                className="rounded"
-              />
-              <span className="text-sm">{feature.replace('_', ' ')}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium">Observações</label>
-        <Textarea
-          value={formData.notes}
-          onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
-          placeholder="Observações sobre a licença..."
-          rows={3}
-        />
-      </div>
-
-      <div className="flex justify-end space-x-2">
-        <Button type="button" variant="outline" onClick={onCancel}>
-          Cancelar
-        </Button>
-        <Button type="submit">
-          {license ? 'Atualizar' : 'Criar'} Licença
-        </Button>
-      </div>
-    </form>
-  );
-}
-
-export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProps) {
+export function EnhancedUserProfile({ userId, onClose }: UserProfileProps) {
   const [user, setUser] = useState<EnhancedUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -354,13 +220,6 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
     role: '',
     notes: ''
   });
-
-  const { analytics, loading: analyticsLoading } = useLicenseAnalytics({
-    filters: { userId },
-    realTimeUpdates: true
-  });
-
-  const { createBulkOperation } = useBulkOperations();
 
   useEffect(() => {
     if (userId) {
@@ -377,28 +236,35 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
       // Mock user data - replace with actual API call
       const mockUser: EnhancedUser = {
         id: userId,
+        email: 'usuario@email.com',
         name: 'João Silva',
-        email: 'joao.silva@email.com',
         phone: '+55 11 99999-9999',
         company: 'Empresa ABC',
         role: 'admin',
         created_at: '2024-01-15T10:00:00Z',
-        last_login: '2024-08-14T15:30:00Z',
+        last_sign_in_at: '2024-08-14T15:30:00Z',
+        email_confirmed_at: '2024-01-15T10:00:00Z',
+        user_metadata: {},
+        license_count: 1,
+        active_licenses: 1,
+        total_license_value: 100,
+        last_license_activity: '2024-08-14T15:30:00Z',
         license: {
           id: 'lic_123',
           user_id: userId,
           type: 'premium',
           status: 'active',
           expires_at: '2024-12-31T23:59:59Z',
+          created_at: '2024-01-15T10:00:00Z',
+          updated_at: '2024-08-14T15:30:00Z',
+          metadata: {},
           max_devices: 5,
           devices_used: 2,
-          features: ['api_access', 'advanced_analytics', 'priority_support'],
-          created_at: '2024-01-15T10:00:00Z',
-          updated_at: '2024-08-14T15:30:00Z'
+          features: ['api_access', 'advanced_analytics', 'priority_support']
         },
         total_licenses: 1,
-        active_licenses: 1,
-        expired_licenses: 0
+        expired_licenses: 0,
+        last_login: '2024-08-14T15:30:00Z'
       };
       
       setUser(mockUser);
@@ -439,144 +305,79 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
     }
   };
 
-  const handleSaveLicense = async (licenseData: LicenseFormData) => {
+  const handleLicenseAction = async (action: string) => {
     try {
+      console.log(`Executing license action: ${action} for user ${userId}`);
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (editingLicense) {
-        // Update existing license
-        const updatedLicense: License = {
-          ...editingLicense,
-          type: licenseData.type,
-          expires_at: licenseData.expires_at,
-          max_devices: licenseData.max_devices,
-          features: licenseData.features,
-          notes: licenseData.notes,
-          updated_at: new Date().toISOString()
-        };
-        
-        if (user) {
-          setUser({ ...user, license: updatedLicense });
-        }
-      } else {
-        // Create new license
-        const newLicense: License = {
-          id: `lic_${Date.now()}`,
-          user_id: userId,
-          type: licenseData.type,
-          status: 'active',
-          expires_at: licenseData.expires_at,
-          max_devices: licenseData.max_devices,
-          devices_used: 0,
-          features: licenseData.features,
-          notes: licenseData.notes,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        };
-        
-        if (user) {
-          setUser({ ...user, license: newLicense });
-        }
-      }
-      
-      setEditingLicense(null);
-      setShowLicenseForm(false);
     } catch (err) {
-      setError('Erro ao salvar licença');
-    }
-  };
-
-  const handleLicenseAction = async (action: string, license: License) => {
-    try {
-      await createBulkOperation({
-        type: action as any,
-        user_ids: [userId],
-        license_data: action === 'create_license' ? {
-          type: license.type,
-          expires_at: license.expires_at,
-          max_devices: license.max_devices
-        } : undefined
-      });
-      
-      // Refresh user data
-      await fetchUserData();
-    } catch (err) {
-      setError(`Erro ao ${action} licença`);
+      setError(`Erro ao executar ação: ${action}`);
     }
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <RefreshCw className="h-8 w-8 animate-spin text-gray-400" />
+      <div className="flex items-center justify-center h-64">
+        <RefreshCw className="h-8 w-8 animate-spin" />
       </div>
     );
   }
 
   if (error) {
     return (
-      <Card className="border-red-200 bg-red-50">
-        <CardContent className="p-6">
-          <div className="flex items-center space-x-2 text-red-600">
-            <AlertTriangle className="h-5 w-5" />
-            <span>{error}</span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <XCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+          <p className="text-red-600">{error}</p>
+        </div>
+      </div>
     );
   }
 
   if (!user) {
     return (
-      <Card>
-        <CardContent className="p-6">
-          <p className="text-gray-500">Usuário não encontrado</p>
-        </CardContent>
-      </Card>
+      <div className="flex items-center justify-center h-64">
+        <p>Usuário não encontrado</p>
+      </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-            <User className="h-6 w-6 text-gray-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">{user.name || 'Nome não informado'}</h1>
-            <p className="text-gray-600">{user.email}</p>
-          </div>
+        <div>
+          <h2 className="text-xl font-semibold">Perfil do Usuário</h2>
+          <p className="text-muted-foreground">{user.email}</p>
         </div>
-        <Button variant="outline" onClick={onClose}>
-          <X className="h-4 w-4 mr-2" />
-          Fechar
-        </Button>
+        {onClose && (
+          <Button variant="outline" onClick={onClose}>
+            <X className="h-4 w-4 mr-2" />
+            Fechar
+          </Button>
+        )}
       </div>
 
-      <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">Visão Geral</TabsTrigger>
           <TabsTrigger value="licenses">Licenças</TabsTrigger>
-          <TabsTrigger value="analytics">Análises</TabsTrigger>
           <TabsTrigger value="activity">Atividade</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* User Information */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Informações do Usuário</CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>Informações Pessoais</span>
+                </CardTitle>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setEditingUser(!editingUser)}
                 >
                   {editingUser ? <X className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
-                  {editingUser ? 'Cancelar' : 'Editar'}
                 </Button>
               </div>
             </CardHeader>
@@ -594,7 +395,6 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
                     <div>
                       <label className="text-sm font-medium">Email</label>
                       <Input
-                        type="email"
                         value={userFormData.email}
                         onChange={(e) => setUserFormData(prev => ({ ...prev, email: e.target.value }))}
                       />
@@ -616,19 +416,6 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
                       />
                     </div>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium">Função</label>
-                    <Select value={userFormData.role} onValueChange={(value) => setUserFormData(prev => ({ ...prev, role: value }))}>
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">Usuário</SelectItem>
-                        <SelectItem value="admin">Administrador</SelectItem>
-                        <SelectItem value="manager">Gerente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div className="flex justify-end space-x-2">
                     <Button variant="outline" onClick={() => setEditingUser(false)}>
                       Cancelar
@@ -640,70 +427,37 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Mail className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">Email:</span>
-                      <span>{user.email}</span>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex items-center space-x-2">
+                    <User className="h-4 w-4 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-600">Nome</p>
+                      <p className="font-medium">{user.name || 'Não informado'}</p>
                     </div>
-                    {user.phone && (
-                      <div className="flex items-center space-x-2">
-                        <Phone className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">Telefone:</span>
-                        <span>{user.phone}</span>
-                      </div>
-                    )}
-                    {user.company && (
-                      <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4 text-gray-400" />
-                        <span className="text-sm text-gray-600">Empresa:</span>
-                        <span>{user.company}</span>
-                      </div>
-                    )}
                   </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-2">
-                      <Shield className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">Função:</span>
-                      <Badge variant="outline">{user.role}</Badge>
+                  <div className="flex items-center space-x-2">
+                    <Mail className="h-4 w-4 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-600">Email</p>
+                      <p className="font-medium">{user.email}</p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">Criado em:</span>
-                      <span>{new Date(user.created_at).toLocaleDateString('pt-BR')}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="h-4 w-4 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-600">Telefone</p>
+                      <p className="font-medium">{user.phone || 'Não informado'}</p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <Activity className="h-4 w-4 text-gray-400" />
-                      <span className="text-sm text-gray-600">Último login:</span>
-                      <span>{user.last_login ? new Date(user.last_login).toLocaleDateString('pt-BR') : 'Nunca'}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Building className="h-4 w-4 text-gray-500" />
+                    <div>
+                      <p className="text-sm text-gray-600">Empresa</p>
+                      <p className="font-medium">{user.company || 'Não informado'}</p>
                     </div>
                   </div>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* License Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Resumo de Licenças</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">{user.total_licenses}</p>
-                  <p className="text-sm text-gray-600">Total</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">{user.active_licenses}</p>
-                  <p className="text-sm text-gray-600">Ativas</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-red-600">{user.expired_licenses}</p>
-                  <p className="text-sm text-gray-600">Expiradas</p>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -716,21 +470,24 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
               Nova Licença
             </Button>
           </div>
-
+          
           {user.license ? (
             <LicenseCard
               license={user.license}
               onEdit={() => setEditingLicense(user.license)}
-              onDelete={() => handleLicenseAction('delete_license', user.license!)}
-              onRenew={() => handleLicenseAction('renew_license', user.license!)}
-              onSuspend={() => handleLicenseAction('suspend_license', user.license!)}
-              onActivate={() => handleLicenseAction('activate_license', user.license!)}
+              onDelete={() => handleLicenseAction('delete')}
+              onRenew={() => handleLicenseAction('renew')}
+              onSuspend={() => handleLicenseAction('suspend')}
+              onActivate={() => handleLicenseAction('activate')}
             />
           ) : (
             <Card>
-              <CardContent className="p-6 text-center">
-                <CreditCard className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">Este usuário não possui licenças</p>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <CreditCard className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Nenhuma licença encontrada</h3>
+                <p className="text-muted-foreground text-center mb-4">
+                  Este usuário não possui licenças ativas.
+                </p>
                 <Button onClick={() => setShowLicenseForm(true)}>
                   <Plus className="h-4 w-4 mr-2" />
                   Criar Primeira Licença
@@ -738,64 +495,20 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
               </CardContent>
             </Card>
           )}
-
-          {/* License Form Dialog */}
-          <Dialog open={showLicenseForm || !!editingLicense} onOpenChange={(open) => {
-            if (!open) {
-              setShowLicenseForm(false);
-              setEditingLicense(null);
-            }
-          }}>
-            <DialogContent className="max-w-2xl">
-              <DialogHeader>
-                <DialogTitle>
-                  {editingLicense ? 'Editar Licença' : 'Nova Licença'}
-                </DialogTitle>
-                <DialogDescription>
-                  {editingLicense ? 'Modifique os dados da licença abaixo.' : 'Preencha os dados para criar uma nova licença.'}
-                </DialogDescription>
-              </DialogHeader>
-              <LicenseForm
-                license={editingLicense || undefined}
-                onSave={handleSaveLicense}
-                onCancel={() => {
-                  setShowLicenseForm(false);
-                  setEditingLicense(null);
-                }}
-              />
-            </DialogContent>
-          </Dialog>
-        </TabsContent>
-
-        <TabsContent value="analytics" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Análises de Uso</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {analyticsLoading ? (
-                <div className="flex items-center justify-center h-32">
-                  <RefreshCw className="h-6 w-6 animate-spin text-gray-400" />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <p className="text-gray-600">Análises detalhadas de uso da licença serão exibidas aqui.</p>
-                  {/* Add analytics charts and metrics here */}
-                </div>
-              )}
-            </CardContent>
-          </Card>
         </TabsContent>
 
         <TabsContent value="activity" className="space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Histórico de Atividades</CardTitle>
+              <CardTitle className="flex items-center space-x-2">
+                <Activity className="h-5 w-5" />
+                <span>Atividade Recente</span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <p className="text-gray-600">Histórico de atividades do usuário será exibido aqui.</p>
-                {/* Add activity timeline here */}
+              <div className="text-center py-8">
+                <Clock className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <p className="text-muted-foreground">Nenhuma atividade recente</p>
               </div>
             </CardContent>
           </Card>
@@ -804,5 +517,3 @@ export function EnhancedUserProfile({ userId, onClose }: EnhancedUserProfileProp
     </div>
   );
 }
-
-export default EnhancedUserProfile;

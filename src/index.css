@@ -2,6 +2,7 @@
 /* Desktop Grid System */
 @import './styles/desktop-grid.css';
 
+@import url('./styles/desktop-navigation.css');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

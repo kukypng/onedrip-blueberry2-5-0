@@ -13,7 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { ArrowLeft, Search, Plus, Filter, MoreVertical, Eye, Edit, Trash2, Clock, AlertCircle, CheckCircle, XCircle, Wrench, Phone, Calendar, DollarSign, FileText, X, Share2 } from 'lucide-react';
+import { ArrowLeft, Search, Plus, Filter, MoreVertical, Eye, Edit, Trash2, Clock, AlertCircle, CheckCircle, XCircle, Wrench, Phone, Calendar, DollarSign, FileText, X, Share2, ExternalLink } from 'lucide-react';
 import { useSecureServiceOrders, useServiceOrderStats, useDeletedServiceOrdersCount } from '@/hooks/useSecureServiceOrders';
 import { useServiceOrderShare } from '@/hooks/useServiceOrderShare';
 import { toast } from 'sonner';
@@ -576,6 +576,23 @@ export const ServiceOrdersPage = () => {
                       >
                         <Share2 className="h-5 w-5" />
                         <span className="text-xs">Compartilhar</span>
+                      </Button>
+                      
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={async () => {
+                          const shareData = await generateShareToken(order.id);
+                          if (shareData) {
+                            const token = shareData.share_url.split('/').pop();
+                            navigate(`/share/service-order/${token}`);
+                          }
+                        }}
+                        disabled={isGenerating}
+                        className="flex flex-col items-center gap-1 p-2 h-auto text-blue-600 hover:text-blue-700"
+                      >
+                        <ExternalLink className="h-5 w-5" />
+                        <span className="text-xs">Visualizar</span>
                       </Button>
                     </div>
                   </div>

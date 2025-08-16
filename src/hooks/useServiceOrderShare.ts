@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -65,8 +65,6 @@ export function useServiceOrderShare() {
 
   const getServiceOrderByToken = async (shareToken: string): Promise<ServiceOrderShareData | null> => {
     try {
-      setIsLoading(true);
-      
       console.log('🔍 Buscando ordem de serviço com token:', shareToken);
       const { data, error } = await supabase
         .rpc('get_service_order_by_share_token', {
@@ -89,8 +87,6 @@ export function useServiceOrderShare() {
     } catch (error) {
       console.error('💥 Erro geral ao buscar ordem de serviço:', error);
       return null;
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -121,6 +117,31 @@ export function useServiceOrderShare() {
     }
   };
 
+  const loadShareData = useCallback(async (shareToken: string): Promise<{ serviceOrder: ServiceOrderShareData | null; companyInfo: CompanyInfo | null }> => {
+    try {
+      setIsLoading(true);
+      
+      // Executa ambas as chamadas em paralelo
+      const [serviceOrderData, companyInfoData] = await Promise.all([
+        getServiceOrderByToken(shareToken),
+        getCompanyInfoByToken(shareToken)
+      ]);
+
+      return {
+        serviceOrder: serviceOrderData,
+        companyInfo: companyInfoData
+      };
+    } catch (error) {
+      console.error('💥 Erro ao carregar dados de compartilhamento:', error);
+      return {
+        serviceOrder: null,
+        companyInfo: null
+      };
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
   const copyToClipboard = async (text: string): Promise<boolean> => {
     try {
       await navigator.clipboard.writeText(text);
@@ -148,6 +169,7 @@ export function useServiceOrderShare() {
     generateShareToken,
     getServiceOrderByToken,
     getCompanyInfoByToken,
+    loadShareData,
     copyToClipboard,
     shareViaWhatsApp,
     isGenerating,

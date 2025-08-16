@@ -32,7 +32,7 @@ interface StatusStep {
 const ServiceOrderSharePage: React.FC = () => {
   const { shareToken } = useParams<{ shareToken: string }>();
   const navigate = useNavigate();
-  const { getServiceOrderByToken, getCompanyInfoByToken, isLoading } = useServiceOrderShare();
+  const { loadShareData, isLoading } = useServiceOrderShare();
   
   const [serviceOrder, setServiceOrder] = useState<ServiceOrderShareData | null>(null);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
@@ -49,14 +49,9 @@ const ServiceOrderSharePage: React.FC = () => {
         return;
       }
 
-      console.log('⏳ Estado de loading definido como true');
-
       try {
-        console.log('🔄 Iniciando chamadas paralelas para buscar dados...');
-        const [orderData, companyData] = await Promise.all([
-          getServiceOrderByToken(shareToken),
-          getCompanyInfoByToken(shareToken)
-        ]);
+        console.log('🔄 Carregando dados com nova função...');
+        const { serviceOrder: orderData, companyInfo: companyData } = await loadShareData(shareToken);
 
         console.log('📦 Dados recebidos:', { orderData, companyData });
         
@@ -75,7 +70,7 @@ const ServiceOrderSharePage: React.FC = () => {
     };
 
     loadData();
-  }, [shareToken, getServiceOrderByToken, getCompanyInfoByToken]);
+  }, [shareToken, loadShareData]);
 
   const getStatusSteps = (currentStatus: string): StatusStep[] => {
     const statuses = [

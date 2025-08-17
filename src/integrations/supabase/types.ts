@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -345,6 +345,130 @@ export type Database = {
           zip_code?: string | null
         }
         Relationships: []
+      }
+      company_info: {
+        Row: {
+          additional_images: string[] | null
+          address: string | null
+          business_hours: string | null
+          created_at: string | null
+          description: string | null
+          email: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          owner_id: string
+          phone: string | null
+          updated_at: string | null
+          website: string | null
+          whatsapp_phone: string | null
+        }
+        Insert: {
+          additional_images?: string[] | null
+          address?: string | null
+          business_hours?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id: string
+          phone?: string | null
+          updated_at?: string | null
+          website?: string | null
+          whatsapp_phone?: string | null
+        }
+        Update: {
+          additional_images?: string[] | null
+          address?: string | null
+          business_hours?: string | null
+          created_at?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          owner_id?: string
+          phone?: string | null
+          updated_at?: string | null
+          website?: string | null
+          whatsapp_phone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_info_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_share_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          owner_id: string
+          show_address: boolean | null
+          show_business_hours: boolean | null
+          show_description: boolean | null
+          show_email: boolean | null
+          show_logo: boolean | null
+          show_phone: boolean | null
+          show_special_instructions: boolean | null
+          show_warranty_info: boolean | null
+          show_welcome_message: boolean | null
+          special_instructions: string | null
+          updated_at: string | null
+          warranty_info: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          owner_id: string
+          show_address?: boolean | null
+          show_business_hours?: boolean | null
+          show_description?: boolean | null
+          show_email?: boolean | null
+          show_logo?: boolean | null
+          show_phone?: boolean | null
+          show_special_instructions?: boolean | null
+          show_warranty_info?: boolean | null
+          show_welcome_message?: boolean | null
+          special_instructions?: string | null
+          updated_at?: string | null
+          warranty_info?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          owner_id?: string
+          show_address?: boolean | null
+          show_business_hours?: boolean | null
+          show_description?: boolean | null
+          show_email?: boolean | null
+          show_logo?: boolean | null
+          show_phone?: boolean | null
+          show_special_instructions?: boolean | null
+          show_warranty_info?: boolean | null
+          show_welcome_message?: boolean | null
+          special_instructions?: string | null
+          updated_at?: string | null
+          warranty_info?: string | null
+          welcome_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_share_settings_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: true
+            referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       device_types: {
         Row: {
@@ -788,6 +912,44 @@ export type Database = {
           },
         ]
       }
+      service_order_shares: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          service_order_id: string
+          share_token: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_order_id: string
+          share_token?: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          service_order_id?: string
+          share_token?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_shares_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_orders: {
         Row: {
           client_id: string | null
@@ -1048,6 +1210,75 @@ export type Database = {
         }
         Relationships: []
       }
+      user_license_analytics: {
+        Row: {
+          action_date: string | null
+          action_type: string
+          created_at: string | null
+          id: string
+          license_id: string | null
+          metadata: Json | null
+          performed_by: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_date?: string | null
+          action_type: string
+          created_at?: string | null
+          id?: string
+          license_id?: string | null
+          metadata?: Json | null
+          performed_by?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_date?: string | null
+          action_type?: string
+          created_at?: string | null
+          id?: string
+          license_id?: string | null
+          metadata?: Json | null
+          performed_by?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      user_license_bulk_operations: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          id: string
+          license_data: Json | null
+          operation_type: string
+          performed_by: string | null
+          results: Json | null
+          status: string | null
+          user_ids: string[]
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          license_data?: Json | null
+          operation_type: string
+          performed_by?: string | null
+          results?: Json | null
+          status?: string | null
+          user_ids: string[]
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          id?: string
+          license_data?: Json | null
+          operation_type?: string
+          performed_by?: string | null
+          results?: Json | null
+          status?: string | null
+          user_ids?: string[]
+        }
+        Relationships: []
+      }
       user_notifications: {
         Row: {
           created_at: string | null
@@ -1247,19 +1478,27 @@ export type Database = {
       }
       admin_bulk_license_action: {
         Args: {
-          p_license_ids: string[]
           p_action: string
-          p_value?: boolean
+          p_license_ids: string[]
           p_notes?: string
+          p_value?: boolean
         }
         Returns: number
+      }
+      admin_bulk_license_operation: {
+        Args: {
+          p_license_data?: Json
+          p_operation_type: string
+          p_user_ids: string[]
+        }
+        Returns: string
       }
       admin_cleanup_all_user_data: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
       admin_create_bulk_licenses: {
-        Args: { p_quantity: number; p_expires_in_days?: number }
+        Args: { p_expires_in_days?: number; p_quantity: number }
         Returns: Json
       }
       admin_create_license: {
@@ -1268,31 +1507,31 @@ export type Database = {
       }
       admin_create_license_advanced: {
         Args: {
+          p_activate_immediately?: boolean
           p_code: string
           p_expires_at?: string
-          p_user_id?: string
           p_notes?: string
-          p_activate_immediately?: boolean
+          p_user_id?: string
         }
         Returns: string
       }
       admin_create_multiple_licenses: {
         Args: {
-          p_quantity: number
+          p_activate_immediately?: boolean
           p_expires_at?: string
           p_notes?: string
-          p_activate_immediately?: boolean
+          p_quantity: number
         }
         Returns: number
       }
       admin_create_notification: {
         Args: {
-          p_title: string
+          p_expires_at?: string
           p_message: string
-          p_type: string
           p_target_type: string
           p_target_user_id?: string
-          p_expires_at?: string
+          p_title: string
+          p_type: string
         }
         Returns: string
       }
@@ -1309,91 +1548,127 @@ export type Database = {
         Returns: boolean
       }
       admin_extend_license: {
-        Args: { p_license_id: string; p_days: number; p_notes?: string }
+        Args: { p_days: number; p_license_id: string; p_notes?: string }
         Returns: string
       }
       admin_get_all_licenses: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
           code: string
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          notes: string
+          updated_at: string
+          user_email: string
           user_id: string
           user_name: string
-          user_email: string
-          is_active: boolean
-          expires_at: string
-          created_at: string
-          updated_at: string
-          notes: string
         }[]
       }
       admin_get_all_users: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          name: string
-          email: string
-          role: string
-          license_active: boolean
-          expiration_date: string
-          created_at: string
-          last_sign_in_at: string
           budget_count: number
+          created_at: string
+          email: string
+          expiration_date: string
+          id: string
+          last_sign_in_at: string
+          license_active: boolean
+          name: string
+          role: string
         }[]
       }
       admin_get_dashboard_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
       }
+      admin_get_enhanced_users: {
+        Args: {
+          p_license_status?: string
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_order?: string
+        }
+        Returns: {
+          active_licenses: number
+          created_at: string
+          email: string
+          email_confirmed_at: string
+          id: string
+          last_license_activity: string
+          last_sign_in_at: string
+          license_count: number
+          phone: string
+          total_license_value: number
+          user_metadata: Json
+        }[]
+      }
       admin_get_license_history: {
         Args: { p_license_id: string }
         Returns: {
-          id: string
           action_type: string
+          admin_email: string
           admin_id: string
           admin_name: string
-          admin_email: string
-          old_values: Json
+          created_at: string
+          id: string
           new_values: Json
           notes: string
-          created_at: string
+          old_values: Json
+        }[]
+      }
+      admin_get_license_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          active_licenses: number
+          expired_licenses: number
+          licenses_created_today: number
+          licenses_expiring_soon: number
+          suspended_licenses: number
+          total_licenses: number
+          total_users: number
+          users_with_licenses: number
         }[]
       }
       admin_get_license_stats: {
         Args: Record<PropertyKey, never>
         Returns: {
-          total_licenses: number
           active_licenses: number
-          inactive_licenses: number
           expired_licenses: number
           expiring_soon: number
+          inactive_licenses: number
+          total_licenses: number
           unassigned_licenses: number
         }[]
       }
       admin_get_licenses_with_users: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
           code: string
-          user_id: string
-          user_email: string
-          user_name: string
-          expires_at: string
           created_at: string
+          expires_at: string
+          id: string
           is_active: boolean
+          user_email: string
+          user_id: string
+          user_name: string
         }[]
       }
       admin_get_logs: {
         Args: Record<PropertyKey, never>
         Returns: {
-          id: string
-          admin_user_id: string
-          admin_name: string
-          target_user_id: string
-          target_name: string
           action: string
-          details: Json
+          admin_name: string
+          admin_user_id: string
           created_at: string
+          details: Json
+          id: string
+          target_name: string
+          target_user_id: string
         }[]
       }
       admin_get_recent_activity: {
@@ -1403,6 +1678,25 @@ export type Database = {
       admin_get_system_stats: {
         Args: Record<PropertyKey, never>
         Returns: Json
+      }
+      admin_get_user_license_analytics: {
+        Args: {
+          p_end_date?: string
+          p_limit?: number
+          p_start_date?: string
+          p_user_id?: string
+        }
+        Returns: {
+          action_date: string
+          action_type: string
+          id: string
+          license_id: string
+          metadata: Json
+          performed_by: string
+          performer_email: string
+          user_email: string
+          user_id: string
+        }[]
       }
       admin_get_user_metrics: {
         Args: { p_user_id: string }
@@ -1414,49 +1708,49 @@ export type Database = {
       }
       admin_get_users_paginated: {
         Args: {
-          p_page?: number
           p_limit?: number
-          p_search?: string
+          p_page?: number
           p_role_filter?: string
-          p_status_filter?: string
+          p_search?: string
           p_sort_by?: string
           p_sort_order?: string
+          p_status_filter?: string
         }
         Returns: Json
       }
       admin_list_notifications: {
         Args: { p_limit?: number; p_offset?: number }
         Returns: {
-          id: string
-          title: string
-          message: string
-          type: string
-          target_type: string
-          target_user_id: string
+          created_at: string
           created_by: string
           expires_at: string
+          id: string
           is_active: boolean
-          created_at: string
+          message: string
+          target_type: string
+          target_user_id: string
+          title: string
+          type: string
           updated_at: string
         }[]
       }
       admin_list_user_notifications: {
         Args: {
           p_limit?: number
-          p_offset?: number
           p_notification_id?: string
+          p_offset?: number
           p_user_id?: string
         }
         Returns: {
+          created_at: string
+          delivery_status: string
           id: string
-          user_id: string
-          user_email: string
           notification_id: string
           notification_title: string
           notification_type: string
-          delivery_status: string
           sent_at: string
-          created_at: string
+          user_email: string
+          user_id: string
         }[]
       }
       admin_preview_cleanup: {
@@ -1464,11 +1758,11 @@ export type Database = {
         Returns: Json
       }
       admin_renew_license: {
-        Args: { license_id: string; additional_days?: number }
+        Args: { additional_days?: number; license_id: string }
         Returns: Json
       }
       admin_renew_user_license: {
-        Args: { p_user_id: string; p_additional_days: number }
+        Args: { p_additional_days: number; p_user_id: string }
         Returns: boolean
       }
       admin_transfer_license: {
@@ -1477,42 +1771,42 @@ export type Database = {
       }
       admin_update_license: {
         Args: {
-          p_license_id: string
           p_code?: string
-          p_user_id?: string
-          p_is_active?: boolean
           p_expires_at?: string
+          p_is_active?: boolean
+          p_license_id: string
           p_notes?: string
+          p_user_id?: string
         }
         Returns: boolean
       }
       admin_update_user: {
         Args:
-          | { p_user_id: string; p_name?: string; p_role?: string }
           | {
-              p_user_id: string
+              p_expiration_date?: string
+              p_is_active?: boolean
               p_name?: string
               p_role?: string
-              p_is_active?: boolean
-              p_expiration_date?: string
+              p_user_id: string
             }
+          | { p_name?: string; p_role?: string; p_user_id: string }
         Returns: boolean
       }
       audit_rls_policies: {
         Args: Record<PropertyKey, never>
         Returns: {
-          table_name: string
-          rls_enabled: boolean
           policy_count: number
-          security_status: string
           recommendations: string
+          rls_enabled: boolean
+          security_status: string
+          table_name: string
         }[]
       }
       check_budgets_integrity: {
         Args: Record<PropertyKey, never>
         Returns: {
-          total_budgets: number
           orphaned_budgets: number
+          total_budgets: number
           valid_budgets: number
         }[]
       }
@@ -1522,8 +1816,8 @@ export type Database = {
       }
       check_rate_limit: {
         Args: {
-          p_identifier: string
           p_action_type: string
+          p_identifier: string
           p_max_attempts?: number
           p_window_minutes?: number
         }
@@ -1575,39 +1869,39 @@ export type Database = {
       }
       create_notification: {
         Args: {
-          p_title: string
+          p_expires_at?: string
           p_message: string
-          p_type: string
           p_target_type: string
           p_target_user_id?: string
-          p_expires_at?: string
+          p_title: string
+          p_type: string
         }
         Returns: string
       }
       create_service_order: {
-        Args: { p_title: string; p_description: string; p_priority?: string }
+        Args: { p_description: string; p_priority?: string; p_title: string }
         Returns: string
       }
       debug_current_user: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          user_email: string
-          user_role: string
           is_active: boolean
           is_admin: boolean
+          user_email: string
+          user_id: string
+          user_role: string
         }[]
       }
       debug_get_notifications: {
         Args: Record<PropertyKey, never>
         Returns: {
-          notification_id: string
-          title: string
-          message: string
-          type: string
-          target_type: string
-          is_active: boolean
           expires_at: string
+          is_active: boolean
+          message: string
+          notification_id: string
+          target_type: string
+          title: string
+          type: string
           user_notifications_count: number
         }[]
       }
@@ -1620,7 +1914,7 @@ export type Database = {
         Returns: boolean
       }
       delete_user_notification: {
-        Args: { p_notification_id: string } | { p_notification_id: string }
+        Args: { p_notification_id: string }
         Returns: boolean
       }
       detect_sql_injection: {
@@ -1639,6 +1933,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      generate_service_order_share_token: {
+        Args: { p_service_order_id: string }
+        Returns: {
+          expires_at: string
+          share_token: string
+          share_url: string
+        }[]
+      }
       get_allowed_redirect_domains: {
         Args: Record<PropertyKey, never>
         Returns: string[]
@@ -1646,25 +1948,25 @@ export type Database = {
       get_budgets_with_part_quality: {
         Args: { p_user_id: string }
         Returns: {
-          id: string
+          cash_price: number
           client_name: string
           client_phone: string
-          device_type: string
+          created_at: string
+          delivery_date: string
           device_model: string
+          device_type: string
+          expires_at: string
+          id: string
+          installment_price: number
+          is_delivered: boolean
+          is_paid: boolean
           issue: string
           part_quality: string
           status: string
-          workflow_status: string
           total_price: number
-          cash_price: number
-          installment_price: number
-          delivery_date: string
-          expires_at: string
-          valid_until: string
-          created_at: string
           updated_at: string
-          is_paid: boolean
-          is_delivered: boolean
+          valid_until: string
+          workflow_status: string
         }[]
       }
       get_cleanup_preview: {
@@ -1679,76 +1981,106 @@ export type Database = {
         Args: { client_id: string }
         Returns: number
       }
-      get_deleted_service_orders: {
-        Args:
-          | Record<PropertyKey, never>
-          | {
-              p_limit?: number
-              p_offset?: number
-              p_search?: string
-              p_start_date?: string
-              p_end_date?: string
-              p_sort_by?: string
-              p_sort_order?: string
-            }
+      get_company_info: {
+        Args: { p_owner_id?: string }
         Returns: {
-          id: string
-          title: string
-          description: string
-          status: string
-          priority: string
-          created_at: string
-          updated_at: string
-          deleted_at: string
-          owner_id: string
-          owner_name: string
-          total_count: number
+          address: string
+          logo_url: string
+          name: string
+          whatsapp_phone: string
         }[]
+      }
+      get_company_info_by_share_token: {
+        Args: { p_share_token: string }
+        Returns: {
+          address: string
+          logo_url: string
+          name: string
+          whatsapp_phone: string
+        }[]
+      }
+      get_deleted_service_orders: {
+        Args: {
+          p_end_date?: string
+          p_limit?: number
+          p_offset?: number
+          p_search?: string
+          p_sort_by?: string
+          p_sort_order?: string
+          p_start_date?: string
+        }
+        Returns: {
+          client_id: string
+          created_at: string
+          deleted_at: string
+          deleted_by: string
+          delivery_date: string
+          device_model: string
+          device_type: string
+          id: string
+          imei_serial: string
+          is_paid: boolean
+          labor_cost: number
+          notes: string
+          owner_id: string
+          parts_cost: number
+          priority: string
+          reported_issue: string
+          status: string
+          total_count: number
+          total_price: number
+          updated_at: string
+          warranty_months: number
+        }[]
+      }
+      get_enhanced_share_data: {
+        Args: { share_token_param: string }
+        Returns: Json
       }
       get_expiring_budgets: {
         Args: { p_user_id: string }
         Returns: {
           budget_id: string
           client_name: string
-          expires_at: string
           days_until_expiry: number
+          expires_at: string
         }[]
       }
       get_optimized_budgets: {
         Args:
           | {
-              p_user_id: string
               p_limit?: number
               p_offset?: number
-              p_search_term?: string
-            }
-          | {
-              p_user_id: string
               p_search_term?: string
               p_status_filter?: string
+              p_user_id: string
+            }
+          | {
               p_limit?: number
               p_offset?: number
+              p_search_term?: string
+              p_user_id: string
             }
         Returns: {
-          id: string
+          cash_price: number
           client_name: string
           client_phone: string
-          device_type: string
+          created_at: string
+          delivery_date: string
           device_model: string
+          device_type: string
+          expires_at: string
+          id: string
+          installment_price: number
+          is_delivered: boolean
+          is_paid: boolean
           issue: string
           part_quality: string
           status: string
-          workflow_status: string
           total_price: number
-          cash_price: number
-          installment_price: number
-          delivery_date: string
-          expires_at: string
-          valid_until: string
-          created_at: string
           updated_at: string
-          is_paid: boolean
-          is_delivered: boolean
+          valid_until: string
+          workflow_status: string
         }[]
       }
       get_secure_user_data: {
@@ -1758,80 +2090,103 @@ export type Database = {
       get_service_order_by_id: {
         Args: { p_id: string }
         Returns: {
-          id: string
-          title: string
-          description: string
-          status: string
-          priority: string
+          client_id: string
           created_at: string
-          updated_at: string
+          delivery_date: string
+          device_model: string
+          device_type: string
+          id: string
+          imei_serial: string
+          is_paid: boolean
+          labor_cost: number
+          notes: string
           owner_id: string
           owner_name: string
+          parts_cost: number
+          priority: string
+          reported_issue: string
+          status: string
+          total_price: number
+          updated_at: string
+          warranty_months: number
+        }[]
+      }
+      get_service_order_by_share_token: {
+        Args: { p_share_token: string }
+        Returns: {
+          created_at: string
+          device_model: string
+          device_type: string
+          formatted_id: string
+          id: string
+          reported_issue: string
+          status: string
+          updated_at: string
         }[]
       }
       get_service_order_details: {
         Args: { p_service_order_id: string }
         Returns: {
-          id: string
+          attachments_count: number
+          client_address: string
           client_id: string
           client_name: string
           client_phone: string
-          client_address: string
-          device_type: string
+          created_at: string
+          delivery_date: string
           device_model: string
+          device_type: string
+          events_count: number
+          id: string
           imei_serial: string
+          is_paid: boolean
+          items_count: number
+          labor_cost: number
+          notes: string
+          parts_cost: number
+          priority: string
           reported_issue: string
           status: string
-          priority: string
-          parts_cost: number
-          labor_cost: number
           total_price: number
-          is_paid: boolean
-          delivery_date: string
-          warranty_months: number
-          notes: string
-          created_at: string
           updated_at: string
-          items_count: number
-          events_count: number
-          attachments_count: number
+          warranty_months: number
         }[]
       }
       get_service_orders: {
         Args: {
+          p_end_date?: string
           p_limit?: number
           p_offset?: number
-          p_status?: string
           p_search?: string
-          p_start_date?: string
-          p_end_date?: string
           p_sort_by?: string
           p_sort_order?: string
+          p_start_date?: string
+          p_status?: string
         }
         Returns: {
-          id: string
-          title: string
-          description: string
-          status: string
-          priority: string
           created_at: string
-          updated_at: string
+          description: string
+          id: string
           owner_id: string
           owner_name: string
+          priority: string
+          status: string
+          title: string
           total_count: number
+          updated_at: string
         }[]
       }
       get_service_orders_stats: {
         Args: { p_date_from?: string; p_date_to?: string }
         Returns: {
-          total_orders: number
-          pending_orders: number
-          in_progress_orders: number
-          completed_orders: number
-          cancelled_orders: number
-          total_revenue: number
           avg_completion_time: unknown
+          cancelled_orders: number
+          completed_orders: number
           high_priority_orders: number
+          in_progress_orders: number
+          pending_orders: number
+          total_orders: number
+          total_revenue: number
         }[]
       }
       get_shop_profile: {
@@ -1841,32 +2196,32 @@ export type Database = {
       get_top_rankings: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
-          user_name: string
-          total_budgets: number
-          total_value: number
           avg_budget_value: number
           rank_position: number
+          total_budgets: number
+          total_value: number
+          user_id: string
+          user_name: string
         }[]
       }
       get_user_notifications: {
-        Args: { p_limit?: number; p_offset?: number; p_show_deleted?: boolean }
+        Args:
+          | { p_limit?: number; p_offset?: number }
+          | { p_limit?: number; p_offset?: number; p_show_deleted?: boolean }
         Returns: {
-          id: string
-          title: string
-          message: string
-          type: string
-          target_type: string
-          target_user_id: string
+          created_at: string
           created_by: string
           expires_at: string
+          id: string
           is_active: boolean
-          created_at: string
-          updated_at: string
           is_read: boolean
+          message: string
           read_at: string
-          user_notification_id: string
-          is_deleted: boolean
+          target_type: string
+          target_user_id: string
+          title: string
+          type: string
+          updated_at: string
         }[]
       }
       get_user_role: {
@@ -1887,10 +2242,10 @@ export type Database = {
       }
       insert_shop_profile: {
         Args: {
-          p_user_id: string
-          p_shop_name: string
           p_address: string
           p_contact_phone: string
+          p_shop_name: string
+          p_user_id: string
         }
         Returns: boolean
       }
@@ -1921,26 +2276,26 @@ export type Database = {
       log_admin_access: {
         Args: {
           p_action: string
-          p_resource_type?: string
-          p_resource_id?: string
           p_details?: Json
+          p_resource_id?: string
+          p_resource_type?: string
         }
         Returns: undefined
       }
       log_admin_action: {
-        Args: { p_target_user_id: string; p_action: string; p_details?: Json }
+        Args: { p_action: string; p_details?: Json; p_target_user_id: string }
         Returns: undefined
       }
       log_login_attempt: {
-        Args: { p_email: string; p_success: boolean; p_failure_reason?: string }
+        Args: { p_email: string; p_failure_reason?: string; p_success: boolean }
         Returns: undefined
       }
       log_security_event: {
         Args: {
-          p_event_type: string
-          p_user_id?: string
           p_details?: Json
+          p_event_type: string
           p_severity?: string
+          p_user_id?: string
         }
         Returns: undefined
       }
@@ -1949,8 +2304,8 @@ export type Database = {
           p_device_fingerprint: string
           p_device_name?: string
           p_device_type?: string
-          p_user_agent?: string
           p_ip_address?: string
+          p_user_agent?: string
         }
         Returns: Json
       }
@@ -1963,7 +2318,7 @@ export type Database = {
         Returns: Json
       }
       restore_service_order: {
-        Args: { p_service_order_id: string }
+        Args: { service_order_id: string }
         Returns: boolean
       }
       restore_user_notification: {
@@ -1972,58 +2327,58 @@ export type Database = {
       }
       search_service_orders: {
         Args: {
-          p_search_query?: string
-          p_status?: string
-          p_priority?: string
-          p_device_type?: string
           p_date_from?: string
           p_date_to?: string
+          p_device_type?: string
           p_limit?: number
           p_offset?: number
+          p_priority?: string
+          p_search_query?: string
+          p_status?: string
         }
         Returns: {
-          id: string
           client_name: string
           client_phone: string
-          device_model: string
-          status: string
-          priority: string
-          total_price: number
           created_at: string
           delivery_date: string
+          device_model: string
+          id: string
+          priority: string
           search_rank: number
+          status: string
+          total_price: number
         }[]
       }
       security_health_check: {
         Args: Record<PropertyKey, never>
         Returns: {
-          table_name: string
-          rls_enabled: boolean
           policy_count: number
+          rls_enabled: boolean
           security_status: string
+          table_name: string
         }[]
       }
       send_push_notification: {
         Args: {
-          p_user_id: string
-          p_title: string
-          p_message: string
-          p_type?: string
           p_data?: Json
+          p_message: string
+          p_title: string
+          p_type?: string
+          p_user_id: string
         }
         Returns: boolean
       }
       send_push_to_subscribed_users: {
         Args: {
+          p_message: string
           p_notification_id: string
           p_title: string
-          p_message: string
           p_type?: string
         }
         Returns: number
       }
       set_user_budget_limit: {
-        Args: { p_user_id: string; p_budget_limit: number }
+        Args: { p_budget_limit: number; p_user_id: string }
         Returns: boolean
       }
       should_maintain_login: {
@@ -2039,8 +2394,8 @@ export type Database = {
         Returns: Json
       }
       soft_delete_service_order: {
-        Args: { p_service_order_id: string }
-        Returns: boolean
+        Args: { service_order_id: string }
+        Returns: Json
       }
       test_admin_access: {
         Args: Record<PropertyKey, never>
@@ -2049,9 +2404,9 @@ export type Database = {
       test_admin_permissions: {
         Args: Record<PropertyKey, never>
         Returns: {
-          test_name: string
-          result: boolean
           details: string
+          result: boolean
+          test_name: string
         }[]
       }
       test_admin_with_user: {
@@ -2061,9 +2416,9 @@ export type Database = {
       test_user_permissions: {
         Args: Record<PropertyKey, never>
         Returns: {
-          test_name: string
-          result: boolean
           description: string
+          result: boolean
+          test_name: string
         }[]
       }
       trust_device: {
@@ -2072,28 +2427,39 @@ export type Database = {
       }
       update_service_order: {
         Args: {
+          p_delivery_date?: string
+          p_device_model?: string
+          p_device_type?: string
           p_id: string
-          p_title?: string
-          p_description?: string
-          p_status?: string
+          p_imei_serial?: string
+          p_is_paid?: boolean
+          p_labor_cost?: number
+          p_notes?: string
+          p_parts_cost?: number
           p_priority?: string
+          p_reported_issue?: string
+          p_status?: string
+          p_total_price?: number
+          p_warranty_months?: number
         }
         Returns: boolean
       }
       update_service_order_status: {
-        Args: {
-          p_service_order_id: string
-          p_new_status: string
-          p_notes?: string
-        }
+        Args:
+          | { new_status: string; service_order_id: string }
+          | {
+              p_new_status: string
+              p_notes?: string
+              p_service_order_id: string
+            }
         Returns: boolean
       }
       update_shop_profile: {
         Args: {
-          p_user_id: string
-          p_shop_name: string
           p_address: string
           p_contact_phone: string
+          p_shop_name: string
+          p_user_id: string
         }
         Returns: boolean
       }
@@ -2102,20 +2468,20 @@ export type Database = {
         Returns: Json
       }
       validate_admin_email_change: {
-        Args: { p_user_id: string; p_new_email: string }
+        Args: { p_new_email: string; p_user_id: string }
         Returns: Json
       }
       validate_admin_password_reset: {
-        Args: { p_user_id: string; p_new_password: string }
+        Args: { p_new_password: string; p_user_id: string }
         Returns: Json
       }
       validate_rls_security: {
         Args: Record<PropertyKey, never>
         Returns: {
-          table_name: string
-          rls_enabled: boolean
           policy_count: number
+          rls_enabled: boolean
           security_status: string
+          table_name: string
         }[]
       }
       validate_user_license: {

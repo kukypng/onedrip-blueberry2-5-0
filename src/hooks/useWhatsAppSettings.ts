@@ -6,7 +6,12 @@ export interface WhatsAppSettings {
   id: string;
   phone_number: string;
   welcome_message: string;
+  message_template?: string;
   is_active: boolean;
+  is_enabled?: boolean;
+  enabled?: boolean;
+  auto_open?: boolean;
+  country_code?: string;
   created_at: string;
   updated_at: string;
 }
@@ -91,26 +96,18 @@ export function useWhatsAppSettings() {
     }
   };
 
-  const generateWhatsAppShareLink = async (orderToken: string): Promise<string> => {
+  const generateShareLink = async (serviceOrderId: string, shareUrl: string): Promise<string> => {
     try {
       if (!whatsappSettings) {
         throw new Error('Configurações do WhatsApp não encontradas');
       }
 
-      const { data, error } = await supabase
-        .rpc('generate_whatsapp_share_link', {
-          order_token: orderToken
-        });
-
-      if (error) throw error;
-
-      if (!data.success) {
-        throw new Error(data.error || 'Erro ao gerar link do WhatsApp');
-      }
-
-      return data.whatsapp_url;
+      const message = whatsappSettings.message_template || whatsappSettings.welcome_message || 
+        `Olá! Você pode acompanhar o status do seu serviço através deste link: ${shareUrl}`;
+      
+      return message.replace('{shareUrl}', shareUrl);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Erro ao gerar link do WhatsApp';
+      const errorMessage = err instanceof Error ? err.message : 'Erro ao gerar mensagem do WhatsApp';
       toast.error(errorMessage);
       throw err;
     }
@@ -163,7 +160,7 @@ export function useWhatsAppSettings() {
     refreshSettings: fetchWhatsAppSettings,
     createSettings: createWhatsAppSettings,
     updateSettings: updateWhatsAppSettings,
-    generateShareLink: generateWhatsAppShareLink,
+    generateShareLink,
     formatPhoneNumber,
     validatePhoneNumber,
     openWhatsApp

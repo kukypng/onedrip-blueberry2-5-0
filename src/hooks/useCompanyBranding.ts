@@ -21,8 +21,13 @@ export interface CompanyShareSettings {
   welcome_message?: string;
   special_instructions?: string;
   warranty_info?: string;
-  show_contact_info: boolean;
-  show_company_description: boolean;
+  show_contact_info?: boolean;
+  show_company_description?: boolean;
+  show_logo?: boolean;
+  show_company_name?: boolean;
+  show_whatsapp_button?: boolean;
+  custom_message?: string;
+  theme_color?: string;
   created_at: string;
   updated_at: string;
 }

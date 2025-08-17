@@ -159,6 +159,21 @@ export function useCustomStatuses() {
     fetchCustomStatuses();
   }, []);
 
+  const getStatusColor = (status: string): string => {
+    const customStatus = getStatusByName(status);
+    return customStatus?.color || '#6B7280';
+  };
+
+  const getStatusIcon = (status: string): string => {
+    const customStatus = getStatusByName(status);
+    return customStatus?.icon || 'clock';
+  };
+
+  const getStatusText = (status: string): string => {
+    const customStatus = getStatusByName(status);
+    return customStatus?.name || status;
+  };
+
   return {
     customStatuses,
     loading,
@@ -172,6 +187,9 @@ export function useCustomStatuses() {
     getNextStatus,
     getStatusByName,
     getDefaultStatuses,
-    getCustomStatuses
+    getCustomStatuses,
+    getStatusColor,
+    getStatusIcon,
+    getStatusText
   };
 }

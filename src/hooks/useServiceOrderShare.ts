@@ -41,7 +41,7 @@ export function useServiceOrderShare() {
 
       if (error) {
         console.error('Erro ao gerar token de compartilhamento:', error);
-        toast.error('Erro ao gerar link de compartilhamento');
+        toast.error('Erro ao gerar link de compartilhamento: ' + error.message);
         return null;
       }
 

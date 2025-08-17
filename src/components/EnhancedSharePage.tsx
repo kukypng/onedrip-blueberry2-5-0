@@ -30,53 +30,35 @@ import { ptBR } from 'date-fns/locale';
 
 interface ServiceOrder {
   id: string;
-  order_number: string;
-  customer_name: string;
-  customer_phone?: string;
-  customer_address?: string;
-  service_type: string;
-  description: string;
+  formatted_id: string;
+  device_type: string;
+  device_model: string;
+  reported_issue: string;
   status: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
   created_at: string;
   updated_at: string;
-  scheduled_date?: string;
-  completed_date?: string;
-  technician_name?: string;
-  estimated_cost?: number;
-  final_cost?: number;
-  notes?: string;
 }
-
-const priorityConfig = {
-  low: { label: 'Baixa', color: 'bg-gray-100 text-gray-800' },
-  medium: { label: 'Média', color: 'bg-blue-100 text-blue-800' },
-  high: { label: 'Alta', color: 'bg-orange-100 text-orange-800' },
-  urgent: { label: 'Urgente', color: 'bg-red-100 text-red-800' }
-};
 
 const defaultStatusConfig = {
   pending: { label: 'Pendente', color: '#6B7280', icon: 'Clock' },
+  opened: { label: 'Aberto', color: '#EF4444', icon: 'Clock' },
   in_progress: { label: 'Em Andamento', color: '#3B82F6', icon: 'Settings' },
   completed: { label: 'Concluído', color: '#10B981', icon: 'CheckCircle' },
+  delivered: { label: 'Entregue', color: '#3B82F6', icon: 'CheckCircle' },
   cancelled: { label: 'Cancelado', color: '#EF4444', icon: 'X' }
 };
 
 export function EnhancedSharePage() {
   const { token } = useParams<{ token: string }>();
   const navigate = useNavigate();
-  const { getServiceOrderByToken, loading: shareLoading } = useServiceOrderShare();
-  const { companyInfo, shareSettings, loading: brandingLoading, refreshData } = useCompanyBranding();
+  const { getServiceOrderByToken, isLoading: shareLoading } = useServiceOrderShare();
+  const { companyInfo, shareSettings, loading: brandingLoading } = useCompanyBranding();
   const { settings: whatsappSettings, generateShareLink, openWhatsApp } = useWhatsAppSettings();
   const { getStatusByName, getStatusColor, getStatusIcon } = useCustomStatuses();
   
   const [serviceOrder, setServiceOrder] = useState<ServiceOrder | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Removed useEffect that was causing infinite loop
-  // refreshData is not needed here as company branding data
-  // is loaded automatically by the useCompanyBranding hook
 
   useEffect(() => {
     if (token) {
@@ -103,7 +85,7 @@ export function EnhancedSharePage() {
       
       if (order) {
         console.log('✅ [DEBUG] Ordem encontrada, atualizando estado');
-        setServiceOrder(order);
+        setServiceOrder(order as ServiceOrder);
       } else {
         console.log('❌ [DEBUG] Ordem não encontrada');
         setError('Ordem de serviço não encontrada ou token inválido');
@@ -127,8 +109,8 @@ export function EnhancedSharePage() {
       const shareUrl = window.location.href;
       const link = await generateShareLink(serviceOrder.id, shareUrl);
       
-      if (whatsappSettings.auto_open) {
-        openWhatsApp(whatsappSettings.phone_number, link);
+      if (whatsappSettings?.auto_open) {
+        openWhatsApp(link);
       } else {
         // Copy to clipboard
         await navigator.clipboard.writeText(link);
@@ -154,17 +136,6 @@ export function EnhancedSharePage() {
       color: '#6B7280',
       icon: 'AlertCircle'
     };
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL'
-    }).format(value);
-  };
-
-  const formatDate = (dateString: string) => {
-    return format(new Date(dateString), 'dd/MM/yyyy', { locale: ptBR });
   };
 
   const formatDateTime = (dateString: string) => {
@@ -235,8 +206,6 @@ export function EnhancedSharePage() {
                   </p>
                 )}
               </div>
-              
-
             </div>
           </div>
         </div>
@@ -254,7 +223,7 @@ export function EnhancedSharePage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                {serviceOrder.order_number}
+                {serviceOrder.formatted_id}
               </h1>
               <p className="text-gray-600">
                 Ordem de Serviço Compartilhada
@@ -284,9 +253,9 @@ export function EnhancedSharePage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Main Information */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="space-y-6">
             {/* Status Card */}
             <Card>
               <CardHeader>
@@ -311,20 +280,6 @@ export function EnhancedSharePage() {
                     <p className="text-sm text-gray-600">Última atualização</p>
                     <p className="font-semibold">{formatDateTime(serviceOrder.updated_at)}</p>
                   </div>
-                  
-                  {serviceOrder.scheduled_date && (
-                    <div>
-                      <p className="text-sm text-gray-600">Data agendada</p>
-                      <p className="font-semibold">{formatDate(serviceOrder.scheduled_date)}</p>
-                    </div>
-                  )}
-                  
-                  {serviceOrder.completed_date && (
-                    <div>
-                      <p className="text-sm text-gray-600">Data de conclusão</p>
-                      <p className="font-semibold">{formatDate(serviceOrder.completed_date)}</p>
-                    </div>
-                  )}
                 </div>
               </CardContent>
             </Card>
@@ -332,157 +287,41 @@ export function EnhancedSharePage() {
             {/* Service Details */}
             <Card>
               <CardHeader>
-                <CardTitle>Detalhes do Serviço</CardTitle>
+                <CardTitle>Detalhes do Equipamento</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <p className="text-sm text-gray-600">Tipo de Serviço</p>
-                  <p className="font-semibold">{serviceOrder.service_type}</p>
+                  <p className="text-sm text-gray-600">Tipo de Equipamento</p>
+                  <p className="font-semibold">{serviceOrder.device_type}</p>
                 </div>
                 
                 <div>
-                  <p className="text-sm text-gray-600">Descrição</p>
-                  <p className="text-gray-900">{serviceOrder.description}</p>
+                  <p className="text-sm text-gray-600">Modelo</p>
+                  <p className="font-semibold">{serviceOrder.device_model}</p>
                 </div>
                 
                 <div>
-                  <p className="text-sm text-gray-600">Prioridade</p>
-                  <Badge className={priorityConfig[serviceOrder.priority].color}>
-                    {priorityConfig[serviceOrder.priority].label}
-                  </Badge>
+                  <p className="text-sm text-gray-600">Problema Relatado</p>
+                  <p className="text-gray-900">{serviceOrder.reported_issue}</p>
                 </div>
-                
-                {serviceOrder.technician_name && (
-                  <div>
-                    <p className="text-sm text-gray-600">Técnico Responsável</p>
-                    <p className="font-semibold">{serviceOrder.technician_name}</p>
-                  </div>
-                )}
-                
-                {serviceOrder.notes && (
-                  <div>
-                    <p className="text-sm text-gray-600">Observações</p>
-                    <p className="text-gray-900">{serviceOrder.notes}</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
-
-            {/* Cost Information */}
-            {(serviceOrder.estimated_cost || serviceOrder.final_cost) && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>Informações de Custo</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {serviceOrder.estimated_cost && (
-                      <div>
-                        <p className="text-sm text-gray-600">Custo Estimado</p>
-                        <p className="font-semibold text-lg">
-                          {formatCurrency(serviceOrder.estimated_cost)}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {serviceOrder.final_cost && (
-                      <div>
-                        <p className="text-sm text-gray-600">Custo Final</p>
-                        <p className="font-semibold text-lg" style={{ color: themeColor }}>
-                          {formatCurrency(serviceOrder.final_cost)}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            )}
           </div>
 
-          {/* Customer Information */}
+          {/* Quick Actions */}
           <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <User className="w-5 h-5" />
-                  <span>Cliente</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div>
-                  <p className="text-sm text-gray-600">Nome</p>
-                  <p className="font-semibold">{serviceOrder.customer_name}</p>
-                </div>
-                
-                {serviceOrder.customer_phone && (
-                  <div>
-                    <p className="text-sm text-gray-600">Telefone</p>
-                    <div className="flex items-center justify-between">
-                      <p className="font-semibold">{serviceOrder.customer_phone}</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`tel:${serviceOrder.customer_phone}`, '_self')}
-                      >
-                        <Phone className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-                
-                {serviceOrder.customer_address && (
-                  <div>
-                    <p className="text-sm text-gray-600">Endereço</p>
-                    <div className="flex items-start justify-between">
-                      <p className="font-semibold flex-1 mr-2">{serviceOrder.customer_address}</p>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(serviceOrder.customer_address!)}`, '_blank')}
-                      >
-                        <MapPin className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-
-            {/* Quick Actions */}
             <Card>
               <CardHeader>
                 <CardTitle>Ações Rápidas</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {serviceOrder.customer_phone && (
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => window.open(`tel:${serviceOrder.customer_phone}`, '_self')}
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    Ligar para Cliente
-                  </Button>
-                )}
-                
-                {serviceOrder.customer_address && (
-                  <Button
-                    variant="outline"
-                    className="w-full justify-start"
-                    onClick={() => window.open(`https://maps.google.com/?q=${encodeURIComponent(serviceOrder.customer_address!)}`, '_blank')}
-                  >
-                    <MapPin className="w-4 h-4 mr-2" />
-                    Ver no Mapa
-                  </Button>
-                )}
-                
                 <Button
                   variant="outline"
                   className="w-full justify-start"
                   onClick={() => {
                     const shareData = {
-                      title: `Ordem de Serviço ${serviceOrder.order_number}`,
-                      text: `${serviceOrder.service_type} - ${serviceOrder.customer_name}`,
+                      title: `Ordem de Serviço ${serviceOrder.formatted_id}`,
+                      text: `${serviceOrder.device_type} ${serviceOrder.device_model} - ${serviceOrder.reported_issue}`,
                       url: window.location.href
                     };
                     
@@ -497,8 +336,49 @@ export function EnhancedSharePage() {
                   <Share2 className="w-4 h-4 mr-2" />
                   Compartilhar
                 </Button>
+
+                {companyInfo?.whatsapp_phone && (
+                  <Button
+                    variant="outline"
+                    className="w-full justify-start"
+                    onClick={() => {
+                      const message = `Olá! Gostaria de saber sobre o status da ordem de serviço ${serviceOrder.formatted_id} (${serviceOrder.device_type} ${serviceOrder.device_model})`;
+                      const encodedMessage = encodeURIComponent(message);
+                      const whatsappUrl = `https://wa.me/55${companyInfo.whatsapp_phone?.replace(/\D/g, '')}?text=${encodedMessage}`;
+                      window.open(whatsappUrl, '_blank');
+                    }}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Entrar em Contato
+                  </Button>
+                )}
               </CardContent>
             </Card>
+
+            {/* Company Information */}
+            {companyInfo && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Building2 className="w-5 h-5" />
+                    <span>Informações da Empresa</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <p className="text-sm text-gray-600">Nome</p>
+                    <p className="font-semibold">{companyInfo.name}</p>
+                  </div>
+                  
+                  {companyInfo.address && (
+                    <div>
+                      <p className="text-sm text-gray-600">Endereço</p>
+                      <p className="text-sm">{companyInfo.address}</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
 

@@ -360,6 +360,7 @@ export type Database = {
           owner_id: string
           phone: string | null
           updated_at: string | null
+          website: string | null
           whatsapp_phone: string | null
         }
         Insert: {
@@ -375,6 +376,7 @@ export type Database = {
           owner_id: string
           phone?: string | null
           updated_at?: string | null
+          website?: string | null
           whatsapp_phone?: string | null
         }
         Update: {
@@ -390,6 +392,7 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           updated_at?: string | null
+          website?: string | null
           whatsapp_phone?: string | null
         }
         Relationships: [
@@ -463,6 +466,56 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: true
             referencedRelation: "user_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      custom_statuses: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          next_status_id: string | null
+          sort_order: number | null
+          status_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          next_status_id?: string | null
+          sort_order?: number | null
+          status_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          next_status_id?: string | null
+          sort_order?: number | null
+          status_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "custom_statuses_next_status_id_fkey"
+            columns: ["next_status_id"]
+            isOneToOne: false
+            referencedRelation: "custom_statuses"
             referencedColumns: ["id"]
           },
         ]
@@ -1027,6 +1080,42 @@ export type Database = {
           },
         ]
       }
+      service_types: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       shop_profiles: {
         Row: {
           address: string
@@ -1445,6 +1534,33 @@ export type Database = {
           id?: string
           label?: string
           months?: number
+        }
+        Relationships: []
+      }
+      whatsapp_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          phone_number: string
+          updated_at: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          phone_number: string
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          phone_number?: string
+          updated_at?: string | null
+          welcome_message?: string | null
         }
         Relationships: []
       }
@@ -1938,6 +2054,10 @@ export type Database = {
           share_url: string
         }[]
       }
+      generate_whatsapp_share_link: {
+        Args: { order_token: string }
+        Returns: Json
+      }
       get_allowed_redirect_domains: {
         Args: Record<PropertyKey, never>
         Returns: string[]
@@ -2202,9 +2322,7 @@ export type Database = {
         }[]
       }
       get_user_notifications: {
-        Args:
-          | { p_limit?: number; p_offset?: number }
-          | { p_limit?: number; p_offset?: number; p_show_deleted?: boolean }
+        Args: { p_limit?: number; p_offset?: number }
         Returns: {
           created_at: string
           created_by: string
@@ -2410,6 +2528,15 @@ export type Database = {
         Args: { test_user_id: string }
         Returns: Json
       }
+      test_generate_share_token: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          expires_at: string
+          service_order_id: string
+          share_token: string
+          share_url: string
+        }[]
+      }
       test_user_permissions: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -2450,6 +2577,10 @@ export type Database = {
               p_service_order_id: string
             }
         Returns: boolean
+      }
+      update_service_order_status_contextual: {
+        Args: { new_status: string; order_id: string }
+        Returns: Json
       }
       update_shop_profile: {
         Args: {

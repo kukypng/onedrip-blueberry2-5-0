@@ -28,7 +28,7 @@ import { ResetPasswordPage } from "./pages/ResetPasswordPage";
 import { ResetEmailPage } from "./pages/ResetEmailPage";
 import { VerifyPage } from "./pages/VerifyPage";
 import { BudgetsPage } from "./pages/BudgetsPage";
-import { ServiceOrdersPage } from "./pages/ServiceOrdersPage";
+import ServiceOrdersPage from "./pages/ServiceOrdersPage";
 import { ServiceOrderFormPage } from "./pages/ServiceOrderFormPage";
 import { ServiceOrderDetailsPage } from "./pages/ServiceOrderDetailsPage";
 import { ServiceOrderTrashPage } from "./pages/ServiceOrderTrashPage";
@@ -38,6 +38,11 @@ import { PWAProvider } from "./components/PWAProvider";
 import NotificationsPage from "./pages/NotificationsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import ServiceOrderSharePage from "./pages/ServiceOrderSharePage";
+import { ServiceOrderSettings } from "./components/ServiceOrderSettings";
+import { ServiceTypeManager } from "./components/ServiceTypeManager";
+import { CustomStatusManager } from "./components/CustomStatusManager";
+import { WhatsAppSettings } from "./components/WhatsAppSettings";
+import { CompanyBrandingSettings } from "./components/CompanyBrandingSettings";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -203,6 +208,46 @@ const AppContent = () => {
           element={
             <ProtectedRoute>
               <ServiceOrderTrashPage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/settings" 
+          element={
+            <ProtectedRoute>
+              <ServiceOrderSettings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/settings/types" 
+          element={
+            <ProtectedRoute>
+              <ServiceTypeManager />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/settings/statuses" 
+          element={
+            <ProtectedRoute>
+              <CustomStatusManager />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/settings/whatsapp" 
+          element={
+            <ProtectedRoute>
+              <WhatsAppSettings />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/service-orders/settings/branding" 
+          element={
+            <ProtectedRoute>
+              <CompanyBrandingSettings />
             </ProtectedRoute>
           } 
         />

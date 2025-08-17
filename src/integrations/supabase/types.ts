@@ -360,7 +360,6 @@ export type Database = {
           owner_id: string
           phone: string | null
           updated_at: string | null
-          website: string | null
           whatsapp_phone: string | null
         }
         Insert: {
@@ -376,7 +375,6 @@ export type Database = {
           owner_id: string
           phone?: string | null
           updated_at?: string | null
-          website?: string | null
           whatsapp_phone?: string | null
         }
         Update: {
@@ -392,7 +390,6 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           updated_at?: string | null
-          website?: string | null
           whatsapp_phone?: string | null
         }
         Relationships: [

@@ -220,22 +220,29 @@ export const IOSHelpSystem = ({
 
           {/* Content */}
           <div className="flex-1 overflow-hidden">
-            {showFeedback ? <IOSFeedbackForm onClose={handleCloseFeedback} context={initialContext} /> : selectedContent ? <IOSMotion animation="fadeSlide" className="h-full p-4">
+            {showFeedback ? (
+              <IOSFeedbackForm onClose={handleCloseFeedback} context={initialContext} />
+            ) : selectedContent ? (
+              <IOSMotion animation="fadeSlide" className="h-full p-4">
                 <ScrollArea className="h-full">
                   <div className="space-y-6">
                     <div>
                       <h2 className="text-xl font-semibold mb-2">{selectedContent.title}</h2>
                       <p className="text-muted-foreground mb-4">{selectedContent.description}</p>
                       <div className="flex flex-wrap gap-2">
-                        {selectedContent.tags.map(tag => <Badge key={tag} variant="outline" className="text-xs">
+                        {selectedContent.tags.map(tag => (
+                          <Badge key={tag} variant="outline" className="text-xs">
                             {tag}
-                          </Badge>)}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
 
-                    {selectedContent.steps && <div className="space-y-4">
+                    {selectedContent.steps && (
+                      <div className="space-y-4">
                         <h3 className="font-medium">Passo a passo:</h3>
-                        {selectedContent.steps.map((step, index) => <Card key={index}>
+                        {selectedContent.steps.map((step, index) => (
+                          <Card key={index}>
                             <CardContent className="p-4">
                               <div className="flex gap-3">
                                 <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-sm flex items-center justify-center font-medium">
@@ -247,11 +254,15 @@ export const IOSHelpSystem = ({
                                 </div>
                               </div>
                             </CardContent>
-                          </Card>)}
-                      </div>}
+                          </Card>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
-              </IOSMotion> : <div className="h-full flex flex-col">
+              </IOSMotion>
+            ) : (
+              <div className="h-full flex flex-col">
                 {/* Search */}
                 <div className="p-4 pb-0">
                   <SearchInput value={searchQuery} onChange={setSearchQuery} onClear={clearSearch} placeholder="Buscar ajuda..." className="mb-4" />
@@ -260,7 +271,7 @@ export const IOSHelpSystem = ({
                 {/* Tabs */}
                 <div className="flex-1 overflow-hidden">
                   <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                    <TabsList className="grid w-full grid-cols-3 mx-4 mb-4">
+                    <TabsList className="grid w-full grid-cols-2 mx-4 mb-4">
                       <TabsTrigger value="quick" className="text-xs">
                         Rápido
                       </TabsTrigger>
@@ -299,12 +310,14 @@ export const IOSHelpSystem = ({
                             {/* Quick FAQs */}
                             <div className="space-y-3">
                               <h3 className="font-medium text-sm px-1">Perguntas Frequentes</h3>
-                              {filteredFAQs.slice(0, 4).map(faq => <Card key={faq.id} className="border-l-4 border-l-primary/20">
-                                  <CardContent className="p-4">
-                                    <h4 className="font-medium text-sm mb-2">{faq.question}</h4>
-                                    <p className="text-xs text-muted-foreground leading-relaxed">{faq.answer}</p>
-                                  </CardContent>
-                                </Card>)}
+                              {filteredFAQs.slice(0, 4).map(faq => (
+                              <Card key={faq.id} className="border-l-4 border-l-primary/20">
+                                <CardContent className="p-4">
+                                  <h4 className="font-medium text-sm mb-2">{faq.question}</h4>
+                                  <p className="text-xs text-muted-foreground leading-relaxed">{faq.answer}</p>
+                                </CardContent>
+                              </Card>
+                            ))}
                             </div>
                           </div>
                         </ScrollArea>
@@ -318,19 +331,22 @@ export const IOSHelpSystem = ({
                               <Button variant={activeCategory ? "outline" : "default"} size="sm" onClick={() => setActiveCategory(null)} className="whitespace-nowrap">
                                 Todos
                               </Button>
-                              {categories.map(category => <Button key={category.id} variant={activeCategory === category.id ? "default" : "outline"} size="sm" onClick={() => setActiveCategory(category.id)} className="whitespace-nowrap gap-2">
+                              {categories.map(category => (
+                                <Button key={category.id} variant={activeCategory === category.id ? "default" : "outline"} size="sm" onClick={() => setActiveCategory(category.id)} className="whitespace-nowrap gap-2">
                                   {category.label}
                                   <Badge variant="secondary" className="text-xs">
                                     {category.count}
                                   </Badge>
-                                </Button>)}
+                                </Button>
+                              ))}
                             </div>
                           </div>
 
                           {/* Content List */}
                           <ScrollArea className="flex-1 px-4">
                             <div className="space-y-3 pb-4">
-                              {filteredContent.map(content => <IOSMotion key={content.id} animation="fadeSlide">
+                              {filteredContent.map(content => (
+                                <IOSMotion key={content.id} animation="fadeSlide">
                                   <Card className="active:bg-muted/50 transition-colors cursor-pointer" onClick={() => handleContentSelect(content)} style={{
                               touchAction: 'manipulation'
                             }}>
@@ -347,16 +363,19 @@ export const IOSHelpSystem = ({
                                             {content.description}
                                           </p>
                                           <div className="flex gap-1 flex-wrap">
-                                            {content.tags.slice(0, 2).map(tag => <Badge key={tag} variant="outline" className="text-xs">
+                                            {content.tags.slice(0, 2).map(tag => (
+                                              <Badge key={tag} variant="outline" className="text-xs">
                                                 {tag}
-                                              </Badge>)}
+                                              </Badge>
+                                            ))}
                                           </div>
                                         </div>
                                         <ArrowRight className="h-4 w-4 text-muted-foreground ml-3 flex-shrink-0" />
                                       </div>
                                     </CardContent>
                                   </Card>
-                                </IOSMotion>)}
+                                </IOSMotion>
+                              ))}
                             </div>
                           </ScrollArea>
                         </div>
@@ -365,26 +384,31 @@ export const IOSHelpSystem = ({
                       <TabsContent value="faq" className="h-full mt-0">
                         <ScrollArea className="h-full px-4">
                           <div className="space-y-3 pb-4">
-                            {filteredFAQs.map(faq => <IOSMotion key={faq.id} animation="fadeSlide">
+                            {filteredFAQs.map(faq => (
+                              <IOSMotion key={faq.id} animation="fadeSlide">
                                 <Card>
                                   <CardContent className="p-4">
                                     <h3 className="font-medium text-sm mb-2">{faq.question}</h3>
                                     <p className="text-xs text-muted-foreground leading-relaxed mb-3">{faq.answer}</p>
                                     <div className="flex gap-1 flex-wrap">
-                                      {faq.tags.map(tag => <Badge key={tag} variant="outline" className="text-xs">
+                                      {faq.tags.map(tag => (
+                                        <Badge key={tag} variant="outline" className="text-xs">
                                           {tag}
-                                        </Badge>)}
+                                        </Badge>
+                                      ))}
                                     </div>
                                   </CardContent>
                                 </Card>
-                              </IOSMotion>)}
+                              </IOSMotion>
+                            ))}
                           </div>
                         </ScrollArea>
                       </TabsContent>
                     </div>
                   </Tabs>
                 </div>
-              </div>}
+              </div>
+            )}
           </div>
         </IOSMotion>
       </SheetContent>

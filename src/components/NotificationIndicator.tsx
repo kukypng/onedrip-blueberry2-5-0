@@ -58,8 +58,9 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
     lg: 'h-6 w-6'
   };
 
-  const NotificationButton = () => (
+  const NotificationButton = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>((props, ref) => (
     <Button
+      ref={ref}
       variant={hasUnread ? 'default' : 'ghost'}
       size={iconOnly ? 'icon' : size}
       className={cn(
@@ -80,6 +81,7 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
       )}
       disabled={isLoading}
       onClick={() => navigate('/msg')}
+      {...props}
     >
       {/* Subtle glow effect - only on hover */}
       {hasUnread && (
@@ -127,7 +129,9 @@ export const NotificationIndicator: React.FC<NotificationIndicatorProps> = ({
         <div className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 bg-yellow-400 rounded-full opacity-40 pointer-events-none" />
       )}
     </Button>
-  );
+  ));
+
+  NotificationButton.displayName = 'NotificationButton';
 
   if (variant === 'modal') {
     return (

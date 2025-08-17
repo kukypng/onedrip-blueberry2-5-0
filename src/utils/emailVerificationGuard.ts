@@ -4,7 +4,7 @@
  * Implementa múltiplas camadas de verificação e segurança
  */
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { securityLogger, SecurityEventType } from './securityAuditLogger';
 
 export interface EmailVerificationStatus {

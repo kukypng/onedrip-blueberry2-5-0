@@ -266,7 +266,7 @@ export const LicenseReportsPanel: React.FC = () => {
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
               </CardContent>
-            </Card>;
+            </Card>
       })}
       </div>
 

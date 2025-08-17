@@ -65,27 +65,40 @@ export function useServiceOrderShare() {
 
   const getServiceOrderByToken = async (shareToken: string): Promise<ServiceOrderShareData | null> => {
     try {
-      console.log('🔍 Buscando ordem de serviço com token:', shareToken);
+      console.log('🔍 [DEBUG] Iniciando busca da ordem de serviço com token:', shareToken);
+      console.log('🔍 [DEBUG] Supabase client status:', !!supabase);
+      
+      const startTime = Date.now();
       const { data, error } = await supabase
         .rpc('get_service_order_by_share_token', {
           p_share_token: shareToken
         });
-
-      console.log('📊 Resposta da função RPC get_service_order_by_share_token:', { data, error });
+      
+      const endTime = Date.now();
+      console.log(`📊 [DEBUG] RPC call completed in ${endTime - startTime}ms`);
+      console.log('📊 [DEBUG] Resposta da função RPC get_service_order_by_share_token:', { data, error });
 
       if (error) {
-        console.error('❌ Erro ao buscar ordem de serviço:', error);
+        console.error('❌ [DEBUG] Erro ao buscar ordem de serviço:', error);
+        console.error('❌ [DEBUG] Error details:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        });
         return null;
       }
 
       if (!data || data.length === 0) {
+        console.log('⚠️ [DEBUG] Nenhum dado retornado da função RPC');
         return null;
       }
 
-      console.log('✅ Ordem de serviço encontrada:', data[0]);
+      console.log('✅ [DEBUG] Ordem de serviço encontrada:', data[0]);
       return data[0] as ServiceOrderShareData;
     } catch (error) {
-      console.error('💥 Erro geral ao buscar ordem de serviço:', error);
+      console.error('💥 [DEBUG] Erro geral ao buscar ordem de serviço:', error);
+      console.error('💥 [DEBUG] Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
       return null;
     }
   };

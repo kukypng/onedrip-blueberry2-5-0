@@ -4,7 +4,7 @@
  * Implementa conformidade com LGPD e boas práticas de auditoria
  */
 
-import { supabase } from '../lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface SecurityEvent {
   id?: string;
